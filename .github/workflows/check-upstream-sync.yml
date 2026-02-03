@@ -103,9 +103,9 @@ jobs:
           DIFF_OUTPUT=$(diff -rq PKHeX.Core /tmp/pkhex-upstream/PKHeX.Core 2>/dev/null | grep -v "bin\|obj\|\.git" || true)
           
           # Count different types
-          FILES_DIFFER=$(echo "$DIFF_OUTPUT" | grep -c "differ" || true)
-          FILES_ONLY_OURS=$(echo "$DIFF_OUTPUT" | grep -c "Only in PKHeX.Core" || true)
-          FILES_ONLY_UPSTREAM=$(echo "$DIFF_OUTPUT" | grep -c "Only in /tmp/pkhex-upstream" || true)
+          FILES_DIFFER=$(echo "$DIFF_OUTPUT" | grep "differ" | wc -l | xargs)
+          FILES_ONLY_OURS=$(echo "$DIFF_OUTPUT" | grep "Only in PKHeX.Core" | wc -l | xargs)
+          FILES_ONLY_UPSTREAM=$(echo "$DIFF_OUTPUT" | grep "Only in /tmp/pkhex-upstream" | wc -l | xargs)
           TOTAL_DIFF=$((FILES_DIFFER + FILES_ONLY_OURS + FILES_ONLY_UPSTREAM))
           
           echo "files_differ=$FILES_DIFFER" >> $GITHUB_OUTPUT
@@ -132,7 +132,7 @@ jobs:
               if [ -n "$CS_FILES" ]; then
                 echo "**Changed .cs files:**"
                 echo "$CS_FILES"
-                CS_TOTAL=$(echo "$DIFF_OUTPUT" | grep "differ" | grep -c "\.cs" || true)
+                CS_TOTAL=$(echo "$DIFF_OUTPUT" | grep "differ" | grep "\.cs" | wc -l | xargs)
                 if [ "$CS_TOTAL" -gt 30 ]; then
                   echo "... and $((CS_TOTAL - 30)) more .cs files"
                 fi
