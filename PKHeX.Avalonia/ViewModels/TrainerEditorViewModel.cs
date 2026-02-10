@@ -264,8 +264,8 @@ public partial class TrainerEditorViewModel : ViewModelBase
             // HasHyperspacePoints = true;
             // HyperspacePoints = za.HyperspaceSurveyPoints;
 
-            // HasStreetName = true;
-            // StreetName = za.StreetName;
+            HasStreetName = true;
+            StreetName = za.StreetName;
         }
 
         AnyCurrencyVisible = HasBP || HasCoins || HasWatts || HasLP || HasBlueberryPoints || HasFestaCoins || HasMeritPoints || HasPokeMiles || HasGimmighoulCoins || HasRoyalePoints || HasRoyalePointsInfinite || HasHyperspacePoints;
@@ -424,7 +424,7 @@ public partial class TrainerEditorViewModel : ViewModelBase
             za.TicketPointsRoyale = RoyalePoints;
             za.TicketPointsRoyaleInfinite = RoyalePointsInfinite;
             // za.HyperspaceSurveyPoints = HyperspacePoints;
-            // za.StreetName = StreetName;
+            za.StreetName = StreetName;
         }
     }
 
