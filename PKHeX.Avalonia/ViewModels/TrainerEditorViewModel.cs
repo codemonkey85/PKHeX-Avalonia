@@ -264,8 +264,12 @@ public partial class TrainerEditorViewModel : ViewModelBase
             // HasHyperspacePoints = true;
             // HyperspacePoints = za.HyperspaceSurveyPoints;
 
+            // HasHyperspacePoints = true;
+            // HyperspacePoints = za.HyperspaceSurveyPoints;
+
             HasStreetName = true;
-            StreetName = za.StreetName;
+            var b = za.Blocks.GetBlock(SaveBlockAccessor9ZA.KStreetName);
+            StreetName = za.GetString(b.Data);
         }
 
         AnyCurrencyVisible = HasBP || HasCoins || HasWatts || HasLP || HasBlueberryPoints || HasFestaCoins || HasMeritPoints || HasPokeMiles || HasGimmighoulCoins || HasRoyalePoints || HasRoyalePointsInfinite || HasHyperspacePoints;
@@ -421,10 +425,12 @@ public partial class TrainerEditorViewModel : ViewModelBase
         // PLZA
         if (_sav is SAV9ZA za && HasRoyalePoints)
         {
-            za.TicketPointsRoyale = RoyalePoints;
             za.TicketPointsRoyaleInfinite = RoyalePointsInfinite;
             // za.HyperspaceSurveyPoints = HyperspacePoints;
-            za.StreetName = StreetName;
+            
+            var b = za.Blocks.GetBlock(SaveBlockAccessor9ZA.KStreetName);
+            b.Data.Clear(); // Clear buffer to ensure no leftover characters
+            za.SetString(b.Data, StreetName, b.Data.Length, StringConverterOption.None);
         }
     }
 
