@@ -132,6 +132,10 @@ public static class LayoutValidator
             {
                 var c1 = children[i];
                 var c2 = children[j];
+
+                // Skip if one is purely decorative (IsHitTestVisible = false)
+                if (!c1.IsHitTestVisible || !c2.IsHitTestVisible)
+                    continue;
                 
                 // Skip if one is a background/border that is meant to be behind
                 if (c1 is Border || c2 is Border) continue;

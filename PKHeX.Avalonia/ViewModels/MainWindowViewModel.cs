@@ -279,7 +279,7 @@ public partial class MainWindowViewModel : ViewModelBase
             return;
         }
 
-        var set = new ShowdownSet(text);
+        var set = new ShowdownSet(text.Trim());
         if (set.Species <= 0)
         {
             await _dialogService.ShowErrorAsync("Import Failed", "Invalid Showdown set text.");
