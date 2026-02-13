@@ -117,7 +117,7 @@ public class DatabaseTests
         var settings = new PKHeX.Core.Searching.SearchSettings
         {
             Species = 0, // Any
-            Format = sav.Generation
+            Context = sav.Context
         };
         
         var allPkms = sav.BoxData.Concat(sav.PartyData);
@@ -145,7 +145,7 @@ public class DatabaseTests
         var settingsSpecific = new PKHeX.Core.Searching.SearchSettings
         {
             Species = 25, // Pikachu
-            Format = sav.Generation
+            Context = sav.Context
         };
         var matchesSpecific = settingsSpecific.Search(allPkms).Where(p => p.Species != 0).ToList();
         Assert.Single(matchesSpecific);
@@ -155,7 +155,7 @@ public class DatabaseTests
         var settingsMismatch = new PKHeX.Core.Searching.SearchSettings
         {
             Species = 268, // Cascoon
-            Format = sav.Generation
+            Context = sav.Context
         };
         var matchesMismatch = settingsMismatch.Search(allPkms).Where(p => p.Species != 0).ToList();
         Assert.Empty(matchesMismatch); // Should not find Cascoon
@@ -238,15 +238,15 @@ public class DatabaseTests
         var allPkms = sav.BoxData.Concat(sav.PartyData);
 
         // Test Nature=25 (Random = Any wildcard)
-        var setNatureRandom = new PKHeX.Core.Searching.SearchSettings { Species = 0, Format = sav.Generation, Nature = Nature.Random };
+        var setNatureRandom = new PKHeX.Core.Searching.SearchSettings { Species = 0, Context = sav.Context, Nature = Nature.Random };
         var matchNatureRandom = setNatureRandom.Search(allPkms).Where(p => p.Species != 0).Count();
         
         // Test Ability=-1 (Any wildcard)
-        var setAbilityWild = new PKHeX.Core.Searching.SearchSettings { Species = 0, Format = sav.Generation, Ability = -1 };
+        var setAbilityWild = new PKHeX.Core.Searching.SearchSettings { Species = 0, Context = sav.Context, Ability = -1 };
         var matchAbilityWild = setAbilityWild.Search(allPkms).Where(p => p.Species != 0).Count();
         
         // Test Item=-1 (Any wildcard)
-        var setItemWild = new PKHeX.Core.Searching.SearchSettings { Species = 0, Format = sav.Generation, Item = -1 };
+        var setItemWild = new PKHeX.Core.Searching.SearchSettings { Species = 0, Context = sav.Context, Item = -1 };
         var matchItemWild = setItemWild.Search(allPkms).Where(p => p.Species != 0).Count();
 
         // All wildcards should match our Cascoon

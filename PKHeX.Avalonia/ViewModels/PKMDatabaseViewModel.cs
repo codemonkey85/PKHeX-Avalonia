@@ -178,7 +178,7 @@ public partial class PKMDatabaseViewModel : ViewModelBase
             Item = Item, // -1 is already 'Any'
             SearchShiny = IsShiny,
             SearchLegal = IsLegal,
-            Format = _sav.Generation
+            Context = _sav.Context
         };
     }
 
