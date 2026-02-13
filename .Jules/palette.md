@@ -1,0 +1,3 @@
+## 2025-01-24 - [Accessibility in Avalonia]
+**Learning:** Explicitly disabling `FocusAdorner` for all buttons in a global style without providing a clear alternative focus state (like a high-contrast border or background change) breaks keyboard navigation accessibility. Adding `AutomationProperties.Name` to icon-only buttons or buttons with symbolic content (like ◀/▶) is essential for screen reader support in Avalonia.
+**Action:** When working with Avalonia, ensure every interactive element has a perceptible focus state and descriptive `AutomationProperties.Name` if its purpose isn't clear from text content alone.

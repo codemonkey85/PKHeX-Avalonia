@@ -62,7 +62,8 @@
                             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="4">
                                 <!-- Legality -->
                                 <Button Background="Transparent" BorderThickness="0" Padding="4"
-                                        Command="{Binding ShowLegalityCommand}" ToolTip.Tip="{Binding LegalityReport}">
+                                        Command="{Binding ShowLegalityCommand}" ToolTip.Tip="{Binding LegalityReport}"
+                                        AutomationProperties.Name="Show Legality Report">
                                     <Panel>
                                         <Border Classes="badge-success" IsVisible="{Binding IsLegal}" Padding="6,2" CornerRadius="4">
                                             <TextBlock Text="LEGAL" FontSize="10" FontWeight="Bold" Foreground="White"/>
@@ -74,7 +75,8 @@
                                 </Button>
                                 <!-- Shiny -->
                                 <Button Background="Transparent" BorderThickness="0" Padding="4"
-                                        Command="{Binding ToggleShinyCommand}" ToolTip.Tip="Toggle Shiny">
+                                        Command="{Binding ToggleShinyCommand}" ToolTip.Tip="Toggle Shiny"
+                                        AutomationProperties.Name="Toggle Shiny">
                                     <Panel>
                                         <Path Data="M 10,0 L 13,7 L 20,7 L 15,12 L 17,19 L 10,15 L 3,19 L 5,12 L 0,7 L 7,7 Z" 
                                               Fill="{DynamicResource ThemeShinyBrush}" Width="16" Height="16" IsVisible="{Binding IsShiny}" />
@@ -233,12 +235,16 @@
                                 <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="4">
                                     <TextBlock Text="IVs" FontWeight="Bold" Opacity="0.6" VerticalAlignment="Center" />
                                     <Button Content="Max" Command="{Binding SetMaxIVsCommand}" 
-                                            FontSize="10" Padding="4,1" Height="20" VerticalAlignment="Center" />
+                                            FontSize="10" Padding="4,1" Height="20" VerticalAlignment="Center"
+                                            ToolTip.Tip="Set all IVs to 31"
+                                            AutomationProperties.Name="Set maximum IVs" />
                                 </StackPanel>
                                 <StackPanel Grid.Row="0" Grid.Column="3" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="4">
                                     <TextBlock Text="EVs" FontWeight="Bold" Opacity="0.6" VerticalAlignment="Center" />
                                     <Button Content="Clear" Command="{Binding ClearEVsCommand}" 
-                                            FontSize="10" Padding="4,1" Height="20" VerticalAlignment="Center" />
+                                            FontSize="10" Padding="4,1" Height="20" VerticalAlignment="Center"
+                                            ToolTip.Tip="Clear all EVs"
+                                            AutomationProperties.Name="Clear all EVs" />
                                 </StackPanel>
                                 <TextBlock Grid.Row="0" Grid.Column="4" Text="Total" FontWeight="Bold" Opacity="0.6" HorizontalAlignment="Center" />
 
@@ -355,7 +361,9 @@
                                 <DockPanel Margin="0,0,0,4">
                                     <TextBlock Text="Current Moves" FontWeight="Bold" FontSize="14" VerticalAlignment="Center" />
                                     <Button Content="Suggest" Command="{Binding SuggestCurrentMovesCommand}"
-                                            HorizontalAlignment="Right" Padding="8,2" FontSize="12" />
+                                            HorizontalAlignment="Right" Padding="8,2" FontSize="12"
+                                            ToolTip.Tip="Suggest moves based on level and species"
+                                            AutomationProperties.Name="Suggest current moves" />
                                 </DockPanel>
                                 
                                 <StackPanel Spacing="4">
@@ -443,7 +451,9 @@
                                 <DockPanel>
                                     <TextBlock Text="Relearn Moves" FontWeight="Bold" FontSize="14" VerticalAlignment="Center" />
                                     <Button Content="Suggest" Command="{Binding SuggestRelearnMovesCommand}"
-                                            HorizontalAlignment="Right" Padding="8,2" FontSize="12" />
+                                            HorizontalAlignment="Right" Padding="8,2" FontSize="12"
+                                            ToolTip.Tip="Suggest relearn moves based on species"
+                                            AutomationProperties.Name="Suggest relearn moves" />
                                 </DockPanel>
                                 
                                 <Grid ColumnDefinitions="*,8,*" Margin="0,4,0,0">
