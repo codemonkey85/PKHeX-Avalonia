@@ -8,6 +8,18 @@ namespace PKHeX.Core.Searching;
 /// </summary>
 public static class SearchUtil
 {
+    // Future: Might need to clamp down further for generations that cannot exist in the current format.
+    public static bool SatisfiesFilterFormat(PKM pk, byte format, SearchComparison formatOperand) => formatOperand switch
+    {
+        SearchComparison.GreaterThanEquals when pk.Format <  format => false,
+        SearchComparison.Equals            when pk.Format != format => false,
+        SearchComparison.LessThanEquals    when pk.Format >  format => false,
+
+        _ when format <= 2 => pk.Format <= 2, // 1-2
+        _ when format <= 6 => pk.Format >= 3, // 3-6
+        _ => true,
+    };
+
     public static bool SatisfiesFilterContext(PKM pk, EntityContext context, SearchComparison contextOperand) => contextOperand switch
     {
         SearchComparison.GreaterThanEquals when pk.Context.IsGenerationLessThan(context) => false,
