@@ -42,7 +42,9 @@
                                    Width="64" Height="52"
                                    RenderOptions.BitmapInterpolationMode="HighQuality"
                                    HorizontalAlignment="Center"
-                                   VerticalAlignment="Center" />
+                                   VerticalAlignment="Center"
+                                   AutomationProperties.Name="{Binding Title}"
+                                   ToolTip.Tip="{Binding Title}" />
                             <!-- Illegal Warning - inset from corner to match box slots -->
                             <Path Data="M 8,0 L 16,14 L 0,14 Z M 8.5,12 H 7.5 V 10.5 H 8.5 V 12 Z M 8.5,9 H 7.5 V 4.5 H 8.5 V 9 Z" 
                                   Fill="#E3350D" 
@@ -50,7 +52,9 @@
                                   VerticalAlignment="Top"
                                   IsVisible="{Binding !IsLegal}"
                                   Margin="0,2,4,0"
-                                  Width="12" Height="10"/>
+                                  Width="12" Height="10"
+                                  AutomationProperties.Name="Illegal Pokémon"
+                                  ToolTip.Tip="This Pokémon is illegal." />
                         </Panel>
                     </Border>
 
@@ -548,17 +552,21 @@
                                     <Grid ColumnDefinitions="*,8,*,8,*">
                                         <StackPanel Grid.Column="0">
                                             <TextBlock Text="EXP" FontWeight="SemiBold" Margin="0,0,0,4" />
-                                            <NumericUpDown Value="{Binding Exp}" Minimum="0" Maximum="16400000" FormatString="0" ShowButtonSpinner="False" />
+                                            <NumericUpDown Value="{Binding Exp}" Minimum="0" Maximum="16400000" FormatString="0" ShowButtonSpinner="False"
+                                                           AutomationProperties.Name="Experience Points" />
                                         </StackPanel>
                                         <StackPanel Grid.Column="2">
                                             <TextBlock Text="Friendship" FontWeight="SemiBold" Margin="0,0,0,4" />
-                                            <NumericUpDown Value="{Binding Happiness}" Minimum="0" Maximum="255" FormatString="0" ShowButtonSpinner="False" />
+                                            <NumericUpDown Value="{Binding Happiness}" Minimum="0" Maximum="255" FormatString="0" ShowButtonSpinner="False"
+                                                           AutomationProperties.Name="Friendship" />
                                         </StackPanel>
                                         <StackPanel Grid.Column="4">
                                             <TextBlock Text="PKRS" FontWeight="SemiBold" Margin="0,0,0,4" />
                                             <Grid ColumnDefinitions="*,2,*">
-                                                <NumericUpDown Grid.Column="0" Value="{Binding PkrsDays}" Minimum="0" Maximum="15" FormatString="0" ShowButtonSpinner="False" />
-                                                <NumericUpDown Grid.Column="2" Value="{Binding PkrsStrain}" Minimum="0" Maximum="15" FormatString="0" ShowButtonSpinner="False" />
+                                                <NumericUpDown Grid.Column="0" Value="{Binding PkrsDays}" Minimum="0" Maximum="15" FormatString="0" ShowButtonSpinner="False"
+                                                               AutomationProperties.Name="Pokérus Days Remaining" />
+                                                <NumericUpDown Grid.Column="2" Value="{Binding PkrsStrain}" Minimum="0" Maximum="15" FormatString="0" ShowButtonSpinner="False"
+                                                               AutomationProperties.Name="Pokérus Strain" />
                                             </Grid>
                                         </StackPanel>
                                     </Grid>
@@ -737,7 +745,8 @@
                                                         <!-- Boolean Ribbon: Checkbox -->
                                                         <CheckBox IsVisible="{Binding IsBooleanRibbon}" 
                                                                   IsChecked="{Binding HasRibbon}"
-                                                                  HorizontalAlignment="Center" />
+                                                                  HorizontalAlignment="Center"
+                                                                  AutomationProperties.Name="{Binding DisplayName}" />
                                                         
                                                         <!-- Count Ribbon: NumericUpDown -->
                                                         <NumericUpDown IsVisible="{Binding !IsBooleanRibbon}" 
@@ -745,7 +754,8 @@
                                                                        Minimum="0" 
                                                                        Maximum="{Binding MaxCount}"
                                                                        Classes="compact"
-                                                                       Width="55" />
+                                                                       Width="55"
+                                                                       AutomationProperties.Name="{Binding DisplayName}" />
                                                     </Panel>
                                                 </Grid>
                                             </Border>
