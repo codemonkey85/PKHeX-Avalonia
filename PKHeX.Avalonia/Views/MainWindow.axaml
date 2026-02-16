@@ -124,7 +124,8 @@
                     <ComboBox x:CompileBindings="False"
                               ItemsSource="{Binding LanguageService.AvailableLanguages}"
                               SelectedItem="{Binding LanguageService.CurrentLanguageOption, Mode=TwoWay}"
-                              Width="120"/>
+                              Width="120"
+                              AutomationProperties.Name="Language Selection"/>
                 </MenuItem>
                 <MenuItem Header="Undo" Command="{Binding UndoCommand}" InputGesture="Ctrl+Z" />
                 <MenuItem Header="Redo" Command="{Binding RedoCommand}" InputGesture="Ctrl+Y" />

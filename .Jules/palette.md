@@ -9,3 +9,7 @@
 ## 2025-01-25 - [Cohesive Accessibility Labeling]
 **Learning:** In complex editor UIs with many unlabeled inputs (like stats or IDs), adding `AutomationProperties.Name` provides a massive accessibility boost with zero visual impact. For grid-based data like Pokémon slots, reusing existing tooltip summary properties for `AutomationProperties.Name` ensures consistency between visual and screen reader feedback.
 **Action:** Always check symbol-based controls (like markings) and input-dense grids for missing programmatic labels.
+
+## 2025-02-12 - [Contextual Accessibility Labels]
+**Learning:** For dynamic elements like the Pokémon Sprite, binding `AutomationProperties.Name` to a summary property (like `Title`) provides much better context than a static label. Similarly, providing tooltips for ambiguous symbolic indicators (like a red warning triangle for "Illegal") is crucial for both screen reader and visual accessibility.
+**Action:** Use existing descriptive ViewModel properties (e.g., `Title`, `DisplayName`) for `AutomationProperties.Name` on images and complex controls.
