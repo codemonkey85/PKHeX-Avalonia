@@ -509,15 +509,6 @@ public abstract class PKM : ISpeciesForm, ITrainerID32, IGeneration, IShiny, ILa
         value[0] = Move1;
     }
 
-    public void SetMoves(Moveset value)
-    {
-        Move1 = value.Move1;
-        Move2 = value.Move2;
-        Move3 = value.Move3;
-        Move4 = value.Move4;
-        this.SetMaximumPPCurrent(value);
-    }
-
     public void SetMoves(ReadOnlySpan<ushort> value)
     {
         Move1 = value.Length > 0 ? value[0] : default;
@@ -527,18 +518,19 @@ public abstract class PKM : ISpeciesForm, ITrainerID32, IGeneration, IShiny, ILa
         this.SetMaximumPPCurrent(value);
     }
 
+    public void SetMoves(Moveset value)
+    {
+        Move1 = value.Move1;
+        Move2 = value.Move2;
+        Move3 = value.Move3;
+        Move4 = value.Move4;
+        this.SetMaximumPPCurrent(value);
+    }
+
     public ushort[] RelearnMoves
     {
         get => [RelearnMove1, RelearnMove2, RelearnMove3, RelearnMove4];
         set => SetRelearnMoves(value);
-    }
-
-    public void SetRelearnMoves(Moveset value)
-    {
-        RelearnMove1 = value.Move1;
-        RelearnMove2 = value.Move2;
-        RelearnMove3 = value.Move3;
-        RelearnMove4 = value.Move4;
     }
 
     public void SetRelearnMoves(ReadOnlySpan<ushort> value)
@@ -547,6 +539,14 @@ public abstract class PKM : ISpeciesForm, ITrainerID32, IGeneration, IShiny, ILa
         RelearnMove2 = value.Length > 1 ? value[1] : default;
         RelearnMove3 = value.Length > 2 ? value[2] : default;
         RelearnMove4 = value.Length > 3 ? value[3] : default;
+    }
+
+    public void SetRelearnMoves(Moveset value)
+    {
+        RelearnMove1 = value.Move1;
+        RelearnMove2 = value.Move2;
+        RelearnMove3 = value.Move3;
+        RelearnMove4 = value.Move4;
     }
 
     public int PIDAbility
