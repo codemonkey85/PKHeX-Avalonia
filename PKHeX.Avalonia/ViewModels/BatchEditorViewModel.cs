@@ -125,7 +125,7 @@ public partial class BatchEditorViewModel : ViewModelBase
                 return;
             }
 
-            var editor = Core.BatchEditor.Execute(lines, pkms);
+            var editor = EntityBatchProcessor.Execute(lines, pkms);
             var sets = StringInstructionSet.GetBatchSets(lines);
             Results = editor.GetEditorResults(sets);
 
@@ -135,7 +135,7 @@ public partial class BatchEditorViewModel : ViewModelBase
                 for (int box = 0; box < _sav.BoxCount; box++)
                 {
                     var boxData = _sav.GetBoxData(box);
-                    // Core.BatchEditor.Execute modified the objects in `pkms`.
+                    // EntityBatchProcessor.Execute modified the objects in `pkms`.
                     // If GetBoxData returns references to those same objects, we are good.
                     // If it returns copies, we need to be careful.
                     // In most PKHeX.Core implementations, GetBoxData returns internal references or copies.

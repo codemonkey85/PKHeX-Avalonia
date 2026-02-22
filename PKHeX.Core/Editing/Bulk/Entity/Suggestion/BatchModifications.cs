@@ -59,7 +59,7 @@ internal static class BatchModifications
             enc.SetInitialMastery(pk);
         if (IsAll(propValue))
         {
-            t.SetPurchasedFlagsAll();
+            t.SetPurchasedFlagsAll(pk);
             t.SetMoveShopFlagsAll(pk);
         }
         else
@@ -176,7 +176,7 @@ internal static class BatchModifications
     /// <param name="option">Option to apply with</param>
     public static ModifyResult SetContestStats(PKM pk, LegalityAnalysis la, ReadOnlySpan<char> option)
     {
-        if (option.Length != 0 && option[BatchEditing.CONST_SUGGEST.Length..] is not "0")
+        if (option.Length != 0 && option[EntityBatchEditor.CONST_SUGGEST.Length..] is not "0")
             pk.SetMaxContestStats(la.EncounterMatch, la.Info.EvoChainsAllGens);
         else
             pk.SetSuggestedContestStats(la.EncounterMatch, la.Info.EvoChainsAllGens);
