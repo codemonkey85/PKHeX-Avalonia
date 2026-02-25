@@ -446,7 +446,7 @@
 933	r	Ne pas Faire Apparaître Goélise à Cimetronelle
 934	r	Ne pas Faire Apparaître Goélise à Algatia
 935	r	Ne pas Faire Apparaître Regirock aux Ruines Désert
-
+	
 938	r	Ne pas Faire Apparaître les Sbires Aqua et Arthur au Site Météore
 939	r	Ne pas Faire Apparaître les Sbires Magma au Site Météore
 940	r	Ne pas Faire Apparaître l'Homme aux Cheveux Noirs au Centre Culturel de Myokara
@@ -647,7 +647,7 @@
 
 1139	r	Morc. Étoile Trouvé au Chenal 108
 1140	r	Potion Trouvée au Chenal 109
-1141	r	Élixir Trouvé à la Route 110
+1141	r	Élixir Trouvé à la Route 110 
 1142	r	Élixir Trouvé à la Route 111
 1143	r	Hyper Potion Trouvée à la Route 113
 1144	r	Poudre Soin Trouvée à la Route 115
