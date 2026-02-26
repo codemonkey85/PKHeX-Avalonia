@@ -1,6 +1,8 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:PKHeX.Avalonia.ViewModels"
              x:Class="PKHeX.Avalonia.Views.AboutView"
+             x:DataType="vm:AboutViewModel"
              Width="400" Height="250">
     <Border Padding="24" Classes="view-container">
         <StackPanel Spacing="16" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -16,10 +18,14 @@
             <Separator />
             
             <StackPanel Spacing="4">
-                <TextBlock Text="Core: PKHeX.Core 26.01.11"
+                <TextBlock Text="{Binding UIVersion, StringFormat='PKHeX Avalonia v{0}'}"
+                           HorizontalAlignment="Center"
+                           FontSize="13"
+                           FontWeight="SemiBold" />
+                <TextBlock Text="{Binding CoreVersion, StringFormat='Core: {0}'}"
                            HorizontalAlignment="Center"
                            FontSize="12" />
-                <TextBlock Text="UI: Avalonia UI 11.2.3"
+                <TextBlock Text="{Binding AvaloniaVersion, StringFormat='Avalonia UI: {0}'}"
                            HorizontalAlignment="Center"
                            FontSize="12" />
             </StackPanel>

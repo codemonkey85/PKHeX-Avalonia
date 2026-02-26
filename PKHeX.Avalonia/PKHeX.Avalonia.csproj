@@ -10,6 +10,11 @@
     <RootNamespace>PKHeX.Avalonia</RootNamespace>
     <ApplicationIcon>Assets/Icons/icon.ico</ApplicationIcon>
     <CFBundleIconFile>icon.icns</CFBundleIconFile>
+    <!-- Override assembly version with UIVersion for Avalonia releases -->
+    <Version>$(UIVersion)</Version>
+    <AssemblyVersion>$(UIVersion).0</AssemblyVersion>
+    <FileVersion>$(UIVersion).0</FileVersion>
+    <InformationalVersion>$(UIVersion)</InformationalVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -81,7 +86,7 @@
     &lt;key&gt;CFBundleIdentifier&lt;/key&gt;
     &lt;string&gt;io.pkhex.avalonia&lt;/string&gt;
     &lt;key&gt;CFBundleVersion&lt;/key&gt;
-    &lt;string&gt;1.0.0&lt;/string&gt;
+    &lt;string&gt;$(UIVersion)&lt;/string&gt;
     &lt;key&gt;CFBundlePackageType&lt;/key&gt;
     &lt;string&gt;APPL&lt;/string&gt;
     &lt;key&gt;CFBundleSignature&lt;/key&gt;

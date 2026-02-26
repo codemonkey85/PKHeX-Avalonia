@@ -1,20 +1,32 @@
 # PKHeX Avalonia
 
 ![License](https://img.shields.io/badge/License-GPLv3-blue.svg)
+![CI](https://github.com/realgarit/PKHeX-Avalonia/actions/workflows/ci.yml/badge.svg)
+![Release](https://img.shields.io/github/v/release/realgarit/PKHeX-Avalonia?label=Latest%20Release)
 
-PKHeX Avalonia is now the main development branch of the cross-platform [PKHeX](https://github.com/kwsch/PKHeX) port. By using the Avalonia UI framework, we bring the classic Pokémon save editor to macOS and Linux with a native look and feel.
+PKHeX Avalonia is the cross-platform [PKHeX](https://github.com/kwsch/PKHeX) port built with the Avalonia UI framework, bringing the classic Pokémon save editor to **Windows**, **macOS**, and **Linux** with a native look and feel.
 
-### ⚠️ Project Status: Beta (Migration Complete)
-All core features and editors have been migrated from the original WinForms version to Avalonia. However, **nothing is thoroughly tested**.
+---
 
-**Expect a lot of bugs.** We are currently in a stabilization phase.
+## Download
+
+Grab the latest release for your platform from the [Releases](https://github.com/realgarit/PKHeX-Avalonia/releases/latest) page:
+
+| Platform | File |
+|----------|------|
+| Windows (x64) | `PKHeX-Avalonia-win-x64.zip` |
+| Linux (x64) | `PKHeX-Avalonia-linux-x64.zip` |
+| macOS Apple Silicon | `PKHeX-Avalonia-osx-arm64.zip` |
+| macOS Intel | `PKHeX-Avalonia-osx-x64.zip` |
+
+All releases are self-contained — no .NET runtime installation required.
 
 ---
 
 ## Project Structure
 * **PKHeX.Avalonia**: The main application (cross-platform).
 * **Legacy/PKHeX.WinForms**: The original Windows Forms application, kept as a reference archive.
-* **PKHeX.Core**: Shared logic library.
+* **PKHeX.Core**: Shared logic library (synced from [upstream PKHeX](https://github.com/kwsch/PKHeX)).
 
 ## Features
 * **Save Editing:** Core series save files (.sav, .dsv, .dat, .gci, .bin).
@@ -22,16 +34,37 @@ All core features and editors have been migrated from the original WinForms vers
 * **Mystery Gifts:** Support for .pgt, .pcd, .pgf, and .wc* files.
 * **Transferring:** Move Pokémon between generations while converting formats automatically.
 
-## Requirements
-To build and run this, you'll need:
+## Building from Source
+
+### Requirements
 * [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
 
-## Getting Started
-You can run the project directly from your terminal. Navigate to the root folder and run:
-
+### Run
 ```bash
 dotnet run --project PKHeX.Avalonia
 ```
+
+### Build
+```bash
+dotnet build PKHeX.sln -c Release
+```
+
+### Test
+```bash
+dotnet test PKHeX.sln
+```
+
+### Publish (example: macOS ARM)
+```bash
+dotnet publish PKHeX.Avalonia -c Release -r osx-arm64 --self-contained -p:PublishSingleFile=true
+```
+
+## Versioning
+
+PKHeX Avalonia uses **semantic versioning** (`1.0.0`, `1.1.0`, etc.) for the UI application.
+PKHeX.Core follows the upstream date-based versioning scheme.
+
+To create a release, bump the `<UIVersion>` value in `Directory.Build.props` and push to `main`. The release workflow detects the new version, creates the git tag, builds all 4 platforms, and publishes a GitHub release — no manual tagging required.
 
 ## Screenshots
 *Work in progress — the UI is changing fast.*
