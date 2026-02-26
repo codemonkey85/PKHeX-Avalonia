@@ -21,6 +21,10 @@ Grab the latest release for your platform from the [Releases](https://github.com
 
 All releases are self-contained — no .NET runtime installation required.
 
+**macOS Note:** The app is ad-hoc signed but not notarized, so on first launch macOS will warn "unidentified developer". To open it:
+1. Right-click the app → select **Open** → click **Open** in the dialog
+2. Or in Terminal: `xattr -d com.apple.quarantine ~/Downloads/PKHeX.Avalonia.app`
+
 ---
 
 ## Project Structure

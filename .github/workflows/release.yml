@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - 'Directory.Build.props'
+      - '.github/workflows/release.yml'
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -83,11 +85,13 @@ jobs:
           -p:UIVersion=${{ needs.check-version.outputs.version }}
           -o publish
 
-      # macOS: zip the .app bundle
+      # macOS: ad-hoc sign and zip the .app bundle created by BundleApp MSBuild target
       - name: Package (macOS)
         if: startsWith(matrix.rid, 'osx')
         shell: bash
         run: |
+          # dotnet publish already ran BundleApp, producing publish/PKHeX.Avalonia.app
+          codesign --force --deep --sign - publish/PKHeX.Avalonia.app
           cd publish
           zip -r ../${{ matrix.artifact }}.zip PKHeX.Avalonia.app
           cd ..
