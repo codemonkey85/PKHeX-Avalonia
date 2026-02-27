@@ -99,7 +99,7 @@ jobs:
         if: steps.check-upstream.outputs.needs_sync == 'true'
         id: analyze
         run: |
-          # Compare our PKHeX.Core with upstream
+          # Compare our PKHeX.Core with upstream (exclude build artifacts)
           DIFF_OUTPUT=$(diff -rq PKHeX.Core /tmp/pkhex-upstream/PKHeX.Core 2>/dev/null | grep -v "bin\|obj\|\.git" || true)
           
           # Count different types
@@ -156,9 +156,8 @@ jobs:
             fi
           } > /tmp/file_diff_summary.txt
           
-          # Build warnings
+          # Build warnings (files only in our repo that aren't in upstream)
           {
-            # Files only in ours
             OUR_ONLY=$(echo "$DIFF_OUTPUT" | grep "Only in PKHeX.Core" | sed 's|Only in PKHeX.Core|- |' || true)
             if [ -n "$OUR_ONLY" ]; then
               echo ""
@@ -169,22 +168,9 @@ jobs:
               echo "Review these - they may conflict with upstream changes."
               echo ""
             fi
-            
-            # Check PKM.cs for local modifications
-            if [ -f "PKHeX.Core/PKM/PKM.cs" ] && [ -f "/tmp/pkhex-upstream/PKHeX.Core/PKM/PKM.cs" ]; then
-              OUR_ADDITIONS=$(diff PKHeX.Core/PKM/PKM.cs /tmp/pkhex-upstream/PKHeX.Core/PKM/PKM.cs 2>/dev/null | grep "^<" | grep -E "public|protected" | head -5 || true)
-              if [ -n "$OUR_ADDITIONS" ]; then
-                echo "**PKM.cs - Your local additions (not in upstream):**"
-                echo "\`\`\`csharp"
-                echo "$OUR_ADDITIONS"
-                echo "\`\`\`"
-                echo "These are your custom methods. Make sure they still compile after syncing."
-                echo ""
-              fi
-            fi
           } > /tmp/warnings.txt
           
-          # Build notes
+          # Build notes (new files in upstream, new MessageStrings)
           {
             # New files in upstream
             NEW_FILES=$(echo "$DIFF_OUTPUT" | grep "Only in /tmp/pkhex-upstream" | sed 's|Only in /tmp/pkhex-upstream/PKHeX.Core|- PKHeX.Core|' || true)
@@ -206,18 +192,6 @@ jobs:
                 echo "$NEW_MSGS"
                 echo "\`\`\`"
                 echo "Check if these are used in new dialogs that need UI work."
-                echo ""
-              fi
-            fi
-            
-            # New API in Moveset.cs
-            if [ -f "PKHeX.Core/Legality/Encounters/Templates/Shared/Moveset.cs" ] && [ -f "/tmp/pkhex-upstream/PKHeX.Core/Legality/Encounters/Templates/Shared/Moveset.cs" ]; then
-              NEW_API=$(diff PKHeX.Core/Legality/Encounters/Templates/Shared/Moveset.cs /tmp/pkhex-upstream/PKHeX.Core/Legality/Encounters/Templates/Shared/Moveset.cs 2>/dev/null | grep "^>" | grep -E "public|internal" | head -5 || true)
-              if [ -n "$NEW_API" ]; then
-                echo "**Moveset.cs - New API in upstream:**"
-                echo "\`\`\`csharp"
-                echo "$NEW_API"
-                echo "\`\`\`"
                 echo ""
               fi
             fi
