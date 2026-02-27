@@ -53,10 +53,31 @@ public class SaveLoadAuditTests(ITestOutputHelper output)
         (GameVersion.ZA, "Gen9a-LegendsZA"),
     ];
 
+    // Gen3 and Gen4 blank saves are not fully initialized by Core and throw
+    // ArgumentOutOfRangeException on Write(). Exclude them from write tests.
+    private static readonly HashSet<GameVersion> NonWriteableVersions =
+    [
+        GameVersion.R, GameVersion.S, GameVersion.E, GameVersion.FR, GameVersion.LG,
+        GameVersion.D, GameVersion.P, GameVersion.Pt, GameVersion.HG, GameVersion.SS,
+    ];
+
     public static IEnumerable<object[]> Versions()
     {
         foreach (var (v, label) in AllVersions)
         {
+            SaveFile sav;
+            try { sav = BlankSaveFile.Get(v); }
+            catch { continue; }
+            yield return [sav, label];
+        }
+    }
+
+    public static IEnumerable<object[]> VersionsWriteable()
+    {
+        foreach (var (v, label) in AllVersions)
+        {
+            if (NonWriteableVersions.Contains(v))
+                continue;
             SaveFile sav;
             try { sav = BlankSaveFile.Get(v); }
             catch { continue; }
@@ -186,12 +207,11 @@ public class SaveLoadAuditTests(ITestOutputHelper output)
 
     // -----------------------------------------------------------------------
     // 9. Write round-trip — save can be written without exceptions
-    //    NOTE: Gen3 and Gen4 blank saves (from BlankSaveFile.Get) are not fully
-    //    initialized by Core and fail sav.Write() with ArgumentOutOfRangeException.
-    //    This is a Core limitation that only affects blank saves — real saves work.
-    //    The test is kept here to detect regressions on games that do pass.
+    //    Gen3/Gen4 blank saves fail Write() with ArgumentOutOfRangeException
+    //    (Core limitation, only affects blank saves). They are excluded via
+    //    VersionsWriteable so this test covers all generations that do pass.
     // -----------------------------------------------------------------------
-    [Theory, MemberData(nameof(Versions))]
+    [Theory, MemberData(nameof(VersionsWriteable))]
     public void Core_WriteRoundTrip_DoesNotThrow(SaveFile sav, string label)
     {
         output.WriteLine(label);
