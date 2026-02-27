@@ -141,35 +141,46 @@ public partial class MainWindowViewModel : ViewModelBase
         CurrentSave = sav;
         if (sav is not null)
         {
-            _spriteRenderer.Initialize(sav);
-            _undoRedo.Initialize(sav);
-            
-            // Initialize PKHeX Core data filters for the current save
-            GameInfo.FilteredSources = new FilteredGameDataSource(sav, GameInfo.Sources);
-            
-            // Initialize Editor with a blank PKM (or first slot?)
-            var blank = sav.BlankPKM;
-            CurrentPokemonEditor = new PokemonEditorViewModel(blank, sav, _spriteRenderer, _dialogService);
-            
-            var boxViewer = new BoxViewerViewModel(sav, _spriteRenderer, _slotService);
-            boxViewer.SlotActivated += OnBoxSlotActivated;
-            boxViewer.ViewSlotRequested += OnBoxViewSlot;
-            boxViewer.SetSlotRequested += OnBoxSetSlot;
-            boxViewer.DeleteSlotRequested += OnBoxDeleteSlot;
-            BoxViewer = boxViewer;
-            
-            var partyViewer = new PartyViewerViewModel(sav, _spriteRenderer, _slotService);
-            partyViewer.SlotActivated += OnPartySlotActivated;
-            partyViewer.ViewSlotRequested += OnPartyViewSlot;
-            partyViewer.SetSlotRequested += OnPartySetSlot;
-            PartyViewer = partyViewer;
+            try
+            {
+                _spriteRenderer.Initialize(sav);
+                _undoRedo.Initialize(sav);
 
-            TrainerEditor = new TrainerEditorViewModel(sav);
-            InventoryEditor = new InventoryEditorViewModel(sav);
-            EventFlagsEditor = new EventFlagsEditorViewModel(sav);
-            MysteryGiftEditor = new MysteryGiftEditorViewModel(sav, _dialogService);
-            BatchEditor = new BatchEditorViewModel(sav, _dialogService);
-            BatchEditor.BatchEditCompleted += OnBatchEditCompleted;
+                // Initialize PKHeX Core data filters for the current save
+                GameInfo.FilteredSources = new FilteredGameDataSource(sav, GameInfo.Sources);
+
+                // Initialize Editor with a blank PKM (or first slot?)
+                var blank = sav.BlankPKM;
+                CurrentPokemonEditor = new PokemonEditorViewModel(blank, sav, _spriteRenderer, _dialogService);
+
+                var boxViewer = new BoxViewerViewModel(sav, _spriteRenderer, _slotService);
+                boxViewer.SlotActivated += OnBoxSlotActivated;
+                boxViewer.ViewSlotRequested += OnBoxViewSlot;
+                boxViewer.SetSlotRequested += OnBoxSetSlot;
+                boxViewer.DeleteSlotRequested += OnBoxDeleteSlot;
+                BoxViewer = boxViewer;
+
+                var partyViewer = new PartyViewerViewModel(sav, _spriteRenderer, _slotService);
+                partyViewer.SlotActivated += OnPartySlotActivated;
+                partyViewer.ViewSlotRequested += OnPartyViewSlot;
+                partyViewer.SetSlotRequested += OnPartySetSlot;
+                PartyViewer = partyViewer;
+
+                TrainerEditor = new TrainerEditorViewModel(sav);
+                InventoryEditor = new InventoryEditorViewModel(sav);
+                EventFlagsEditor = new EventFlagsEditorViewModel(sav);
+                MysteryGiftEditor = new MysteryGiftEditorViewModel(sav, _dialogService);
+                BatchEditor = new BatchEditorViewModel(sav, _dialogService);
+                BatchEditor.BatchEditCompleted += OnBatchEditCompleted;
+            }
+            catch (Exception ex)
+            {
+                // Loading the ViewModel layer failed — close the save and show an error
+                // instead of leaving the app in a half-initialized, crash-prone state.
+                _saveFileService.CloseSave();
+                _ = _dialogService.ShowErrorAsync("Failed to open save file",
+                    $"This save file loaded successfully but the editor could not display it.\n\n{ex.GetType().Name}: {ex.Message}");
+            }
         }
         else
         {

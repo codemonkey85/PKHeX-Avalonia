@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PKHeX.Avalonia.Services;
@@ -24,22 +25,30 @@ public partial class BatchEditorViewModel : ViewModelBase
 
     private static List<string> GetCommonPkmProperties()
     {
-        // Common PKM properties for batch editing
-        return
-        [
-            "Species", "Form", "Nickname", "IsNicknamed",
-            "Level", "EXP", "Nature", "StatNature",
-            "Ability", "AbilityNumber",
-            "Gender", "IsShiny", "ShinyXor",
+        // Pull all public read/write instance properties from the PKM base class.
+        // This gives users the same full set the core batch engine actually accepts,
+        // rather than a short hardcoded list that's always going to be incomplete.
+        var props = typeof(PKM)
+            .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+            .Where(p => p.CanRead && p.CanWrite && p.GetIndexParameters().Length == 0)
+            .Select(p => p.Name)
+            .OrderBy(n => n, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        // Put the most commonly used ones at the top for quicker access.
+        var priority = new[]
+        {
+            "Species", "Nickname", "Level", "IsShiny", "Nature", "Ability",
+            "Gender", "HeldItem", "Ball", "Friendship", "IsEgg",
             "IV_HP", "IV_ATK", "IV_DEF", "IV_SPA", "IV_SPD", "IV_SPE",
             "EV_HP", "EV_ATK", "EV_DEF", "EV_SPA", "EV_SPD", "EV_SPE",
             "Move1", "Move2", "Move3", "Move4",
-            "HeldItem", "Ball",
-            "OT_Name", "OT_Gender",
-            "Friendship", "IsEgg",
-            "Language", "Version",
-            "CurrentHandler", "HT_Name", "HT_Gender"
-        ];
+            "OT_Name", "Language", "Version",
+        };
+
+        var result = priority.Where(props.Contains).ToList();
+        result.AddRange(props.Except(priority));
+        return result;
     }
 
     public IReadOnlyList<string> PropertySuggestions { get; }

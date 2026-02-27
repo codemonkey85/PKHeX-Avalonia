@@ -100,8 +100,13 @@ public sealed class DialogService : IDialogService
         var dialog = new Window
         {
             Title = title,
-            Width = 350,
-            Height = 150,
+            // No fixed height — let the window size to content so long messages
+            // (e.g. FR save error, file path info) are never cut off at the bottom.
+            Width = 420,
+            MinHeight = 120,
+            MaxWidth = 600,
+            MaxHeight = 500,
+            SizeToContent = SizeToContent.Height,
             WindowStartupLocation = WindowStartupLocation.CenterOwner,
             CanResize = false,
             Content = new StackPanel
@@ -144,7 +149,11 @@ public sealed class DialogService : IDialogService
             Content = content,
             SizeToContent = SizeToContent.WidthAndHeight,
             WindowStartupLocation = WindowStartupLocation.CenterOwner,
-            CanResize = false
+            // Cap dialog windows so they never fill the screen or go under the taskbar.
+            // CanResize=true lets users adjust if they need more space.
+            CanResize = true,
+            MaxWidth = 1400,
+            MaxHeight = 820,
         };
 
 

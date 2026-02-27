@@ -13,7 +13,19 @@ public partial class InventoryEditorViewModel : ViewModelBase
     public InventoryEditorViewModel(SaveFile sav)
     {
         _sav = sav;
-        _originalPouches = sav.Inventory.Pouches;
+
+        // sav.Inventory can throw on blank SCBlock-based saves (LA, SV, ZA) where
+        // blocks have Type=None and are not yet populated. Fall back to empty.
+        IReadOnlyList<InventoryPouch> pouches;
+        try
+        {
+            pouches = sav.Inventory.Pouches;
+        }
+        catch
+        {
+            pouches = Array.Empty<InventoryPouch>();
+        }
+        _originalPouches = pouches;
 
         // Build item name list
         var itemStrings = GameInfo.Strings.GetItemStrings(sav.Context, sav.Version);

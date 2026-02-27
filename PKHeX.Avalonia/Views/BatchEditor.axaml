@@ -54,15 +54,18 @@
                     Margin="0,0,0,12">
                 <StackPanel Spacing="8">
                     <TextBlock Text="Instruction Builder" FontWeight="SemiBold" />
-                    <Grid ColumnDefinitions="*,80,*,Auto,Auto">
+                    <TextBlock FontSize="11" Opacity="0.6"
+                               Text="Type a property name and click + Filter (condition) or + Modify (change). Each click adds one line. Run executes all lines together." />
+                    <Grid ColumnDefinitions="*,Auto,*,Auto,Auto">
                         <AutoCompleteBox Grid.Column="0"
                                          Text="{Binding SelectedProperty}"
                                          ItemsSource="{Binding PropertySuggestions}"
                                          FilterMode="Contains"
-                                         Watermark="Property..." />
+                                         Watermark="Type a property name..." />
                         <ComboBox Grid.Column="1"
                                   ItemsSource="{Binding Operators}"
                                   SelectedItem="{Binding SelectedOperator}"
+                                  MinWidth="100"
                                   Margin="8,0" />
                         <TextBox Grid.Column="2"
                                  Text="{Binding SelectedValue}"

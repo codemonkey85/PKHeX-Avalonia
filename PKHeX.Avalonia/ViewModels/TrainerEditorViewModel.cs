@@ -154,14 +154,16 @@ public partial class TrainerEditorViewModel : ViewModelBase
     {
         TrainerName = _sav.OT;
         Gender = _sav.Gender;
-        Money = _sav.Money;
+        // SCBlock-based saves (LA, SV, ZA) throw when the block type is None on a blank save.
+        // Wrap each property that routes through GetBlockValue so the editor still loads.
+        try { Money = _sav.Money; } catch { }
         Tid16 = _sav.TID16;
         Sid16 = _sav.SID16;
         Language = _sav.Language;
 
-        PlayedHours = _sav.PlayedHours;
-        PlayedMinutes = _sav.PlayedMinutes;
-        PlayedSeconds = _sav.PlayedSeconds;
+        try { PlayedHours = _sav.PlayedHours; } catch { }
+        try { PlayedMinutes = _sav.PlayedMinutes; } catch { }
+        try { PlayedSeconds = _sav.PlayedSeconds; } catch { }
 
         // Initialize language list based on generation
         LanguageList = GameInfo.Sources.LanguageDataSource(_sav.Generation, _sav.Context);
@@ -195,16 +197,11 @@ public partial class TrainerEditorViewModel : ViewModelBase
         }
         else if (_sav is SAV9SV sv)
         {
-            HasBP = true;
-            BP = (uint)sv.Blocks.GetBlockValue(SaveBlockAccessor9SV.KBlueberryPoints);
-            HasBlueberryPoints = true;
-            BlueberryPoints = BP;
-
-            HasLP = true;
-            LP = (uint)sv.Blocks.GetBlockValue(SaveBlockAccessor9SV.KLeaguePoints);
-
-            HasGimmighoulCoins = true;
-            GimmighoulCoins = sv.Items.GetItemQuantity(1985);
+            // SCBlocks in blank/uninitialized SV saves can have Type=None and throw.
+            // Wrap each block read individually so a missing block doesn't hide the rest.
+            try { HasBP = true; BP = (uint)sv.Blocks.GetBlockValue(SaveBlockAccessor9SV.KBlueberryPoints); HasBlueberryPoints = true; BlueberryPoints = BP; } catch { }
+            try { HasLP = true; LP = (uint)sv.Blocks.GetBlockValue(SaveBlockAccessor9SV.KLeaguePoints); } catch { }
+            try { HasGimmighoulCoins = true; GimmighoulCoins = sv.Items.GetItemQuantity(1985); } catch { }
         }
 
         // Coins (Gen 1-4)
@@ -230,19 +227,13 @@ public partial class TrainerEditorViewModel : ViewModelBase
         }
 
         // Merit Points (Gen 8 LA)
+        // SCBlocks in blank/uninitialized LA saves can have Type=None and throw.
         if (_sav is SAV8LA la)
         {
-            HasMeritPoints = true;
-            MeritPoints = (uint)la.Accessor.GetBlockValue(SaveBlockAccessor8LA.KMeritCurrent);
-
-            HasMeritEarned = true;
-            MeritEarned = (uint)la.Accessor.GetBlockValue(SaveBlockAccessor8LA.KMeritEarnedTotal);
-
-            HasExpeditionRank = true;
-            ExpeditionRank = (uint)la.Accessor.GetBlockValue(SaveBlockAccessor8LA.KExpeditionTeamRank);
-
-            HasSatchelUpgrades = true;
-            SatchelUpgrades = (uint)la.Accessor.GetBlockValue(SaveBlockAccessor8LA.KSatchelUpgrades);
+            try { HasMeritPoints = true; MeritPoints = (uint)la.Accessor.GetBlockValue(SaveBlockAccessor8LA.KMeritCurrent); } catch { }
+            try { HasMeritEarned = true; MeritEarned = (uint)la.Accessor.GetBlockValue(SaveBlockAccessor8LA.KMeritEarnedTotal); } catch { }
+            try { HasExpeditionRank = true; ExpeditionRank = (uint)la.Accessor.GetBlockValue(SaveBlockAccessor8LA.KExpeditionTeamRank); } catch { }
+            try { HasSatchelUpgrades = true; SatchelUpgrades = (uint)la.Accessor.GetBlockValue(SaveBlockAccessor8LA.KSatchelUpgrades); } catch { }
         }
 
         // Poké Miles (Gen 6)
@@ -253,23 +244,19 @@ public partial class TrainerEditorViewModel : ViewModelBase
         }
 
         // PLZA (SAV9ZA)
+        // SCBlocks in blank/uninitialized ZA saves can have Type=None and throw.
         if (_sav is SAV9ZA za)
         {
-            HasRoyalePoints = true;
-            RoyalePoints = za.TicketPointsRoyale;
+            try { HasRoyalePoints = true; RoyalePoints = za.TicketPointsRoyale; } catch { }
+            try { HasRoyalePointsInfinite = true; RoyalePointsInfinite = za.TicketPointsRoyaleInfinite; } catch { }
 
-            HasRoyalePointsInfinite = true;
-            RoyalePointsInfinite = za.TicketPointsRoyaleInfinite;
-
-            // HasHyperspacePoints = true;
-            // HyperspacePoints = za.HyperspaceSurveyPoints;
-
-            // HasHyperspacePoints = true;
-            // HyperspacePoints = za.HyperspaceSurveyPoints;
-
-            HasStreetName = true;
-            var b = za.Blocks.GetBlock(SaveBlockAccessor9ZA.KStreetName);
-            StreetName = za.GetString(b.Data);
+            try
+            {
+                HasStreetName = true;
+                var b = za.Blocks.GetBlock(SaveBlockAccessor9ZA.KStreetName);
+                StreetName = za.GetString(b.Data);
+            }
+            catch { }
         }
 
         AnyCurrencyVisible = HasBP || HasCoins || HasWatts || HasLP || HasBlueberryPoints || HasFestaCoins || HasMeritPoints || HasPokeMiles || HasGimmighoulCoins || HasRoyalePoints || HasRoyalePointsInfinite || HasHyperspacePoints;

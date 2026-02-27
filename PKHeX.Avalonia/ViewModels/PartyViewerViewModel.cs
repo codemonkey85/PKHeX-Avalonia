@@ -50,7 +50,11 @@ public partial class PartyViewerViewModel : ViewModelBase
         
         for (int i = 0; i < 6; i++)
         {
-            var pk = _sav.GetPartySlotAtIndex(i);
+            // LGPE stores party in a PokeList structure inside boxes.
+            // On blank saves GetPartySlotAtIndex throws if the list is empty.
+            PKM pk;
+            try { pk = _sav.GetPartySlotAtIndex(i); }
+            catch { pk = _sav.BlankPKM; }
             var isEmpty = pk.Species == 0 || i >= partyCount;
             
             Slots.Add(new PartySlotData
@@ -61,11 +65,11 @@ public partial class PartyViewerViewModel : ViewModelBase
                 IsEmpty = isEmpty,
                 IsShiny = pk.IsShiny,
                 Nickname = isEmpty ? string.Empty : pk.Nickname,
-                SpeciesName = isEmpty ? string.Empty : strings.Species[pk.Species],
+                SpeciesName = isEmpty ? string.Empty : (pk.Species < strings.Species.Count ? strings.Species[pk.Species] : string.Empty),
                 Level = pk.CurrentLevel,
                 Gender = (byte)pk.Gender,
                 HeldItem = (ushort)pk.HeldItem,
-                HeldItemName = pk.HeldItem > 0 ? strings.Item[pk.HeldItem] : string.Empty,
+                HeldItemName = pk.HeldItem > 0 && pk.HeldItem < strings.Item.Count ? strings.Item[pk.HeldItem] : string.Empty,
                 IsEgg = pk.IsEgg,
                 CurrentHp = (ushort)(pk is PKM pkm ? pkm.Stat_HPCurrent : 0),
                 MaxHp = (ushort)(pk is PKM pkm2 ? pkm2.Stat_HPMax : 0),
