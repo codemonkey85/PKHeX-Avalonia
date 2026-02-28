@@ -23,6 +23,7 @@ public class ShowdownSetTests
     [Fact]
     public void SimulatorGetEncounters()
     {
+        ParseSettings.AllowEraCartGBA = true;
         // Set must have visited US/UM. Sun/Moon origin can't obtain the moves unless traded.
         var set = new ShowdownSet(SetGlaceonUSUMTutor);
         var pk7 = new PK7 {Species = set.Species, Form = set.Form};
@@ -69,6 +70,7 @@ public class ShowdownSetTests
     [Fact]
     public void SimulatorGetGift3()
     {
+        ParseSettings.AllowEraCartGBA = true;
         var set = new ShowdownSet(SetROCKSMetang);
         var pk3 = new PK3 { Species = set.Species, Form = set.Form, Moves = set.Moves };
         var encs = EncounterMovesetGenerator.GenerateEncounters(pk3, set.Moves, GameVersion.R);
@@ -276,6 +278,7 @@ public class ShowdownSetTests
     [InlineData(LowLevelElectrode)]
     public void SimulatorParseEncounter(string text)
     {
+        ParseSettings.AllowEraCartGBA = true;
         var set = new ShowdownSet(text);
         var pk7 = new PK3 { Species = set.Species, Form = set.Form, Moves = set.Moves, CurrentLevel = set.Level };
         var encs = EncounterMovesetGenerator.GenerateEncounters(pk7, set.Moves, GameVersion.FR);

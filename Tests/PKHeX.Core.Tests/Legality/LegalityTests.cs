@@ -131,6 +131,7 @@ public class LegalityTest
 
             var dn = fi.DirectoryName ?? string.Empty;
             ParseSettings.AllowEraCartGB = dn.Contains("GBCartEra");
+            ParseSettings.AllowEraCartGBA = !dn.Contains("GBAVCEra");
             ParseSettings.Settings.Tradeback.AllowGen1Tradeback = dn.Contains("1 Tradeback");
             var pk = EntityFormat.GetFromBytes(data, prefer);
             pk.Should().NotBeNull($"the PKM '{new FileInfo(file).Name}' should have been loaded");
