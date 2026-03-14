@@ -161,6 +161,21 @@ public class LayoutTests
     }
 
     [AvaloniaFact]
+    public void Verify_RibbonEditor_ConstructsWithHeadless()
+    {
+        // RibbonEditorViewModel loads .png assets via Avalonia AssetLoader —
+        // must run inside the headless app context.
+        var pkm = new PK6 { Species = 25 };
+        var ex = Record.Exception(() =>
+        {
+            var vm = new RibbonEditorViewModel(pkm);
+            Assert.NotNull(vm);
+            Assert.NotEmpty(vm.Ribbons);
+        });
+        Assert.Null(ex);
+    }
+
+    [AvaloniaFact]
     public void Verify_Critical_Controls_Are_Visible()
     {
         var pkm = new PK3();
