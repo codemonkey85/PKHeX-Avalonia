@@ -238,7 +238,7 @@ public abstract class SAV4 : SaveFile, IEventFlag37, IDaycareStorage, IDaycareRa
     private int OFS_Backdrop => FashionCase + 0x28;
 
     protected int OFS_Chatter = int.MinValue;
-    public Chatter4 Chatter => new(this, GeneralBuffer[OFS_Chatter..]);
+    public Chatter4 Chatter => new(this, Buffer[OFS_Chatter..]);
 
     protected int OFS_Record = int.MinValue;
     public Record4 Records => new(this, Buffer.Slice(OFS_Record, Record4.GetSize(this)));
@@ -255,10 +255,13 @@ public abstract class SAV4 : SaveFile, IEventFlag37, IDaycareStorage, IDaycareRa
     public sealed override int GetPartyOffset(int slot) => Party + (SIZE_PARTY * slot);
 
     #region Trainer Info
+
+    public Span<byte> OriginalTrainerTrash => General.Slice(Trainer1, 16);
+
     public override string OT
     {
-        get => GetString(General.Slice(Trainer1, 16));
-        set => SetString(General.Slice(Trainer1, 16), value, MaxStringLengthTrainer, StringConverterOption.ClearZero);
+        get => GetString(OriginalTrainerTrash);
+        set => SetString(OriginalTrainerTrash, value, MaxStringLengthTrainer, StringConverterOption.ClearZero);
     }
 
     public override uint ID32
