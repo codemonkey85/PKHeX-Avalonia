@@ -8,6 +8,7 @@ namespace PKHeX.Avalonia.ViewModels;
 public partial class InventoryEditorViewModel : ViewModelBase
 {
     private readonly SaveFile _sav;
+    private readonly PlayerBag? _bag;
     private readonly IReadOnlyList<InventoryPouch> _originalPouches;
 
     public InventoryEditorViewModel(SaveFile sav)
@@ -16,15 +17,18 @@ public partial class InventoryEditorViewModel : ViewModelBase
 
         // sav.Inventory can throw on blank SCBlock-based saves (LA, SV, ZA) where
         // blocks have Type=None and are not yet populated. Fall back to empty.
+        PlayerBag? bag = null;
         IReadOnlyList<InventoryPouch> pouches;
         try
         {
-            pouches = sav.Inventory.Pouches;
+            bag = sav.Inventory;
+            pouches = bag.Pouches;
         }
         catch
         {
             pouches = Array.Empty<InventoryPouch>();
         }
+        _bag = bag;
         _originalPouches = pouches;
 
         // Build item name list
@@ -80,6 +84,10 @@ public partial class InventoryEditorViewModel : ViewModelBase
         {
             pouch.ApplyChanges();
         }
+        // Flush the in-memory InventoryPouch items back to the save file bytes.
+        // Without this, changes only exist in the PlayerBag's in-memory arrays
+        // and are lost when the save is reloaded.
+        _bag?.CopyTo(_sav);
     }
 
     [RelayCommand]
