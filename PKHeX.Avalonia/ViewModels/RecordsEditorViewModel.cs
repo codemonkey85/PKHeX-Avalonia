@@ -11,13 +11,13 @@ namespace PKHeX.Avalonia.ViewModels;
 public partial class RecordsEditorViewModel : ViewModelBase
 {
     private readonly SaveFile _sav;
-    private readonly IRecordStatStorage? _storage;
+    private readonly ITrainerStatRecord? _storage;
     private readonly Dictionary<int, string>? _recordNames;
 
     public RecordsEditorViewModel(SaveFile sav)
     {
         _sav = sav;
-        _storage = sav as IRecordStatStorage;
+        _storage = sav as ITrainerStatRecord;
         _recordNames = GetRecordList(sav.Generation);
 
         LoadRecords();
@@ -47,8 +47,9 @@ public partial class RecordsEditorViewModel : ViewModelBase
 
         foreach (var kvp in _recordNames.OrderBy(x => x.Key))
         {
+            if (kvp.Key >= _storage.RecordCount) continue; // skip IDs outside save's valid range
             var value = _storage.GetRecord(kvp.Key);
-            var vm = new RecordItemViewModel(kvp.Key, kvp.Value, value, _storage);
+            var vm = new RecordItemViewModel(kvp.Key, kvp.Value, value, (ITrainerStatRecord)_storage);
             Records.Add(vm);
         }
 
@@ -88,9 +89,9 @@ public partial class RecordsEditorViewModel : ViewModelBase
 
 public partial class RecordItemViewModel : ViewModelBase
 {
-    private readonly IRecordStatStorage _storage;
+    private readonly ITrainerStatRecord _storage;
 
-    public RecordItemViewModel(int id, string name, int value, IRecordStatStorage storage)
+    public RecordItemViewModel(int id, string name, int value, ITrainerStatRecord storage)
     {
         Id = id;
         Name = name;
