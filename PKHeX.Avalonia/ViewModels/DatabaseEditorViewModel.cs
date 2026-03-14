@@ -5,16 +5,8 @@ using PKHeX.Core;
 
 namespace PKHeX.Avalonia.ViewModels;
 
-/// <summary>
-/// PKM Database browser for viewing stored Pokémon files.
-/// </summary>
 public partial class DatabaseEditorViewModel : ViewModelBase
 {
-    public DatabaseEditorViewModel()
-    {
-        // Note: Database functionality requires file system access
-        // This is a placeholder implementation
-    }
 
     [ObservableProperty] private string _databasePath = string.Empty;
     [ObservableProperty] private string _searchText = string.Empty;
@@ -23,11 +15,7 @@ public partial class DatabaseEditorViewModel : ViewModelBase
     public ObservableCollection<PKMSummary> Results { get; } = [];
 
     [RelayCommand]
-    private void Search()
-    {
-        // Database search would be implemented here
-        ResultCount = Results.Count;
-    }
+    private void Search() => ResultCount = Results.Count;
 
     [RelayCommand]
     private void Clear()

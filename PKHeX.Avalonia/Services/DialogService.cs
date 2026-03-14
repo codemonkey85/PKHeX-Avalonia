@@ -136,12 +136,10 @@ public sealed class DialogService : IDialogService
         await dialog.ShowDialog(window);
     }
 
-    public async Task<bool> ShowDialogAsync(Control content, string title)
+    public async Task ShowDialogAsync(Control content, string title)
     {
         var window = GetMainWindow();
-        if (window is null) return false;
-
-        var result = false;
+        if (window is null) return;
 
         var dialog = new Window
         {
@@ -149,17 +147,12 @@ public sealed class DialogService : IDialogService
             Content = content,
             SizeToContent = SizeToContent.WidthAndHeight,
             WindowStartupLocation = WindowStartupLocation.CenterOwner,
-            // Cap dialog windows so they never fill the screen or go under the taskbar.
-            // CanResize=true lets users adjust if they need more space.
             CanResize = true,
             MaxWidth = 1400,
             MaxHeight = 820,
         };
 
-
-
         await dialog.ShowDialog(window);
-        return result;
     }
 
     public async Task<string?> GetClipboardTextAsync()

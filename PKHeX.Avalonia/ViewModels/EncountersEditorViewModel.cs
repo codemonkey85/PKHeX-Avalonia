@@ -5,9 +5,6 @@ using PKHeX.Core;
 
 namespace PKHeX.Avalonia.ViewModels;
 
-/// <summary>
-/// Encounter database browser for searching available encounters.
-/// </summary>
 public partial class EncountersEditorViewModel : ViewModelBase
 {
     private readonly SaveFile _sav;
@@ -25,12 +22,8 @@ public partial class EncountersEditorViewModel : ViewModelBase
 
     private void LoadSpecies()
     {
-        Species.Clear();
-        var speciesList = GameInfo.FilteredSources.Species;
-        foreach (var s in speciesList)
-        {
+        foreach (var s in GameInfo.FilteredSources.Species)
             Species.Add(s);
-        }
     }
 
     [RelayCommand]
@@ -42,7 +35,6 @@ public partial class EncountersEditorViewModel : ViewModelBase
             return;
         }
 
-        // Simplified search - shows species was selected
         SearchResults = $"Searching encounters for species #{SelectedSpecies}...";
     }
 

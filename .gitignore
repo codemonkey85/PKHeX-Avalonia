@@ -45,6 +45,7 @@ local.properties
 *.sln.docstates
 *.vs
 .vscode/
+.claude/
 
 # Build results
 

@@ -69,13 +69,14 @@ public partial class PokemonEditorViewModel
     [NotifyPropertyChangedFor(nameof(Stat_HP), nameof(Stat_ATK), nameof(Stat_DEF), nameof(Stat_SPA), nameof(Stat_SPD), nameof(Stat_SPE), nameof(EVTotal))]
     private int _evSPE;
 
-    // Computed Stats
-    public int Stat_HP { get { RecalculateStats(); return _pk.Stat_HPMax; } }
-    public int Stat_ATK { get { RecalculateStats(); return _pk.Stat_ATK; } }
-    public int Stat_DEF { get { RecalculateStats(); return _pk.Stat_DEF; } }
-    public int Stat_SPA { get { RecalculateStats(); return _pk.Stat_SPA; } }
-    public int Stat_SPD { get { RecalculateStats(); return _pk.Stat_SPD; } }
-    public int Stat_SPE { get { RecalculateStats(); return _pk.Stat_SPE; } }
+    // Computed Stats — RecalculateStats() is called in the OnChanged hooks before
+    // PropertyChanged fires, so _pk is already up-to-date by the time these are read.
+    public int Stat_HP => _pk.Stat_HPMax;
+    public int Stat_ATK => _pk.Stat_ATK;
+    public int Stat_DEF => _pk.Stat_DEF;
+    public int Stat_SPA => _pk.Stat_SPA;
+    public int Stat_SPD => _pk.Stat_SPD;
+    public int Stat_SPE => _pk.Stat_SPE;
 
     // Base Stats
     public int Base_HP => _pk.PersonalInfo.HP;
@@ -130,16 +131,17 @@ public partial class PokemonEditorViewModel
         EvSPE = 0;
     }
 
-    partial void OnIvHPChanged(int value) { if (!_isLoading) Validate(); }
-    partial void OnIvATKChanged(int value) { if (!_isLoading) Validate(); }
-    partial void OnIvDEFChanged(int value) { if (!_isLoading) Validate(); }
-    partial void OnIvSPAChanged(int value) { if (!_isLoading) Validate(); }
-    partial void OnIvSPDChanged(int value) { if (!_isLoading) Validate(); }
-    partial void OnIvSPEChanged(int value) { if (!_isLoading) Validate(); }
-    partial void OnEvHPChanged(int value) { if (!_isLoading) Validate(); }
-    partial void OnEvATKChanged(int value) { if (!_isLoading) Validate(); }
-    partial void OnEvDEFChanged(int value) { if (!_isLoading) Validate(); }
-    partial void OnEvSPAChanged(int value) { if (!_isLoading) Validate(); }
-    partial void OnEvSPDChanged(int value) { if (!_isLoading) Validate(); }
-    partial void OnEvSPEChanged(int value) { if (!_isLoading) Validate(); }
+    // Recalculate once per change, then let NotifyPropertyChangedFor push the new values to the UI.
+    partial void OnIvHPChanged(int value) { if (!_isLoading) { RecalculateStats(); Validate(); } }
+    partial void OnIvATKChanged(int value) { if (!_isLoading) { RecalculateStats(); Validate(); } }
+    partial void OnIvDEFChanged(int value) { if (!_isLoading) { RecalculateStats(); Validate(); } }
+    partial void OnIvSPAChanged(int value) { if (!_isLoading) { RecalculateStats(); Validate(); } }
+    partial void OnIvSPDChanged(int value) { if (!_isLoading) { RecalculateStats(); Validate(); } }
+    partial void OnIvSPEChanged(int value) { if (!_isLoading) { RecalculateStats(); Validate(); } }
+    partial void OnEvHPChanged(int value) { if (!_isLoading) { RecalculateStats(); Validate(); } }
+    partial void OnEvATKChanged(int value) { if (!_isLoading) { RecalculateStats(); Validate(); } }
+    partial void OnEvDEFChanged(int value) { if (!_isLoading) { RecalculateStats(); Validate(); } }
+    partial void OnEvSPAChanged(int value) { if (!_isLoading) { RecalculateStats(); Validate(); } }
+    partial void OnEvSPDChanged(int value) { if (!_isLoading) { RecalculateStats(); Validate(); } }
+    partial void OnEvSPEChanged(int value) { if (!_isLoading) { RecalculateStats(); Validate(); } }
 }

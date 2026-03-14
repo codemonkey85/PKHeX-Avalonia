@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.Input;
 using PKHeX.Avalonia.Models;
 using PKHeX.Avalonia.Services;
 using PKHeX.Core;
-using System;
 using System.Collections.ObjectModel;
 
 namespace PKHeX.Avalonia.ViewModels;
@@ -35,7 +34,6 @@ public partial class PartyViewerViewModel : ViewModelBase
 
     partial void OnSelectedIndexChanged(int value)
     {
-        // Update IsSelected on all slots
         for (int i = 0; i < Slots.Count; i++)
             Slots[i].IsSelected = i == value;
     }
@@ -71,8 +69,8 @@ public partial class PartyViewerViewModel : ViewModelBase
                 HeldItem = (ushort)pk.HeldItem,
                 HeldItemName = pk.HeldItem > 0 && pk.HeldItem < strings.Item.Count ? strings.Item[pk.HeldItem] : string.Empty,
                 IsEgg = pk.IsEgg,
-                CurrentHp = (ushort)(pk is PKM pkm ? pkm.Stat_HPCurrent : 0),
-                MaxHp = (ushort)(pk is PKM pkm2 ? pkm2.Stat_HPMax : 0),
+                CurrentHp = (ushort)pk.Stat_HPCurrent,
+                MaxHp = (ushort)pk.Stat_HPMax,
                 ShowdownSummary = isEmpty ? string.Empty : new ShowdownSet(pk).Text,
                 IsLegal = isEmpty || new LegalityAnalysis(pk).Valid,
                 IsSelected = false

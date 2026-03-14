@@ -1,6 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PKHeX.Avalonia.Services;
@@ -26,16 +24,16 @@ public partial class TrashEditorViewModel : ViewModelBase
 
     public byte[] FinalBytes { get; private set; }
 
-    public System.Collections.ObjectModel.ObservableCollection<TrashByteViewModel> Bytes { get; } = [];
+    public ObservableCollection<TrashByteViewModel> Bytes { get; } = [];
 
     [ObservableProperty]
-    private System.Collections.Generic.IEnumerable<ComboItem> _speciesList;
+    private IEnumerable<ComboItem> _speciesList;
     
     [ObservableProperty]
     private ComboItem? _selectedSpecies;
 
     [ObservableProperty]
-    private System.Collections.Generic.IEnumerable<ComboItem> _languageList;
+    private IEnumerable<ComboItem> _languageList;
 
     [ObservableProperty]
     private ComboItem? _selectedLanguage;
@@ -61,28 +59,16 @@ public partial class TrashEditorViewModel : ViewModelBase
         }
         else
         {
-            // If no existing bytes, maybe determine from text?
-            // Usually this is called when specific bytes are provided.
-            // If not, we might defaults.
-            // For now, assume empty or based on converter.
-             Span<byte> temp = stackalloc byte[200]; // arbitrarily large
-             int len = converter.SetString(temp, initialText.AsSpan(), initialText.Length, StringConverterOption.None);
-             _raw = temp.Slice(0, len).ToArray();
-             // Adjust length to be "Trash" length?
-             // Usually trash bytes are a specific buffer size. 
-             // Logic in WinForms: if raw.Length != 0, use it. Else empty.
-             if (_raw.Length == 0) _raw = [];
+            Span<byte> temp = stackalloc byte[200];
+            int len = converter.SetString(temp, initialText.AsSpan(), initialText.Length, StringConverterOption.None);
+            _raw = temp[..len].ToArray();
         }
 
         FinalBytes = _raw.ToArray();
         
-        // Populate Bytes
         for (int i = 0; i < _raw.Length; i++)
-        {
             Bytes.Add(new TrashByteViewModel(i, _raw[i], UpdateByte));
-        }
 
-        // Setup drop downs
         var source = GameInfo.Sources;
         _speciesList = source.SpeciesDataSource;
         SelectedSpecies = _speciesList.FirstOrDefault();
@@ -96,8 +82,6 @@ public partial class TrashEditorViewModel : ViewModelBase
         if (index >= 0 && index < FinalBytes.Length)
             FinalBytes[index] = val;
         
-        // Update string preview?
-        // _converter.GetString(FinalBytes);
         CurrentText = _converter.GetString(FinalBytes);
     }
 
@@ -119,24 +103,17 @@ public partial class TrashEditorViewModel : ViewModelBase
         string text = SpeciesName.GetSpeciesNameGeneration(species, lang, (byte)SelectedGeneration);
         if (string.IsNullOrEmpty(text)) text = SelectedSpecies.Text;
 
-        // Convert to bytes
         Span<byte> temp = stackalloc byte[FinalBytes.Length];
         var written = _converter.SetString(temp, text.AsSpan(), text.Length, StringConverterOption.None);
-        var data = temp.Slice(0, written);
+        var data = temp[..written];
 
-        // Current text bytes
         Span<byte> currentTemp = stackalloc byte[FinalBytes.Length];
-         var currentWritten = _converter.SetString(currentTemp, CurrentText.AsSpan(), CurrentText.Length, StringConverterOption.None);
-        var currentData = currentTemp.Slice(0, currentWritten);
+        var currentWritten = _converter.SetString(currentTemp, CurrentText.AsSpan(), CurrentText.Length, StringConverterOption.None);
 
-        // "Trash byte layer is hidden by current text" logic from WinForms
+        // Trash layer is hidden when the new name is shorter than the current; nothing to apply
         if (written <= currentWritten)
-        {
-            // Alert user?
             return;
-        }
 
-        // Apply trash bytes (bytes after the current string null terminator or end)
         for (int i = currentWritten; i < written && i < FinalBytes.Length; i++)
         {
             FinalBytes[i] = data[i];

@@ -13,7 +13,6 @@ public sealed class SaveFileService : ISaveFileService
 
     public async Task<bool> LoadSaveFileAsync(string path)
     {
-        // Load file on background thread
         var sav = await Task.Run(() =>
         {
             try
@@ -30,7 +29,6 @@ public sealed class SaveFileService : ISaveFileService
         if (sav is null)
             return false;
 
-        // Update state on UI thread
         CurrentSave = sav;
         _currentPath = path;
         SaveFileChanged?.Invoke(CurrentSave);

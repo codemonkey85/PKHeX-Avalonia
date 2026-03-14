@@ -1,3 +1,4 @@
+using Avalonia.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PKHeX.Avalonia.Models;
@@ -182,8 +183,6 @@ public partial class BoxViewerViewModel : ViewModelBase
     }
 
     public event Action<int, int>? SlotActivated;
-    
-    // Context menu events - pass-through to slot service or handle locally
     public event Action<int, int>? ViewSlotRequested;
     public event Action<int, int>? SetSlotRequested;
     public event Action<int, int>? DeleteSlotRequested;
@@ -224,23 +223,14 @@ public partial class BoxViewerViewModel : ViewModelBase
             DeleteSlotRequested?.Invoke(CurrentBox, slot.Slot);
     }
     
-    /// <summary>
-    /// Gets the PKM at the specified slot.
-    /// </summary>
     public PKM GetSlotPKM(int slot) => _sav.GetBoxSlotAtIndex(CurrentBox, slot);
-    
-    /// <summary>
-    /// Sets the PKM at the specified slot.
-    /// </summary>
+
     public void SetSlotPKM(int slot, PKM pk)
     {
         _sav.SetBoxSlotAtIndex(pk, CurrentBox, slot);
         RefreshCurrentBox();
     }
-    
-    /// <summary>
-    /// Deletes (clears) the PKM at the specified slot.
-    /// </summary>
+
     public void ClearSlot(int slot)
     {
         _sav.SetBoxSlotAtIndex(_sav.BlankPKM, CurrentBox, slot);
@@ -248,9 +238,9 @@ public partial class BoxViewerViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void RequestMove((SlotDragData data, SlotData dest, global::Avalonia.Input.KeyModifiers modifiers) param)
+    private void RequestMove((SlotDragData data, SlotData dest, KeyModifiers modifiers) param)
     {
-        bool clone = param.modifiers.HasFlag(global::Avalonia.Input.KeyModifiers.Control);
+        bool clone = param.modifiers.HasFlag(KeyModifiers.Control);
         _slotService?.RequestMove(param.data.Source, param.dest.Location, clone);
     }
 }

@@ -26,7 +26,6 @@ public partial class PokemonEditorViewModel
     [ObservableProperty]
     private DateTime? _eggDate;
 
-    [ObservableProperty] private bool _isIllegal;
     [ObservableProperty] private ObservableCollection<ComboItem> _metLocationList = [];
     [ObservableProperty] private ObservableCollection<ComboItem> _eggLocationList = [];
 
@@ -40,35 +39,24 @@ public partial class PokemonEditorViewModel
 
     private void UpdateMetDataLists(bool preserveSelection = true)
     {
-        // Store current values
         var currentMetLocation = MetLocation;
         var currentEggLocation = EggLocation;
-        
-        var newMetList = new ObservableCollection<ComboItem>();
+
         var context = _sav.Context;
-        var locations = GameInfo.Sources.Met.GetLocationList((GameVersion)OriginGame, context);
-        foreach (var item in locations)
-            newMetList.Add(item);
-        MetLocationList = newMetList;
+        MetLocationList = new ObservableCollection<ComboItem>(
+            GameInfo.Sources.Met.GetLocationList((GameVersion)OriginGame, context));
+        EggLocationList = new ObservableCollection<ComboItem>(
+            GameInfo.Sources.Met.GetLocationList((GameVersion)OriginGame, context, egg: true));
 
-        var newEggList = new ObservableCollection<ComboItem>();
-        var eggLocations = GameInfo.Sources.Met.GetLocationList((GameVersion)OriginGame, context, egg: true);
-        foreach (var item in eggLocations)
-            newEggList.Add(item);
-        EggLocationList = newEggList;
-        
-        if (_isLoading || !preserveSelection) return; 
+        if (_isLoading || !preserveSelection) return;
 
-        // Restore values if they exist in new lists
-        if (MetLocationList.Any(l => l.Value == currentMetLocation))
-            MetLocation = currentMetLocation;
-        else if (MetLocationList.Count > 0)
-            MetLocation = MetLocationList[0].Value;
-            
-        if (EggLocationList.Any(l => l.Value == currentEggLocation))
-            EggLocation = currentEggLocation;
-        else if (EggLocationList.Count > 0)
-            EggLocation = EggLocationList[0].Value;
+        MetLocation = MetLocationList.Any(l => l.Value == currentMetLocation)
+            ? currentMetLocation
+            : MetLocationList.Count > 0 ? MetLocationList[0].Value : 0;
+
+        EggLocation = EggLocationList.Any(l => l.Value == currentEggLocation)
+            ? currentEggLocation
+            : EggLocationList.Count > 0 ? EggLocationList[0].Value : 0;
     }
 
     partial void OnMetLocationChanged(int value) { if (!_isLoading) Validate(); }

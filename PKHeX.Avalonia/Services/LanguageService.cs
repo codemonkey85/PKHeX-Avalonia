@@ -4,9 +4,6 @@ using PKHeX.Core;
 
 namespace PKHeX.Avalonia.Services;
 
-/// <summary>
-/// Manages application display language and provides localized string resources.
-/// </summary>
 public partial class LanguageService : ObservableObject
 {
     private static readonly string[] SupportedLanguages = ["en", "ja", "fr", "it", "de", "es", "ko", "zh-Hans", "zh-Hant"];
@@ -17,10 +14,6 @@ public partial class LanguageService : ObservableObject
 
     public IReadOnlyList<LanguageOption> AvailableLanguages { get; }
     
-    /// <summary>
-    /// Gets or sets the current language as a LanguageOption for ComboBox binding.
-    /// Setting this property triggers SetLanguage().
-    /// </summary>
     public LanguageOption? CurrentLanguageOption
     {
         get => AvailableLanguages.FirstOrDefault(l => l.Code == CurrentLanguage);
@@ -49,14 +42,8 @@ public partial class LanguageService : ObservableObject
 
         CurrentLanguage = languageCode;
         OnPropertyChanged(nameof(CurrentLanguageOption));
-        
-        // Update PKHeX.Core's GameInfo to use this language
         GameInfo.CurrentLanguage = languageCode;
         GameInfo.Strings = GameInfo.GetStrings(languageCode);
-        
-        // Update FilteredSources if we have a save context (this is a bit hacky but keeps it central)
-        // Ideally we'd have a reference to the current save here, but we can rely on MainWindowViewModel to do it too.
-        
         LanguageChanged?.Invoke();
         WeakReferenceMessenger.Default.Send(new LanguageChangedMessage(languageCode));
     }

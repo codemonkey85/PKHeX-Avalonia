@@ -54,22 +54,16 @@ public sealed class SpriteLoader
         _availableResources = new HashSet<string>(_assembly.GetManifestResourceNames());
     }
 
-    /// <summary>
-    /// Gets the sprite for a Pokémon.
-    /// </summary>
     public SKBitmap? GetSprite(ushort species, byte form, byte gender, uint formarg, bool shiny, EntityContext context)
     {
         if (species == 0)
             return null;
 
-        // Build resource name
         var resourceName = GetResourceName(species, form, gender, formarg, shiny, context);
 
-        // Try cache first
         if (_cache.TryGetValue(resourceName, out var cached))
             return cached;
 
-        // Try to load
         var bitmap = LoadSprite(resourceName);
 
         // If shiny not found, try non-shiny
@@ -103,17 +97,11 @@ public sealed class SpriteLoader
         return bitmap;
     }
 
-    /// <summary>
-    /// Gets the shiny star overlay.
-    /// </summary>
     public SKBitmap? GetShinyOverlay()
     {
         return LoadFromPrefix(OverlayPrefix, "rare_icon_alt.png");
     }
 
-    /// <summary>
-    /// Gets the egg sprite.
-    /// </summary>
     public SKBitmap? GetEggSprite(ushort species)
     {
         // Manaphy has a special egg
@@ -123,9 +111,6 @@ public sealed class SpriteLoader
         return LoadFromPrefix(SpritePrefix, "b_egg.png");
     }
 
-    /// <summary>
-    /// Gets an item sprite by item ID.
-    /// </summary>
     public SKBitmap? GetItemSprite(int itemId)
     {
         if (itemId <= 0)
@@ -211,9 +196,6 @@ public sealed class SpriteLoader
         }
     }
 
-    /// <summary>
-    /// Clears the sprite cache.
-    /// </summary>
     public void ClearCache()
     {
         foreach (var bitmap in _cache.Values)

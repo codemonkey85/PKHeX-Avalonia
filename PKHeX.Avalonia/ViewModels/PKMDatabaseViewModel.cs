@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Messaging;
 using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -44,10 +39,10 @@ public partial class PKMDatabaseViewModel : ViewModelBase
     [ObservableProperty] private bool? _isLegal;
 
     // Data Sources for View
-    [ObservableProperty] private IReadOnlyList<ComboItem> _speciesList;
-    [ObservableProperty] private IReadOnlyList<ComboItem> _natureList;
-    [ObservableProperty] private IReadOnlyList<ComboItem> _abilityList;
-    [ObservableProperty] private IReadOnlyList<ComboItem> _itemList;
+    [ObservableProperty] private IReadOnlyList<ComboItem> _speciesList = [];
+    [ObservableProperty] private IReadOnlyList<ComboItem> _natureList = [];
+    [ObservableProperty] private IReadOnlyList<ComboItem> _abilityList = [];
+    [ObservableProperty] private IReadOnlyList<ComboItem> _itemList = [];
 
     public PKMDatabaseViewModel(SaveFile sav, ISpriteRenderer spriteRenderer, IDialogService dialogService)
     {
@@ -55,20 +50,22 @@ public partial class PKMDatabaseViewModel : ViewModelBase
         _spriteRenderer = spriteRenderer;
         _dialogService = dialogService;
 
-        // Data sources with "Any" option prepended. Value must match SearchSettings wildcards:
-        // Species=0 (Any), Nature=25 (Random), Ability=-1, Item=-1
-        SpeciesList = new List<ComboItem> { new("Any", 0) }.Concat(GameInfo.Sources.SpeciesDataSource).ToList();
-        NatureList = new List<ComboItem> { new("Any", 25) }.Concat(GameInfo.Sources.NatureDataSource).ToList(); // Nature.Random = 25
-        AbilityList = new List<ComboItem> { new("Any", -1) }.Concat(GameInfo.Sources.AbilityDataSource).ToList();
-        ItemList = new List<ComboItem> { new("Any", -1) }.Concat(GameInfo.Sources.GetItemDataSource(_sav.Version, _sav.Context, _sav.HeldItems)).ToList();
-        
-        // Default Selections (wildcards)
+        // Wildcard values: Species=0, Nature=25 (Random), Ability=-1, Item=-1
         Species = 0;
-        Nature = 25; // Nature.Random = Any
+        Nature = 25;
         Ability = -1;
         Item = -1;
-        
+
+        InitDataSources();
         WeakReferenceMessenger.Default.Register<LanguageChangedMessage>(this, (r, m) => RefreshLanguage());
+    }
+
+    private void InitDataSources()
+    {
+        SpeciesList = new List<ComboItem> { new("Any", 0) }.Concat(GameInfo.Sources.SpeciesDataSource).ToList();
+        NatureList = new List<ComboItem> { new("Any", 25) }.Concat(GameInfo.Sources.NatureDataSource).ToList();
+        AbilityList = new List<ComboItem> { new("Any", -1) }.Concat(GameInfo.Sources.AbilityDataSource).ToList();
+        ItemList = new List<ComboItem> { new("Any", -1) }.Concat(GameInfo.Sources.GetItemDataSource(_sav.Version, _sav.Context, _sav.HeldItems)).ToList();
     }
 
     [RelayCommand]
@@ -82,8 +79,7 @@ public partial class PKMDatabaseViewModel : ViewModelBase
         {
             var settings = GetSearchSettings();
             var allPkms = _sav.BoxData.Concat(_sav.PartyData).ToList();
-            
-            // Check for valid Pokemon to scan
+
             int totalMons = allPkms.Count(p => p.Species != 0);
             if (totalMons == 0)
             {
@@ -92,13 +88,11 @@ public partial class PKMDatabaseViewModel : ViewModelBase
             }
 
             var matches = await Task.Run(() => settings.Search(allPkms).Where(p => p.Species != 0).ToList());
-    
+
             foreach (var pk in matches)
-            {
                 Results.Add(new PKMDatabaseEntry(pk, _spriteRenderer));
-            }
-    
-            StatusText = $"Found {Results.Count} matches in current save. (Scanned {totalMons} valid PKMs. Filters: S={Species} N={Nature})";
+
+            StatusText = $"Found {Results.Count} matches in current save.";
         }
         catch (Exception ex)
         {
@@ -144,7 +138,7 @@ public partial class PKMDatabaseViewModel : ViewModelBase
                     else
                     {
                         var pk = EntityFormat.GetFromBytes(data, _sav.Context);
-                        if (pk != null && settings.Search(new[] { pk }).Any())
+                        if (pk != null && settings.Search([pk]).Any())
                             found.Add(pk);
                     }
                 }
@@ -152,10 +146,8 @@ public partial class PKMDatabaseViewModel : ViewModelBase
             });
     
             foreach (var pk in matches)
-            {
                 Results.Add(new PKMDatabaseEntry(pk, _spriteRenderer));
-            }
-    
+
             StatusText = $"Found {Results.Count} matches in folder.";
         }
         catch (Exception ex)
@@ -168,39 +160,24 @@ public partial class PKMDatabaseViewModel : ViewModelBase
         }
     }
 
-    private SearchSettings GetSearchSettings()
+    private SearchSettings GetSearchSettings() => new()
     {
-        return new SearchSettings
-        {
-            Species = (ushort)Species,
-            Nature = (Nature)Nature, // Nature.Random (25) is already 'Any'
-            Ability = Ability, // -1 is already 'Any'
-            Item = Item, // -1 is already 'Any'
-            SearchShiny = IsShiny,
-            SearchLegal = IsLegal,
-            Context = _sav.Context
-        };
-    }
+        Species = (ushort)Species,
+        Nature = (Nature)Nature,
+        Ability = Ability,
+        Item = Item,
+        SearchShiny = IsShiny,
+        SearchLegal = IsLegal,
+        Context = _sav.Context
+    };
 
     public event Action<PKM>? PokemonSelected;
 
     public void RefreshLanguage()
     {
-        // Data sources with "Any" option prepended. Value must match SearchSettings wildcards:
-        // Species=0 (Any), Nature=25 (Random), Ability=-1, Item=-1
-        SpeciesList = new List<ComboItem> { new("Any", 0) }.Concat(GameInfo.Sources.SpeciesDataSource).ToList();
-        NatureList = new List<ComboItem> { new("Any", 25) }.Concat(GameInfo.Sources.NatureDataSource).ToList();
-        AbilityList = new List<ComboItem> { new("Any", -1) }.Concat(GameInfo.Sources.AbilityDataSource).ToList();
-        ItemList = new List<ComboItem> { new("Any", -1) }.Concat(GameInfo.Sources.GetItemDataSource(_sav.Version, _sav.Context, _sav.HeldItems)).ToList();
-        
-        // Refresh current results
-        var currentResults = Results.ToList();
-        Results.Clear();
-        foreach (var entry in currentResults)
-        {
+        InitDataSources();
+        foreach (var entry in Results)
             entry.Refresh();
-            Results.Add(entry);
-        }
     }
 
     [RelayCommand]
@@ -226,7 +203,7 @@ public partial class PKMDatabaseEntry : ObservableObject
             if (PKM.Form > 0)
             {
                 var formList = FormConverter.GetFormList(PKM.Species, GameInfo.Strings.types, GameInfo.Strings.forms, GameInfo.GenderSymbolASCII, PKM.Context);
-                if (formList != null && PKM.Form < formList.Count() && !string.IsNullOrEmpty(formList[PKM.Form]))
+                if (formList != null && PKM.Form < formList.Length && !string.IsNullOrEmpty(formList[PKM.Form]))
                     name += $" ({formList[PKM.Form]})";
             }
             return name;

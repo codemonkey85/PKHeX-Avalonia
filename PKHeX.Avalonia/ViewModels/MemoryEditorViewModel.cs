@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PKHeX.Core;
@@ -139,8 +136,8 @@ public partial class MemoryEditorViewModel : ViewModelBase
             
             m.HandlingTrainerMemory = (byte)HtMemory;
             m.HandlingTrainerMemoryVariable = (ushort)HtMemoryVar;
-            m.HandlingTrainerMemoryFeeling = (byte)OtMemoryFeel;
-            m.HandlingTrainerMemoryIntensity = (byte)OtMemoryQual;
+            m.HandlingTrainerMemoryFeeling = (byte)HtMemoryFeel;
+            m.HandlingTrainerMemoryIntensity = (byte)HtMemoryQual;
         }
 
         _closeRequested?.Invoke();

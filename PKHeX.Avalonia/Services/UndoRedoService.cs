@@ -1,12 +1,8 @@
-using System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using PKHeX.Core;
 
 namespace PKHeX.Avalonia.Services;
 
-/// <summary>
-/// Wraps SlotChangelog from PKHeX.Core with observable properties for UI binding.
-/// </summary>
 public partial class UndoRedoService : ObservableObject
 {
     private SlotChangelog? _changelog;
@@ -26,8 +22,6 @@ public partial class UndoRedoService : ObservableObject
     {
         _changelog = new SlotChangelog(sav);
         ChangeCount = 0;
-        OnPropertyChanged(nameof(CanUndo));
-        OnPropertyChanged(nameof(CanRedo));
     }
 
     public void Clear()

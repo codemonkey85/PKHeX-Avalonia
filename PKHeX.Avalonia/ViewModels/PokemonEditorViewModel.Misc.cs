@@ -80,7 +80,7 @@ public partial class PokemonEditorViewModel
 
     // Ribbons
     [ObservableProperty]
-    private System.Collections.ObjectModel.ObservableCollection<RibbonItemViewModel> _ribbons = [];
+    private ObservableCollection<RibbonItemViewModel> _ribbons = [];
     
     public bool HasRibbons => Ribbons.Count > 0;
     public int RibbonCount => Ribbons.Count(r => r.IsBooleanRibbon ? r.HasRibbon : r.RibbonCount > 0);
@@ -88,7 +88,7 @@ public partial class PokemonEditorViewModel
     private void LoadRibbons()
     {
         var ribbonInfos = RibbonInfo.GetRibbonInfo(_pk);
-        Ribbons = new System.Collections.ObjectModel.ObservableCollection<RibbonItemViewModel>(
+        Ribbons = new ObservableCollection<RibbonItemViewModel>(
             ribbonInfos.Select(r => new RibbonItemViewModel(_pk, r))
         );
         OnPropertyChanged(nameof(HasRibbons));
@@ -173,7 +173,6 @@ public partial class PokemonEditorViewModel
     [ObservableProperty]
     private int _currentHandler;
     
-    // Group 4: Misc
     [ObservableProperty]
     private int _abilityNumber;
 

@@ -1,5 +1,3 @@
-
-using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -19,8 +17,7 @@ public class ClipboardService : IClipboardService
             clipboard = window.Clipboard;
             return clipboard;
         }
-        
-        // Fallback for other lifetimes if needed, though mostly Desktop for now
+
         return TopLevel.GetTopLevel(null)?.Clipboard;
     }
 

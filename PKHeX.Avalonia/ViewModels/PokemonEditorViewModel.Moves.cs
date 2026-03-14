@@ -135,7 +135,6 @@ public partial class PokemonEditorViewModel
         if (_pk is not ITechRecord tr) return;
         
         var pk = PreparePKM();
-        // Use the SetRecordFlags extension with LegalAll option
         tr.SetRecordFlags(pk, TechnicalRecordApplicatorOption.LegalAll);
         LoadFromPKM();
     }

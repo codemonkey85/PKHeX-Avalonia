@@ -1,4 +1,3 @@
-using System.Collections.ObjectModel;
 using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -19,15 +18,11 @@ public partial class BatchEditorViewModel : ViewModelBase
         _sav = sav;
         _dialogService = dialogService;
 
-        // Initialize property suggestions from PKM types
         PropertySuggestions = GetCommonPkmProperties();
     }
 
     private static List<string> GetCommonPkmProperties()
     {
-        // Pull all public read/write instance properties from the PKM base class.
-        // This gives users the same full set the core batch engine actually accepts,
-        // rather than a short hardcoded list that's always going to be incomplete.
         var props = typeof(PKM)
             .GetProperties(BindingFlags.Public | BindingFlags.Instance)
             .Where(p => p.CanRead && p.CanWrite && p.GetIndexParameters().Length == 0)
@@ -35,7 +30,6 @@ public partial class BatchEditorViewModel : ViewModelBase
             .OrderBy(n => n, StringComparer.OrdinalIgnoreCase)
             .ToList();
 
-        // Put the most commonly used ones at the top for quicker access.
         var priority = new[]
         {
             "Species", "Nickname", "Level", "IsShiny", "Nature", "Ability",
@@ -138,19 +132,10 @@ public partial class BatchEditorViewModel : ViewModelBase
             var sets = StringInstructionSet.GetBatchSets(lines);
             Results = editor.GetEditorResults(sets);
 
-            // Refresh the save data to ensure changes are committed to the underlying buffer
             if (EditBoxes)
             {
                 for (int box = 0; box < _sav.BoxCount; box++)
-                {
-                    var boxData = _sav.GetBoxData(box);
-                    // EntityBatchProcessor.Execute modified the objects in `pkms`.
-                    // If GetBoxData returns references to those same objects, we are good.
-                    // If it returns copies, we need to be careful.
-                    // In most PKHeX.Core implementations, GetBoxData returns internal references or copies.
-                    // Calling SetBoxData ensures they are written back to the buffer.
-                    _sav.SetBoxData(boxData, box);
-                }
+                    _sav.SetBoxData(_sav.GetBoxData(box), box);
             }
 
             if (EditParty)
@@ -196,7 +181,6 @@ public partial class BatchEditorViewModel : ViewModelBase
         }
     }
 
-    // Common batch commands as quick actions
     [RelayCommand]
     private void SetMaxIVs()
     {

@@ -25,7 +25,6 @@ public sealed class AvaloniaSpriteRenderer : ISpriteRenderer
         if (pk.Species == 0)
             return GetEmptySlot();
 
-        // Get base sprite
         var baseSprite = _loader.GetSprite(
             pk.Species,
             pk.Form,
@@ -37,7 +36,6 @@ public sealed class AvaloniaSpriteRenderer : ISpriteRenderer
         if (baseSprite is null)
             return CreatePlaceholderSprite(pk);
 
-        // Compose the final sprite
         using var composed = ComposeSprite(baseSprite, pk);
         return ConvertToBitmap(composed);
     }
@@ -58,57 +56,46 @@ public sealed class AvaloniaSpriteRenderer : ISpriteRenderer
 
     private SKBitmap ComposeSprite(SKBitmap baseSprite, PKM pk)
     {
-        // Create a copy to work with
         var result = new SKBitmap(SpriteWidth, SpriteHeight);
         using var canvas = new SKCanvas(result);
         canvas.Clear(SKColors.Transparent);
 
-        // Handle egg display
         if (pk.IsEgg)
         {
-            // Draw base sprite at reduced opacity
             using var eggPaint = new SKPaint { Color = SKColors.White.WithAlpha(85) }; // ~33% opacity
             canvas.DrawBitmap(baseSprite, 0, 0, eggPaint);
 
-            // Overlay egg sprite
             var eggSprite = _loader.GetEggSprite(pk.Species);
             if (eggSprite is not null)
-            {
                 canvas.DrawBitmap(eggSprite, 0, 0);
-            }
         }
         else
         {
-            // Draw base sprite at full opacity
             canvas.DrawBitmap(baseSprite, 0, 0);
         }
 
-        // Draw held item
         if (pk.HeldItem > 0)
         {
             var itemSprite = _loader.GetItemSprite(pk.HeldItem);
             if (itemSprite is not null)
             {
-                // Position in bottom-right corner
+                // Bottom-right corner
                 int x = SpriteWidth - itemSprite.Width - 2;
                 int y = SpriteHeight - itemSprite.Height - 2;
                 canvas.DrawBitmap(itemSprite, x, y);
             }
         }
 
-        // Draw shiny indicator
         if (pk.IsShiny)
         {
             var shinyOverlay = _loader.GetShinyOverlay();
             if (shinyOverlay is not null)
             {
-                // Draw at 70% opacity in top-left
                 using var shinyPaint = new SKPaint { Color = SKColors.White.WithAlpha(178) };
                 canvas.DrawBitmap(shinyOverlay, 0, 0, shinyPaint);
             }
             else
             {
-                // Fallback: draw a simple star
                 DrawShinyIndicator(canvas);
             }
         }
@@ -154,7 +141,6 @@ public sealed class AvaloniaSpriteRenderer : ISpriteRenderer
         using var surface = SKSurface.Create(new SKImageInfo(SpriteWidth, SpriteHeight));
         var canvas = surface.Canvas;
 
-        // Background color based on primary type
         var typeColor = GetTypeColor(pk.PersonalInfo.Type1);
         if (pk.IsShiny)
             typeColor = BlendColors(typeColor, new SKColor(255, 215, 0), 0.3f);
@@ -176,7 +162,6 @@ public sealed class AvaloniaSpriteRenderer : ISpriteRenderer
         };
         canvas.DrawRoundRect(new SKRoundRect(new SKRect(2, 2, SpriteWidth - 2, SpriteHeight - 2), 6), borderPaint);
 
-        // Draw species number
         using var typeface = SKTypeface.FromFamilyName("Arial", SKFontStyle.Bold);
         using var font = new SKFont(typeface, 12);
         using var textPaint = new SKPaint { Color = SKColors.White, IsAntialias = true };

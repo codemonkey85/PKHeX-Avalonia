@@ -51,7 +51,7 @@ public partial class PokemonEditorViewModel : ViewModelBase
     private int _species;
 
     [ObservableProperty]
-    private string _version = string.Empty; // Read-only game name
+    private string _version = string.Empty;
 
     [ObservableProperty]
     private bool _isNicknamed;
@@ -95,13 +95,13 @@ public partial class PokemonEditorViewModel : ViewModelBase
     private bool _isEgg;
 
     [ObservableProperty]
-    private bool _isFatefulEncounter; // Kept here as wasn't in Met struct
+    private bool _isFatefulEncounter;
 
     [ObservableProperty]
-    private int _sid; // Kept here as wasn't in Misc struct
+    private int _sid;
 
     [ObservableProperty]
-    private int _language; // Kept here
+    private int _language;
 
     public bool HasForms => FormList.Count > 1;
     public PKM TargetPKM => _pk;
@@ -113,7 +113,6 @@ public partial class PokemonEditorViewModel : ViewModelBase
         _spriteRenderer = spriteRenderer;
         _dialogService = dialogService;
         
-        // Initialize filtered data sources
         var filtered = GameInfo.FilteredSources;
         SpeciesList = filtered.Species;
         MoveList = filtered.Moves;
@@ -123,8 +122,6 @@ public partial class PokemonEditorViewModel : ViewModelBase
         OriginGameList = filtered.Games;
         RelearnMoveDataSource = filtered.Relearn;
         LanguageList = GameInfo.Sources.LanguageDataSource(sav.Generation, sav.Context);
-
-        // Load PKM data into view model
         LoadFromPKM();
     }
 
@@ -136,7 +133,6 @@ public partial class PokemonEditorViewModel : ViewModelBase
 
     public void RefreshLanguage()
     {
-        // Re-initialize filtered data sources from the updated GameInfo
         var filtered = GameInfo.FilteredSources;
         SpeciesList = filtered.Species;
         MoveList = filtered.Moves;
@@ -156,19 +152,14 @@ public partial class PokemonEditorViewModel : ViewModelBase
         _isLoading = true;
         try
         {
-            // First set species/form to populate dynamic lists
             Species = _pk.Species;
             Form = _pk.Form;
 
-            // Update dynamic lists BEFORE setting their selected values
-            // Pass false to avoid restoring previous Pokemon's values into the new list
+            // Populate dynamic lists before setting their selected values
             UpdateFormList(false);
             UpdateAbilityList(false);
 
-            // Now set the values that depend on those lists
             Ability = _pk.Ability;
-
-            // Basic info
             Nickname = _pk.Nickname;
             IsNicknamed = _pk.IsNicknamed;
             Level = _pk.CurrentLevel;
@@ -179,14 +170,9 @@ public partial class PokemonEditorViewModel : ViewModelBase
             IsShiny = _pk.IsShiny;
             IsEgg = _pk.IsEgg;
 
-            // New Group 1: Identity & Metadata
             Id32 = _pk.ID32;
             Version = _pk.Version.ToString();
-            
-            // Validation (Partial)
-            // Validate(); // Moved to end to avoid overwriting _pk with incomplete state
 
-            // Moves (Partial)
             Move1 = _pk.Move1;
             Move2 = _pk.Move2;
             Move3 = _pk.Move3;
@@ -197,7 +183,6 @@ public partial class PokemonEditorViewModel : ViewModelBase
             RelearnMove3 = _pk.RelearnMove3;
             RelearnMove4 = _pk.RelearnMove4;
 
-            // PP values (Partial)
             Pp1 = _pk.Move1_PP;
             Pp2 = _pk.Move2_PP;
             Pp3 = _pk.Move3_PP;
@@ -207,7 +192,6 @@ public partial class PokemonEditorViewModel : ViewModelBase
             PpUps3 = _pk.Move3_PPUps;
             PpUps4 = _pk.Move4_PPUps;
 
-            // Stats (Partial)
             IvHP = _pk.IV_HP;
             IvATK = _pk.IV_ATK;
             IvDEF = _pk.IV_DEF;
@@ -222,102 +206,50 @@ public partial class PokemonEditorViewModel : ViewModelBase
             EvSPD = _pk.EV_SPD;
             EvSPE = _pk.EV_SPE;
 
-            // Misc (Partial)
             IsFatefulEncounter = _pk.FatefulEncounter;
             Happiness = _pk.CurrentFriendship;
             Sid = (int)_pk.DisplaySID;
 
-            // PID/EC
             Pid = _pk.PID.ToString("X8");
             EncryptionConstant = _pk.EncryptionConstant.ToString("X8");
-
-            // EXP
             Exp = _pk.EXP;
-
-            // Language
             Language = _pk.Language;
-
-            // Pokerus
             PkrsStrain = _pk.PokerusStrain;
             PkrsDays = _pk.PokerusDays;
 
-            // Met data - set origin game first
             OriginGame = (int)_pk.Version;
-            
-            // Populating lists manually during load to ensure correct initial selection
-            // Pass false to avoid restoring previous values
-            UpdateMetDataLists(false); 
-            
-            // Now set locations from PKM after lists are populated
+            UpdateMetDataLists(false);
             MetLocation = _pk.MetLocation;
             EggLocation = _pk.EggLocation;
             MetLevel = _pk.MetLevel;
 
-
-
-            // OT info (Partial)
             OriginalTrainerName = _pk.OriginalTrainerName;
             TrainerID = _pk.DisplayTID;
             OriginalTrainerGender = _pk.OriginalTrainerGender;
 
-            // Health & Status (Partial)
             StatHPCurrent = _pk.Stat_HPCurrent;
             StatHPMax = _pk.Stat_HPMax;
             StatusCondition = _pk.Status_Condition;
 
-            // Safely parse Met Date (moved to end to ensure persistence)
-            // Just trust the data if the year is somewhat valid (Gen 3+)
-            
-            if (_pk.MetDate is { } md && md.Year >= 2000 && md.Year < 2100)
-            {
-                MetDate = md.ToDateTime(TimeOnly.MinValue);
-            }
-            else if (_pk.MetDate is { } md2 && md2.Year > 1900 && md2.Year < 2200)
-            {
-               // Fallback for weirder years
-               MetDate = md2.ToDateTime(TimeOnly.MinValue);
-            }
-            else
-            {
-                MetDate = null;
-            }
-
-            // Safely parse Egg Date
-            if (_pk.EggMetDate is { } ed && ed.Year >= 2000 && ed.Year < 2100)
-            {
-                EggDate = ed.ToDateTime(TimeOnly.MinValue);
-            }
-            else if (_pk.EggMetDate is { } ed2 && ed2.Year > 1900 && ed2.Year < 2200)
-            {
-               EggDate = ed2.ToDateTime(TimeOnly.MinValue);
-            }
-            else
-            {
-                EggDate = null;
-            }
+            // Trust any year in a broad valid range (Gen 3+ era: 2000–2199, with pre-2000 fallback)
+            MetDate = _pk.MetDate is { } md && md.Year > 1900 && md.Year < 2200
+                ? md.ToDateTime(TimeOnly.MinValue)
+                : null;
+            EggDate = _pk.EggMetDate is { } ed && ed.Year > 1900 && ed.Year < 2200
+                ? ed.ToDateTime(TimeOnly.MinValue)
+                : null;
             
             _isLoading = false;
-            
-            // Force UI refresh for list-dependent properties
+
+            // Force notifications for list-bound properties that were set while loading was suppressed
             OnPropertyChanged(nameof(MetLocation));
             OnPropertyChanged(nameof(EggLocation));
             OnPropertyChanged(nameof(Ability));
             OnPropertyChanged(nameof(MetDate));
             OnPropertyChanged(nameof(EggDate));
-            
+
             Validate();
-            // NOTE: I did NOT move StatusCondition to Stats. Let's check Stats.cs.
-            // I see StatHPCurrent, StatHPMax in Stats.cs.
-            // I do NOT see StatusCondition in Stats.cs.
-            // I do NOT see StatusCondition in Misc.cs.
-            // Therefore, StatusCondition must stay here or be lost invalidly.
-            
-            // Checking Stats.cs content again from memory...
-            // "Group 2: Health & Status... _statHPCurrent, _statHPMax, _statNature, _hpType..."
-            // NO _statusCondition.
-            // I need to add it to Stats.cs or keep it here.
-            // I'll keep it here for this write to be safe, or add it to main.
-            
+
             OriginalTrainerFriendship = _pk.OriginalTrainerFriendship;
             HandlingTrainerFriendship = _pk.HandlingTrainerFriendship;
             CurrentHandler = _pk.CurrentHandler;
@@ -389,24 +321,20 @@ public partial class PokemonEditorViewModel : ViewModelBase
             _isLoading = false;
         }
 
-        // Manually trigger computed property notifications
         OnPropertyChanged(nameof(IVTotal));
         OnPropertyChanged(nameof(EVTotal));
-
-        // These can modify _pk, but now we're done loading so it's OK
         UpdateSprite();
         Validate();
         LoadRibbons();
     }
 
     [ObservableProperty]
-    private int _statusCondition; // Added back here since missed in partials
-
-
+    private int _statusCondition;
 
     partial void OnFormChanged(int value)
     {
         if (_isLoading) return;
+        RecalculateStats();
         UpdateAbilityList();
         UpdateSprite();
     }
@@ -414,18 +342,10 @@ public partial class PokemonEditorViewModel : ViewModelBase
     partial void OnIsShinyChanged(bool value)
     {
         if (_isLoading) return;
-        
-        // Update the internal PKM to get the new PID that matches shiny state
-        if (value)
-            _pk.SetShiny();
-        else
-            _pk.SetUnshiny();
-            
-        // Sync the PID hex string back to the VM so PreparePKM doesn't overwrite it
-        _isLoading = true; // Temporary flag to avoid re-triggering validation/PID changes
+        if (value) _pk.SetShiny(); else _pk.SetUnshiny();
+        _isLoading = true;
         Pid = _pk.PID.ToString("X8");
         _isLoading = false;
-        
         UpdateSprite();
         Validate();
     }
@@ -455,86 +375,54 @@ public partial class PokemonEditorViewModel : ViewModelBase
     }
 
     partial void OnNicknameChanged(string value) { if (!_isLoading) Validate(); }
-    partial void OnLevelChanged(int value) { if (!_isLoading) Validate(); }
-    partial void OnNatureChanged(int value) { if (!_isLoading) Validate(); }
+    partial void OnLevelChanged(int value) { if (!_isLoading) { RecalculateStats(); Validate(); } }
+    partial void OnNatureChanged(int value) { if (!_isLoading) { RecalculateStats(); Validate(); } }
     partial void OnAbilityChanged(int value) { if (!_isLoading) Validate(); }
     partial void OnHeldItemChanged(int value) { if (!_isLoading) Validate(); }
     partial void OnBallChanged(int value) { if (!_isLoading) Validate(); }
     partial void OnGenderChanged(int value) { if (!_isLoading) Validate(); }
-    
-    // Some partial methods implemented in other files won't clash.
 
     private void UpdateAbilityList(bool preserveSelection = true)
     {
-        // Store current ability
         var currentAbility = Ability;
-        
-        var newList = new ObservableCollection<ComboItem>();
         var pi = _sav.Personal.GetFormEntry((ushort)Species, (byte)Form);
-        var filtered = GameInfo.FilteredSources;
-        foreach (var item in filtered.GetAbilityList(pi))
-        {
-            newList.Add(item);
-        }
-        AbilityList = newList;
-        
+        AbilityList = new ObservableCollection<ComboItem>(GameInfo.FilteredSources.GetAbilityList(pi));
+
         if (_isLoading || !preserveSelection) return;
 
-        // Restore ability if it exists in the new list, otherwise use first available
-        if (AbilityList.Any(a => a.Value == currentAbility))
-            Ability = currentAbility;
-        else if (AbilityList.Count > 0)
-            Ability = AbilityList[0].Value;
+        Ability = AbilityList.Any(a => a.Value == currentAbility)
+            ? currentAbility
+            : AbilityList.Count > 0 ? AbilityList[0].Value : 0;
     }
 
     private void UpdateFormList(bool preserveSelection = true)
     {
-        // Store current form
         var currentForm = Form;
-        
-        var newList = new ObservableCollection<ComboItem>();
-        
-        // This logic mirrors WinForms: use FormConverter/PKM to get forms
         var forms = FormConverter.GetFormList((ushort)Species, GameInfo.Strings.Types, GameInfo.Strings.forms, GameInfo.GenderSymbolASCII, _sav.Context);
-        
-        // Populate the new list
-        for (int i = 0; i < forms.Length; i++)
-        {
-             var name = string.IsNullOrWhiteSpace(forms[i]) ? $"Form {i}" : forms[i];
-             newList.Add(new ComboItem(name, i));
-        }
 
-        // If list is empty (shouldn't happen for valid PKM, but fallback), add default
+        var newList = new ObservableCollection<ComboItem>();
+        for (int i = 0; i < forms.Length; i++)
+            newList.Add(new ComboItem(string.IsNullOrWhiteSpace(forms[i]) ? $"Form {i}" : forms[i], i));
+
         if (newList.Count == 0)
             newList.Add(new ComboItem("Normal", 0));
 
         FormList = newList;
-        
+
         if (_isLoading || !preserveSelection) return;
 
-        // Restore form if valid, otherwise use first
-        if (FormList.Any(f => f.Value == currentForm))
-        {
-            Form = currentForm;
-        }
-        else if (FormList.Count > 0)
-        {
-            Form = FormList[0].Value;
-        }
-        
+        Form = FormList.Any(f => f.Value == currentForm)
+            ? currentForm
+            : FormList.Count > 0 ? FormList[0].Value : 0;
+
         OnPropertyChanged(nameof(HasForms));
     }
 
     private void UpdateSprite()
     {
-        // Create a temporary PKM with current values to render sprite
         _pk.Species = (ushort)Species;
         _pk.Form = (byte)Form;
-        if (IsShiny)
-            _pk.SetShiny();
-        else
-            _pk.SetUnshiny(); // Clear shiny state when not shiny
-
+        if (IsShiny) _pk.SetShiny(); else _pk.SetUnshiny();
         Sprite = _spriteRenderer.GetSprite(_pk);
     }
 
@@ -550,12 +438,8 @@ public partial class PokemonEditorViewModel : ViewModelBase
         IsShiny = !IsShiny;
     }
 
-    /// <summary>
-    /// Applies current ViewModel state to the internal PKM and returns it.
-    /// </summary>
     public PKM PreparePKM()
     {
-        // Apply changes to PKM
         _pk.Species = (ushort)Species;
         _pk.Form = (byte)Form;
         _pk.Nickname = Nickname;
@@ -612,19 +496,13 @@ public partial class PokemonEditorViewModel : ViewModelBase
         _pk.CurrentFriendship = (byte)Happiness;
         _pk.FatefulEncounter = IsFatefulEncounter;
 
-        // PID/EC
         if (uint.TryParse(Pid, System.Globalization.NumberStyles.HexNumber, null, out var pid))
             _pk.PID = pid;
         if (uint.TryParse(EncryptionConstant, System.Globalization.NumberStyles.HexNumber, null, out var ec))
             _pk.EncryptionConstant = ec;
 
-        // EXP
         _pk.EXP = (uint)Exp;
-
-        // Language
         _pk.Language = Language;
-
-        // Pokerus
         _pk.PokerusStrain = PkrsStrain;
         _pk.PokerusDays = PkrsDays;
 
@@ -636,7 +514,6 @@ public partial class PokemonEditorViewModel : ViewModelBase
         _pk.MetDate = MetDate is { } md ? new DateOnly(md.Year, md.Month, md.Day) : null;
         _pk.EggMetDate = EggDate is { } ed ? new DateOnly(ed.Year, ed.Month, ed.Day) : null;
 
-        // Contest Stats (if supported)
         if (_pk is IContestStats cs)
         {
             cs.ContestCool = (byte)ContestCool;
@@ -647,7 +524,6 @@ public partial class PokemonEditorViewModel : ViewModelBase
             cs.ContestSheen = (byte)ContestSheen;
         }
 
-        // Markings (if supported)
         if (_pk is IAppliedMarkings3 m3)
         {
             m3.MarkingCircle = MarkingCircle;
@@ -671,7 +547,6 @@ public partial class PokemonEditorViewModel : ViewModelBase
             m7.MarkingDiamond = MarkingDiamond ? MarkingColor.Blue : MarkingColor.None;
         }
 
-        // Memories (if supported)
         if (_pk is IMemoryOT mot)
         {
             mot.OriginalTrainerMemory = (byte)OtMemory;
@@ -687,7 +562,6 @@ public partial class PokemonEditorViewModel : ViewModelBase
             mht.HandlingTrainerMemoryVariable = (ushort)HtMemoryVariable;
         }
 
-        // Recalculate stats
         _pk.ResetPartyStats();
         
         return _pk.Clone();
@@ -699,7 +573,7 @@ public partial class PokemonEditorViewModel : ViewModelBase
         var vm = new RibbonEditorViewModel(_pk);
         var view = new Views.RibbonEditor { DataContext = vm };
         await _dialogService.ShowDialogAsync(view, "Ribbon Editor");
-        LoadRibbons(); // Refresh ribbon count display
+        LoadRibbons();
         OnPropertyChanged(nameof(RibbonCount));
     }
 
@@ -726,6 +600,7 @@ public partial class PokemonEditorViewModel : ViewModelBase
     partial void OnSpeciesChanged(int value)
     {
         if (_isLoading) return;
+        RecalculateStats();
         UpdateFormList();
         UpdateAbilityList();
         UpdateSprite();
