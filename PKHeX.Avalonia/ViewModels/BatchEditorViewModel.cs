@@ -32,12 +32,12 @@ public partial class BatchEditorViewModel : ViewModelBase
 
         var priority = new[]
         {
-            "Species", "Nickname", "Level", "IsShiny", "Nature", "Ability",
-            "Gender", "HeldItem", "Ball", "Friendship", "IsEgg",
+            "Species", "Nickname", "CurrentLevel", "IsShiny", "Nature", "Ability",
+            "Gender", "HeldItem", "Ball", "OriginalTrainerFriendship", "IsEgg",
             "IV_HP", "IV_ATK", "IV_DEF", "IV_SPA", "IV_SPD", "IV_SPE",
             "EV_HP", "EV_ATK", "EV_DEF", "EV_SPA", "EV_SPD", "EV_SPE",
             "Move1", "Move2", "Move3", "Move4",
-            "OT_Name", "Language", "Version",
+            "OriginalTrainerName", "Language", "Version",
         };
 
         var result = priority.Where(props.Contains).ToList();
@@ -121,7 +121,18 @@ public partial class BatchEditorViewModel : ViewModelBase
 
         try
         {
-            var pkms = GetTargetPokemon().ToList();
+            // Snapshot box/party data first so we can batch-modify in-memory
+            // then write the same objects back (not a fresh re-read).
+            var boxData  = EditBoxes  ? Enumerable.Range(0, _sav.BoxCount).Select(b => _sav.GetBoxData(b)).ToList()  : null;
+            var partyData = EditParty ? Enumerable.Range(0, _sav.PartyCount).Select(i => _sav.GetPartySlotAtIndex(i)).ToList() : null;
+
+            var pkms = new List<PKM>();
+            if (boxData is not null)
+                foreach (var box in boxData)
+                    pkms.AddRange(box.Where(pk => pk.Species != 0));
+            if (partyData is not null)
+                pkms.AddRange(partyData.Where(pk => pk.Species != 0));
+
             if (pkms.Count == 0)
             {
                 Results = "No Pokémon to process.";
@@ -132,20 +143,14 @@ public partial class BatchEditorViewModel : ViewModelBase
             var sets = StringInstructionSet.GetBatchSets(lines);
             Results = editor.GetEditorResults(sets);
 
-            if (EditBoxes)
-            {
-                for (int box = 0; box < _sav.BoxCount; box++)
-                    _sav.SetBoxData(_sav.GetBoxData(box), box);
-            }
+            // Write back the modified snapshots (not a fresh re-read from save).
+            if (boxData is not null)
+                for (int box = 0; box < boxData.Count; box++)
+                    _sav.SetBoxData(boxData[box], box);
 
-            if (EditParty)
-            {
-                for (int i = 0; i < _sav.PartyCount; i++)
-                {
-                    var pk = _sav.GetPartySlotAtIndex(i);
-                    _sav.SetPartySlotAtIndex(pk, i);
-                }
-            }
+            if (partyData is not null)
+                for (int i = 0; i < partyData.Count; i++)
+                    _sav.SetPartySlotAtIndex(partyData[i], i);
 
             BatchEditCompleted?.Invoke();
         }
@@ -155,33 +160,7 @@ public partial class BatchEditorViewModel : ViewModelBase
         }
     }
 
-    private IEnumerable<PKM> GetTargetPokemon()
-    {
-        if (EditBoxes)
-        {
-            for (int box = 0; box < _sav.BoxCount; box++)
-            {
-                var boxData = _sav.GetBoxData(box);
-                foreach (var pk in boxData)
-                {
-                    if (pk.Species != 0)
-                        yield return pk;
-                }
-            }
-        }
-
-        if (EditParty)
-        {
-            for (int i = 0; i < _sav.PartyCount; i++)
-            {
-                var pk = _sav.GetPartySlotAtIndex(i);
-                if (pk.Species != 0)
-                    yield return pk;
-            }
-        }
-    }
-
-    [RelayCommand]
+[RelayCommand]
     private void SetMaxIVs()
     {
         Instructions = ".IVs=$suggestPokemon MaxIVs($0)";
