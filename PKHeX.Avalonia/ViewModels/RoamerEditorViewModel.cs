@@ -15,7 +15,7 @@ public partial class RoamerEditorViewModel : ViewModelBase
 
         if (sav is SAV3 sav3)
         {
-            _roamer3 = new Roamer3(sav3);
+            _roamer3 = new Roamer3(sav3.LargeBlock);
             IsSupported = true;
             LoadData();
         }

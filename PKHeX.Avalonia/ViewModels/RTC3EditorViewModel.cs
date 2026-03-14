@@ -11,55 +11,47 @@ namespace PKHeX.Avalonia.ViewModels;
 public partial class RTC3EditorViewModel : ViewModelBase
 {
     private readonly SaveFile _sav;
-    private readonly IGen3Hoenn _clone;
+    private readonly SaveFile _clone;
+    private readonly ISaveBlock3SmallHoenn _small;
     private readonly RTC3 _clockInitial;
     private readonly RTC3 _clockElapsed;
 
-    // Initial Clock
-    [ObservableProperty]
-    private int _initialDay;
+    [ObservableProperty] private int _initialDay;
+    [ObservableProperty] private int _initialHour;
+    [ObservableProperty] private int _initialMinute;
+    [ObservableProperty] private int _initialSecond;
 
-    [ObservableProperty]
-    private int _initialHour;
-
-    [ObservableProperty]
-    private int _initialMinute;
-
-    [ObservableProperty]
-    private int _initialSecond;
-
-    // Elapsed Clock
-    [ObservableProperty]
-    private int _elapsedDay;
-
-    [ObservableProperty]
-    private int _elapsedHour;
-
-    [ObservableProperty]
-    private int _elapsedMinute;
-
-    [ObservableProperty]
-    private int _elapsedSecond;
+    [ObservableProperty] private int _elapsedDay;
+    [ObservableProperty] private int _elapsedHour;
+    [ObservableProperty] private int _elapsedMinute;
+    [ObservableProperty] private int _elapsedSecond;
 
     public RTC3EditorViewModel(SaveFile sav)
     {
         _sav = sav;
-        _clone = (IGen3Hoenn)sav.Clone();
-        _clockInitial = _clone.ClockInitial;
-        _clockElapsed = _clone.ClockElapsed;
-
+        _clone = sav.Clone();
+        _small = GetSmallHoenn(_clone)!;
+        _clockInitial = _small.ClockInitial;
+        _clockElapsed = _small.ClockElapsed;
         LoadData();
     }
 
+    private static ISaveBlock3SmallHoenn? GetSmallHoenn(SaveFile sav) => sav switch
+    {
+        SAV3RS rs => rs.SmallBlock,
+        SAV3E e => e.SmallBlock,
+        _ => null,
+    };
+
     private void LoadData()
     {
-        InitialDay = _clockInitial.Day;
-        InitialHour = Math.Min(23, _clockInitial.Hour);
+        InitialDay    = _clockInitial.Day;
+        InitialHour   = Math.Min(23, _clockInitial.Hour);
         InitialMinute = Math.Min(59, _clockInitial.Minute);
         InitialSecond = Math.Min(59, _clockInitial.Second);
 
-        ElapsedDay = _clockElapsed.Day;
-        ElapsedHour = Math.Min(23, _clockElapsed.Hour);
+        ElapsedDay    = _clockElapsed.Day;
+        ElapsedHour   = Math.Min(23, _clockElapsed.Hour);
         ElapsedMinute = Math.Min(59, _clockElapsed.Minute);
         ElapsedSecond = Math.Min(59, _clockElapsed.Second);
     }
@@ -67,40 +59,22 @@ public partial class RTC3EditorViewModel : ViewModelBase
     [RelayCommand]
     private void Reset()
     {
-        InitialDay = 0;
-        InitialHour = 0;
-        InitialMinute = 0;
-        InitialSecond = 0;
-
-        ElapsedDay = 0;
-        ElapsedHour = 0;
-        ElapsedMinute = 0;
-        ElapsedSecond = 0;
+        InitialDay = InitialHour = InitialMinute = InitialSecond = 0;
+        ElapsedDay = ElapsedHour = ElapsedMinute = ElapsedSecond = 0;
     }
 
     [RelayCommand]
-    private void BerryFix()
-    {
-        // The berry glitch fix requires elapsed days to be at least 2 years + 2 days
-        ElapsedDay = Math.Max((2 * 366) + 2, ElapsedDay);
-    }
+    private void BerryFix() => ElapsedDay = Math.Max((2 * 366) + 2, ElapsedDay);
 
     [RelayCommand]
     private void Save()
     {
-        _clockInitial.Day = InitialDay;
-        _clockInitial.Hour = InitialHour;
-        _clockInitial.Minute = InitialMinute;
-        _clockInitial.Second = InitialSecond;
-
-        _clockElapsed.Day = ElapsedDay;
-        _clockElapsed.Hour = ElapsedHour;
-        _clockElapsed.Minute = ElapsedMinute;
-        _clockElapsed.Second = ElapsedSecond;
-
-        _clone.ClockInitial = _clockInitial;
-        _clone.ClockElapsed = _clockElapsed;
-
-        _sav.CopyChangesFrom((SaveFile)_clone);
+        _clockInitial.Day = InitialDay; _clockInitial.Hour = InitialHour;
+        _clockInitial.Minute = InitialMinute; _clockInitial.Second = InitialSecond;
+        _clockElapsed.Day = ElapsedDay; _clockElapsed.Hour = ElapsedHour;
+        _clockElapsed.Minute = ElapsedMinute; _clockElapsed.Second = ElapsedSecond;
+        _small.ClockInitial = _clockInitial;
+        _small.ClockElapsed = _clockElapsed;
+        _sav.CopyChangesFrom(_clone);
     }
 }

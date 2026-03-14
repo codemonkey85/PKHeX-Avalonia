@@ -18,12 +18,12 @@ public partial class PokeBlock3CaseEditorViewModel : ViewModelBase
 
         if (sav is SAV3E e)
         {
-            _case = e.PokeBlocks;
+            _case = e.LargeBlock.PokeBlocks;
             IsSupported = true;
         }
         else if (sav is SAV3RS rs)
         {
-            _case = rs.PokeBlocks;
+            _case = rs.LargeBlock.PokeBlocks;
             IsSupported = true;
         }
 
@@ -85,9 +85,9 @@ public partial class PokeBlock3CaseEditorViewModel : ViewModelBase
         if (_case is null) return;
         
         if (_sav is SAV3E e)
-            e.PokeBlocks = _case;
+            e.LargeBlock.PokeBlocks = _case;
         else if (_sav is SAV3RS rs)
-            rs.PokeBlocks = _case;
+            rs.LargeBlock.PokeBlocks = _case;
     }
 
     [RelayCommand]

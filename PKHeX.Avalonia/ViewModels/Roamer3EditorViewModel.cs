@@ -62,7 +62,7 @@ public partial class Roamer3EditorViewModel : ViewModelBase
     public Roamer3EditorViewModel(SAV3 sav)
     {
         _sav = sav;
-        _roamer = new Roamer3(sav);
+        _roamer = new Roamer3(sav.LargeBlock);
 
         LoadSpeciesList();
         LoadData();

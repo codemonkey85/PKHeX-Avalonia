@@ -107,7 +107,7 @@ public partial class MailBoxEditorViewModel : ViewModelBase
             case SAV3 sav3:
                 _mail = new MailDetail[6 + 10];
                 for (int i = 0; i < _mail.Length; i++)
-                    _mail[i] = sav3.GetMail(i);
+                    _mail[i] = sav3.LargeBlock.GetMail(i);
                 _mailItemIds = [121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132];
                 _partyMailCount = 6;
                 IsSupported = true;

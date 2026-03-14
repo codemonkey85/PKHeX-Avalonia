@@ -393,9 +393,9 @@ public partial class MainWindowViewModel
     [RelayCommand(CanExecute = nameof(HasSave))]
     private async Task OpenSecretBase3Async()
     {
-        if (CurrentSave is not SAV3 sav3 || sav3 is not IGen3Hoenn) return;
+        if (CurrentSave is not SAV3 sav3hoenn || sav3hoenn is not (SAV3RS or SAV3E)) return;
         await _dialogService.ShowDialogAsync(
-            new SecretBase3Editor { DataContext = new SecretBase3EditorViewModel(sav3) },
+            new SecretBase3Editor { DataContext = new SecretBase3EditorViewModel(sav3hoenn) },
             "Secret Base Editor (RSE)");
     }
 
@@ -672,7 +672,7 @@ public partial class MainWindowViewModel
     [RelayCommand(CanExecute = nameof(HasSave))]
     private async Task OpenRTC3Async()
     {
-        if (CurrentSave is not IGen3Hoenn) return;
+        if (CurrentSave is not (SAV3RS or SAV3E)) return;
         await _dialogService.ShowDialogAsync(
             new RTC3Editor { DataContext = new RTC3EditorViewModel(CurrentSave!) },
             "RTC Editor (Gen 3)");

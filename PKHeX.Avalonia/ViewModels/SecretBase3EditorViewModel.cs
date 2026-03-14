@@ -16,7 +16,7 @@ public partial class SecretBase3EditorViewModel : ViewModelBase
     public SecretBase3EditorViewModel(SAV3 sav)
     {
         _sav = sav;
-        _manager = ((IGen3Hoenn)sav).SecretBases;
+        _manager = (sav switch { SAV3RS rs => (ISaveBlock3LargeHoenn)rs.LargeBlock, SAV3E e => e.LargeBlock, _ => throw new ArgumentException("Not a Hoenn Gen3 save") }).SecretBases;
         LoadBases();
     }
 

@@ -19,13 +19,21 @@ public partial class SecretBaseEditorViewModel : ViewModelBase
         _sav = sav;
         _spriteRenderer = spriteRenderer;
 
-        if (sav is SAV3 sav3 && sav3 is IGen3Hoenn hoenn)
+        if (GetLargeHoenn(sav) is { } hoenn)
         {
             _manager = hoenn.SecretBases;
             IsSupported = true;
             LoadBases();
         }
     }
+
+
+    private static ISaveBlock3LargeHoenn? GetLargeHoenn(SaveFile sav) => sav switch
+    {
+        SAV3RS rs => rs.LargeBlock,
+        SAV3E e => e.LargeBlock,
+        _ => null,
+    };
 
     public bool IsSupported { get; }
 

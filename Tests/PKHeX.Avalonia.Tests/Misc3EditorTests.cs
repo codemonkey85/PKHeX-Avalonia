@@ -40,7 +40,7 @@ public class Misc3EditorTests
     {
         // Arrange
         var sav = new SAV3E();
-        sav.BP = 999;
+        sav.SmallBlock.BP = 999;
 
         // Act
         var vm = new Misc3EditorViewModel(sav);
@@ -62,7 +62,7 @@ public class Misc3EditorTests
         vm.SaveCommand.Execute(null);
 
         // Assert
-        Assert.Equal(2500u, sav.BP);
+        Assert.Equal(2500u, (uint)sav.SmallBlock.BP);
     }
 
     [Fact]

@@ -13,12 +13,10 @@ namespace PKHeX.Avalonia.ViewModels;
 public partial class Misc3EditorViewModel : ViewModelBase
 {
     private readonly SAV3 _sav;
-    private readonly Record3 _records;
 
     public Misc3EditorViewModel(SAV3 sav)
     {
         _sav = sav;
-        _records = new Record3(_sav);
 
         LoadRecords();
         LoadMain();
@@ -68,20 +66,27 @@ public partial class Misc3EditorViewModel : ViewModelBase
     partial void OnSelectedRecordChanged(ComboItem? value)
     {
         if (value is null) return;
-        RecordValue = _records.GetRecord(value.Value);
+        RecordValue = _sav.GetRecord(value.Value);
     }
 
     partial void OnRecordValueChanged(uint value)
     {
         if (SelectedRecord is null) return;
-        _records.SetRecord(SelectedRecord.Value, value);
+        _sav.SetRecord(SelectedRecord.Value, value);
     }
 
     #endregion
 
     #region Joyful Minigames
 
-    public bool IsJoyfulVisible => _sav is IGen3Joyful;
+    private static ISaveBlock3SmallExpansion? GetExpansionSmall(SaveFile sav) => sav switch
+    {
+        SAV3E e => e.SmallBlock,
+        SAV3FRLG frlg => frlg.SmallBlock,
+        _ => null,
+    };
+
+    public bool IsJoyfulVisible => GetExpansionSmall(_sav) is not null;
 
     [ObservableProperty]
     private ushort _joyfulJumpInRow;
@@ -109,7 +114,7 @@ public partial class Misc3EditorViewModel : ViewModelBase
 
     private void LoadJoyful()
     {
-        if (_sav is not IGen3Joyful j) return;
+        if (GetExpansionSmall(_sav) is not { } j) return;
 
         JoyfulJumpInRow = Math.Min((ushort)9999, j.JoyfulJumpInRow);
         JoyfulJumpScore = Math.Min((ushort)9999, (ushort)j.JoyfulJumpScore);
@@ -123,7 +128,7 @@ public partial class Misc3EditorViewModel : ViewModelBase
 
     private void SaveJoyful()
     {
-        if (_sav is not IGen3Joyful j) return;
+        if (GetExpansionSmall(_sav) is not { } j) return;
 
         j.JoyfulJumpInRow = JoyfulJumpInRow;
         j.JoyfulJumpScore = JoyfulJumpScore;
@@ -287,7 +292,7 @@ public partial class Misc3EditorViewModel : ViewModelBase
         Coins = Math.Min((ushort)9999, (ushort)_sav.Coin);
 
         if (_sav is SAV3E e)
-            Bp = Math.Min(9999u, e.BP);
+            Bp = Math.Min(9999u, e.SmallBlock.BP);
 
         if (_sav is SAV3FRLG frlg)
             RivalName = frlg.RivalName;
@@ -298,7 +303,7 @@ public partial class Misc3EditorViewModel : ViewModelBase
         _sav.Coin = Coins;
 
         if (_sav is SAV3E e)
-            e.BP = Bp;
+            e.SmallBlock.BP = (ushort)Bp;
 
         if (_sav is SAV3FRLG frlg)
             frlg.RivalName = RivalName;
