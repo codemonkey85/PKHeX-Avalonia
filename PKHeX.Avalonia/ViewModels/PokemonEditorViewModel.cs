@@ -248,8 +248,6 @@ public partial class PokemonEditorViewModel : ViewModelBase
             OnPropertyChanged(nameof(MetDate));
             OnPropertyChanged(nameof(EggDate));
 
-            Validate();
-
             OriginalTrainerFriendship = _pk.OriginalTrainerFriendship;
             HandlingTrainerFriendship = _pk.HandlingTrainerFriendship;
             CurrentHandler = _pk.CurrentHandler;
