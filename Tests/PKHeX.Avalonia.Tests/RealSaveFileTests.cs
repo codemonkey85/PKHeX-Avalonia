@@ -9,6 +9,7 @@ namespace PKHeX.Avalonia.Tests;
 /// <summary>
 /// Tests using real save files stored in Tests/savefiles/.
 /// Covers BoxViewer, PartyViewer, PokemonEditor, and write round-trips against real data.
+/// Currently covers: Gen3 (Emerald), Gen7 (Sun/Moon).
 /// </summary>
 public class RealSaveFileTests(ITestOutputHelper output)
 {
@@ -227,5 +228,151 @@ public class RealSaveFileTests(ITestOutputHelper output)
         Assert.NotNull(vm.TrainerName);
         Assert.Equal(sav.OT, vm.TrainerName);
         output.WriteLine($"Emerald OT: {vm.TrainerName}");
+    }
+
+    // =======================================================================
+    // Gen7 Sun/Moon: Tests/savefiles/sun.main
+    // =======================================================================
+
+    private SaveFile? GetSun(out string? skipReason)
+    {
+        var savPath = FindSaveFilesPath();
+        if (savPath == null) { skipReason = "savefiles directory not found"; return null; }
+
+        var sav = LoadSave(Path.Combine(savPath, "sun.main"));
+        if (sav == null) { skipReason = "sun.main missing or unrecognised format"; return null; }
+
+        skipReason = null;
+        return sav;
+    }
+
+    [Fact]
+    public void Sun_Loads_As_Gen7_Save()
+    {
+        var sav = GetSun(out var skip);
+        if (sav == null) { output.WriteLine($"Skip: {skip}"); return; }
+
+        output.WriteLine($"Loaded {sav.GetType().Name}, Version={sav.Version}, OT={sav.OT}");
+        Assert.Equal(7, sav.Generation);
+        Assert.True(sav.ChecksumsValid, "Sun save checksum must be valid");
+    }
+
+    [Fact]
+    public void Sun_BoxViewer_Constructs_Without_Exception()
+    {
+        var sav = GetSun(out var skip);
+        if (sav == null) { output.WriteLine($"Skip: {skip}"); return; }
+
+        var spriteMock = new Mock<ISpriteRenderer>();
+        var ex = Record.Exception(() => new BoxViewerViewModel(sav, spriteMock.Object));
+        Assert.Null(ex);
+    }
+
+    [Fact]
+    public void Sun_BoxSlots_AreIterable()
+    {
+        var sav = GetSun(out var skip);
+        if (sav == null) { output.WriteLine($"Skip: {skip}"); return; }
+
+        int occupied = 0;
+        var ex = Record.Exception(() =>
+        {
+            for (int box = 0; box < sav.BoxCount; box++)
+            {
+                foreach (var pk in sav.GetBoxData(box))
+                    if (pk.Species != 0) occupied++;
+            }
+        });
+
+        Assert.Null(ex);
+        output.WriteLine($"Sun: {sav.BoxCount} boxes, {occupied} occupied slots");
+    }
+
+    [Fact]
+    public void Sun_PartyViewer_Constructs_Without_Exception()
+    {
+        var sav = GetSun(out var skip);
+        if (sav == null) { output.WriteLine($"Skip: {skip}"); return; }
+
+        var spriteMock = new Mock<ISpriteRenderer>();
+        var ex = Record.Exception(() =>
+        {
+            var vm = new PartyViewerViewModel(sav, spriteMock.Object);
+            output.WriteLine($"Sun party: {vm.Slots.Count(s => !s.IsEmpty)} occupied");
+        });
+        Assert.Null(ex);
+    }
+
+    [Fact]
+    public void Sun_AllOccupiedSlots_LoadIntoViewModel_WithoutException()
+    {
+        var sav = GetSun(out var skip);
+        if (sav == null) { output.WriteLine($"Skip: {skip}"); return; }
+
+        var errors = new List<string>();
+        int count = 0;
+
+        for (int i = 0; i < sav.BoxCount * sav.BoxSlotCount; i++)
+        {
+            var pk = sav.GetBoxSlotAtIndex(i);
+            if (pk.Species == 0) continue;
+
+            try
+            {
+                var (vm, _, _) = TestHelpers.CreateTestViewModel(pk, sav);
+                _ = vm.Species;
+                _ = vm.Level;
+                _ = vm.IsLegal;
+                count++;
+            }
+            catch (Exception ex)
+            {
+                errors.Add($"Slot {i} (species={pk.Species}): {ex.Message}");
+            }
+        }
+
+        output.WriteLine($"Sun: loaded {count} Pokemon from boxes without exception.");
+        Assert.Empty(errors);
+    }
+
+    [Fact]
+    public void Sun_WriteRoundTrip_ProducesValidSave()
+    {
+        var sav = GetSun(out var skip);
+        if (sav == null) { output.WriteLine($"Skip: {skip}"); return; }
+
+        var written = sav.Write();
+        Assert.True(written.Length > 0);
+
+        var sav2 = SaveUtil.GetSaveFile(written);
+        Assert.NotNull(sav2);
+        Assert.True(sav2.ChecksumsValid, "Reloaded Sun save must have valid checksums");
+        output.WriteLine($"Sun write round-trip: {written.Length} bytes, valid checksums ✓");
+    }
+
+    [Fact]
+    public void Sun_TrainerEditor_Loads_OT()
+    {
+        var sav = GetSun(out var skip);
+        if (sav == null) { output.WriteLine($"Skip: {skip}"); return; }
+
+        var vm = new TrainerEditorViewModel(sav);
+        Assert.NotNull(vm.TrainerName);
+        Assert.Equal(sav.OT, vm.TrainerName);
+        output.WriteLine($"Sun OT: {vm.TrainerName}");
+    }
+
+    [Fact]
+    public void Sun_InventoryEditor_Constructs_Without_Exception()
+    {
+        var sav = GetSun(out var skip);
+        if (sav == null) { output.WriteLine($"Skip: {skip}"); return; }
+
+        var ex = Record.Exception(() =>
+        {
+            var vm = new InventoryEditorViewModel(sav);
+            output.WriteLine($"Sun inventory pouches: {vm.Pouches.Count}");
+        });
+        Assert.Null(ex);
     }
 }
