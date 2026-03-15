@@ -238,7 +238,7 @@ public abstract class SAV4 : SaveFile, IEventFlag37, IDaycareStorage, IDaycareRa
     private int OFS_Backdrop => FashionCase + 0x28;
 
     protected int OFS_Chatter = int.MinValue;
-    public Chatter4 Chatter => new(this, GeneralBuffer[OFS_Chatter..]);
+    public Chatter4 Chatter => new(this, Buffer[OFS_Chatter..]);
 
     protected int OFS_Record = int.MinValue;
     public Record4 Records => new(this, Buffer.Slice(OFS_Record, Record4.GetSize(this)));
@@ -340,13 +340,13 @@ public abstract class SAV4 : SaveFile, IEventFlag37, IDaycareStorage, IDaycareRa
     public abstract int X { get; set; }
     public abstract int Y { get; set; }
 
-    public string Rival
+    public string RivalName
     {
-        get => GetString(RivalTrash);
-        set => SetString(RivalTrash, value, MaxStringLengthTrainer, StringConverterOption.ClearZero);
+        get => GetString(RivalNameTrash);
+        set => SetString(RivalNameTrash, value, MaxStringLengthTrainer, StringConverterOption.ClearZero);
     }
 
-    public abstract Span<byte> RivalTrash { get; set; }
+    public abstract Span<byte> RivalNameTrash { get; set; }
 
     public abstract int X2 { get; set; }
     public abstract int Y2 { get; set; }

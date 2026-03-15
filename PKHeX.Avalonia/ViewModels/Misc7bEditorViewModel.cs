@@ -25,13 +25,13 @@ public partial class Misc7bEditorViewModel : ViewModelBase
     private void LoadData()
     {
         Money = _sav.Blocks.Misc.Money;
-        RivalName = _sav.Blocks.Misc.Rival;
+        RivalName = _sav.Blocks.Misc.RivalName;
     }
 
     private void SaveData()
     {
         _sav.Blocks.Misc.Money = Money;
-        _sav.Blocks.Misc.Rival = RivalName;
+        _sav.Blocks.Misc.RivalName = RivalName;
     }
 
     [RelayCommand]
