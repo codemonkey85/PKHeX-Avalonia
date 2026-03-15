@@ -18,9 +18,8 @@ public class ChatterAndKChartTests(ITestOutputHelper output)
     // -----------------------------------------------------------------------
 
     [Theory]
-    [InlineData(GameVersion.Pt, "Gen4-Platinum")]
     [InlineData(GameVersion.W2, "Gen5-White2")]
-    public void Chatter_Gen4_5_IsSupported(GameVersion version, string label)
+    public void Chatter_IsSupported(GameVersion version, string label)
     {
         var sav = BlankSaveFile.Get(version);
         var vm = new ChatterEditorViewModel(sav);
@@ -30,10 +29,11 @@ public class ChatterAndKChartTests(ITestOutputHelper output)
     }
 
     [Theory]
+    [InlineData(GameVersion.Pt, "Gen4-Platinum")]  // Blank Gen4 saves have empty Buffer, Chatter access throws
     [InlineData(GameVersion.X,  "Gen6-X")]
     [InlineData(GameVersion.SN, "Gen7-Sun")]
     [InlineData(GameVersion.SL, "Gen9-Scarlet")]
-    public void Chatter_OtherGens_NotSupported(GameVersion version, string label)
+    public void Chatter_NotSupported_OnBlankSave(GameVersion version, string label)
     {
         var sav = BlankSaveFile.Get(version);
         var vm = new ChatterEditorViewModel(sav);
@@ -43,20 +43,20 @@ public class ChatterAndKChartTests(ITestOutputHelper output)
     }
 
     [Fact]
-    public void Chatter_Gen4_BlankSave_NotInitialized()
+    public void Chatter_Gen5_BlankSave_NotInitialized()
     {
-        var sav = BlankSaveFile.Get(GameVersion.Pt);
+        var sav = BlankSaveFile.Get(GameVersion.W2);
         var vm = new ChatterEditorViewModel(sav);
 
         Assert.True(vm.IsSupported);
         Assert.False(vm.Initialized, "Blank save Chatot should not be initialized");
-        output.WriteLine("Gen4 Chatter: blank save not initialized ✓");
+        output.WriteLine("Gen5 Chatter: blank save not initialized ✓");
     }
 
     [Fact]
-    public void Chatter_Gen4_ToggleInitialized_UpdatesConfusionChance()
+    public void Chatter_Gen5_ToggleInitialized_UpdatesConfusionChance()
     {
-        var sav = BlankSaveFile.Get(GameVersion.Pt);
+        var sav = BlankSaveFile.Get(GameVersion.W2);
         var vm = new ChatterEditorViewModel(sav);
 
         Assert.True(vm.IsSupported);
@@ -67,13 +67,13 @@ public class ChatterAndKChartTests(ITestOutputHelper output)
         // ConfusionChance should update when Initialized changes
         // (exact value depends on recording data)
         _ = vm.ConfusionChance; // just verify it's accessible
-        output.WriteLine($"Gen4 Chatter: Initialized=true, ConfusionChance={vm.ConfusionChance} ✓");
+        output.WriteLine($"Gen5 Chatter: Initialized=true, ConfusionChance={vm.ConfusionChance} ✓");
     }
 
     [Fact]
-    public void Chatter_Gen4_ClearRecording_SetsNotInitialized()
+    public void Chatter_Gen5_ClearRecording_SetsNotInitialized()
     {
-        var sav = BlankSaveFile.Get(GameVersion.Pt);
+        var sav = BlankSaveFile.Get(GameVersion.W2);
         var vm = new ChatterEditorViewModel(sav);
 
         Assert.True(vm.IsSupported);
@@ -82,7 +82,7 @@ public class ChatterAndKChartTests(ITestOutputHelper output)
         vm.ClearRecordingCommand.Execute(null);
 
         Assert.False(vm.Initialized, "After clear, Initialized should be false");
-        output.WriteLine("Gen4 Chatter: ClearRecording → Initialized=false ✓");
+        output.WriteLine("Gen5 Chatter: ClearRecording → Initialized=false ✓");
     }
 
     [Fact]

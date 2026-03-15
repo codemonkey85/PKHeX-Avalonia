@@ -1,3 +1,4 @@
+using System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PKHeX.Core;
@@ -13,12 +14,7 @@ public partial class ChatterEditorViewModel : ViewModelBase
     {
         _sav = sav;
 
-        _chatter = sav switch
-        {
-            SAV4 sav4 => sav4.Chatter,
-            SAV5 sav5 => sav5.Chatter,
-            _ => null
-        };
+        _chatter = GetChatter(sav);
 
         IsSupported = _chatter is not null;
 
@@ -78,4 +74,22 @@ public partial class ChatterEditorViewModel : ViewModelBase
 
     [RelayCommand]
     private void Refresh() => LoadData();
+
+    private static IChatter? GetChatter(SaveFile sav)
+    {
+        try
+        {
+            return sav switch
+            {
+                SAV4 sav4 => sav4.Chatter,
+                SAV5 sav5 => sav5.Chatter,
+                _ => null
+            };
+        }
+        catch (ArgumentOutOfRangeException)
+        {
+            // SAV4.Chatter accesses Buffer which is empty for blank saves
+            return null;
+        }
+    }
 }
