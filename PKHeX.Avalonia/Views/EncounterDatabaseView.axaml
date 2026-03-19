@@ -46,7 +46,7 @@
                                     Background="Transparent" BorderThickness="0">
                                 <Border Classes="section-card" 
                                         CornerRadius="6" Padding="8" Width="240" Height="70"
-                                        BoxShadow="0 2 4 0 #20000000">
+                                        BoxShadow="{StaticResource ThemeShadowSmall}">
                                     <Grid ColumnDefinitions="50,*">
                                         <Image Grid.Column="0" Source="{Binding Sprite}" Width="40" Height="40" VerticalAlignment="Center"/>
                                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">

@@ -199,9 +199,10 @@ public partial class TrainerEditorViewModel : ViewModelBase
         {
             // SCBlocks in blank/uninitialized SV saves can have Type=None and throw.
             // Wrap each block read individually so a missing block doesn't hide the rest.
-            try { HasBP = true; BP = (uint)sv.Blocks.GetBlockValue(SaveBlockAccessor9SV.KBlueberryPoints); HasBlueberryPoints = true; BlueberryPoints = BP; } catch { }
-            try { HasLP = true; LP = (uint)sv.Blocks.GetBlockValue(SaveBlockAccessor9SV.KLeaguePoints); } catch { }
-            try { HasGimmighoulCoins = true; GimmighoulCoins = sv.Items.GetItemQuantity(1985); } catch { }
+            // Set visibility flags AFTER the read succeeds to avoid showing (and saving) default 0.
+            try { BP = (uint)sv.Blocks.GetBlockValue(SaveBlockAccessor9SV.KBlueberryPoints); HasBP = true; BlueberryPoints = BP; HasBlueberryPoints = true; } catch { }
+            try { LP = (uint)sv.Blocks.GetBlockValue(SaveBlockAccessor9SV.KLeaguePoints); HasLP = true; } catch { }
+            try { GimmighoulCoins = sv.Items.GetItemQuantity(1985); HasGimmighoulCoins = true; } catch { }
         }
 
         // Coins (Gen 1-4)
@@ -230,10 +231,10 @@ public partial class TrainerEditorViewModel : ViewModelBase
         // SCBlocks in blank/uninitialized LA saves can have Type=None and throw.
         if (_sav is SAV8LA la)
         {
-            try { HasMeritPoints = true; MeritPoints = (uint)la.Accessor.GetBlockValue(SaveBlockAccessor8LA.KMeritCurrent); } catch { }
-            try { HasMeritEarned = true; MeritEarned = (uint)la.Accessor.GetBlockValue(SaveBlockAccessor8LA.KMeritEarnedTotal); } catch { }
-            try { HasExpeditionRank = true; ExpeditionRank = (uint)la.Accessor.GetBlockValue(SaveBlockAccessor8LA.KExpeditionTeamRank); } catch { }
-            try { HasSatchelUpgrades = true; SatchelUpgrades = (uint)la.Accessor.GetBlockValue(SaveBlockAccessor8LA.KSatchelUpgrades); } catch { }
+            try { MeritPoints = (uint)la.Accessor.GetBlockValue(SaveBlockAccessor8LA.KMeritCurrent); HasMeritPoints = true; } catch { }
+            try { MeritEarned = (uint)la.Accessor.GetBlockValue(SaveBlockAccessor8LA.KMeritEarnedTotal); HasMeritEarned = true; } catch { }
+            try { ExpeditionRank = (uint)la.Accessor.GetBlockValue(SaveBlockAccessor8LA.KExpeditionTeamRank); HasExpeditionRank = true; } catch { }
+            try { SatchelUpgrades = (uint)la.Accessor.GetBlockValue(SaveBlockAccessor8LA.KSatchelUpgrades); HasSatchelUpgrades = true; } catch { }
         }
 
         // Poké Miles (Gen 6)
@@ -247,14 +248,14 @@ public partial class TrainerEditorViewModel : ViewModelBase
         // SCBlocks in blank/uninitialized ZA saves can have Type=None and throw.
         if (_sav is SAV9ZA za)
         {
-            try { HasRoyalePoints = true; RoyalePoints = za.TicketPointsRoyale; } catch { }
-            try { HasRoyalePointsInfinite = true; RoyalePointsInfinite = za.TicketPointsRoyaleInfinite; } catch { }
+            try { RoyalePoints = za.TicketPointsRoyale; HasRoyalePoints = true; } catch { }
+            try { RoyalePointsInfinite = za.TicketPointsRoyaleInfinite; HasRoyalePointsInfinite = true; } catch { }
 
             try
             {
-                HasStreetName = true;
                 var b = za.Blocks.GetBlock(SaveBlockAccessor9ZA.KStreetName);
                 StreetName = za.GetString(b.Data);
+                HasStreetName = true;
             }
             catch { }
         }
@@ -410,14 +411,17 @@ public partial class TrainerEditorViewModel : ViewModelBase
         }
 
         // PLZA
-        if (_sav is SAV9ZA za && HasRoyalePoints)
+        if (_sav is SAV9ZA za)
         {
-            za.TicketPointsRoyaleInfinite = RoyalePointsInfinite;
-            // za.HyperspaceSurveyPoints = HyperspacePoints;
-            
-            var b = za.Blocks.GetBlock(SaveBlockAccessor9ZA.KStreetName);
-            b.Data.Clear(); // Clear buffer to ensure no leftover characters
-            za.SetString(b.Data, StreetName, b.Data.Length, StringConverterOption.None);
+            if (HasRoyalePoints) za.TicketPointsRoyale = RoyalePoints;
+            if (HasRoyalePointsInfinite) za.TicketPointsRoyaleInfinite = RoyalePointsInfinite;
+
+            if (HasStreetName)
+            {
+                var b = za.Blocks.GetBlock(SaveBlockAccessor9ZA.KStreetName);
+                b.Data.Clear();
+                za.SetString(b.Data, StreetName, b.Data.Length, StringConverterOption.None);
+            }
         }
     }
 

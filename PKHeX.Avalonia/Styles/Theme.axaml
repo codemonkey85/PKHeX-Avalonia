@@ -115,25 +115,12 @@
     </Style>
 
     <!-- ─────────────────────────────────────────────────────────────────────────
-         Glass Card - Subtle glass-morphism effect
+         Global Button Overrides
          ───────────────────────────────────────────────────────────────────────── -->
-    <Style Selector="Border.glass">
-        <Setter Property="Background" Value="#21262D80" />
-        <Setter Property="BorderBrush" Value="#FFFFFF10" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="8" />
-        <Setter Property="Padding" Value="4" />
-    </Style>
-
-    <!-- ─────────────────────────────────────────────────────────────────────────
-         Slot Button - Box slot with hover effects
-         ───────────────────────────────────────────────────────────────────────── -->
-    <!-- Global Button Override to kill FocusAdorner (Yellow Ring) -->
     <Style Selector="Button">
         <Setter Property="FocusAdorner" Value="{x:Null}" />
     </Style>
 
-    <!-- Global Focus State - Enforce Red for keyboard navigation -->
     <Style Selector="Button:focus-visible">
         <Setter Property="BorderBrush" Value="{StaticResource ThemeAccentPrimaryBrush}" />
         <Setter Property="BorderThickness" Value="2" />
@@ -168,8 +155,8 @@
                     </Border>
                     <!-- Illegal Indicator - positioned inside the border with 2px inset -->
                     <Path Data="M 6,0 L 12,11 L 0,11 Z M 6.5,9.5 H 5.5 V 8.5 H 6.5 V 9.5 Z M 6.5,7.5 H 5.5 V 3.5 H 6.5 V 7.5 Z" 
-                          Fill="#E3350D" 
-                          HorizontalAlignment="Right" 
+                          Fill="{StaticResource ThemeShinyBrush}"
+                          HorizontalAlignment="Right"
                           VerticalAlignment="Top"
                           IsVisible="{Binding !IsLegal}"
                           Margin="0,2,2,0"
@@ -207,31 +194,6 @@
     <!-- Deep Focus Override -->
     <Style Selector="Button.slot:focus /template/ Border#PART_Border">
         <Setter Property="BorderBrush" Value="{StaticResource ThemeAccentPrimaryBrush}" />
-    </Style>
-
-    <!-- ─────────────────────────────────────────────────────────────────────────
-         Navigation Button - Modern pill-style buttons
-         ───────────────────────────────────────────────────────────────────────── -->
-    <Style Selector="Button.nav-pill">
-        <Setter Property="Background" Value="{StaticResource ThemeBackgroundElevatedBrush}" />
-        <Setter Property="Foreground" Value="{StaticResource ThemeTextPrimaryBrush}" />
-        <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="CornerRadius" Value="20" />
-        <Setter Property="Padding" Value="16,8" />
-        <Setter Property="FontWeight" Value="SemiBold" />
-        <Setter Property="Transitions">
-            <Transitions>
-                <BrushTransition Property="Background" Duration="0:0:0.15" />
-            </Transitions>
-        </Setter>
-    </Style>
-
-    <Style Selector="Button.nav-pill:pointerover">
-        <Setter Property="Background" Value="{StaticResource ThemeBackgroundHoverBrush}" />
-    </Style>
-
-    <Style Selector="Button.nav-pill:pressed">
-        <Setter Property="Background" Value="{StaticResource ThemeAccentSecondaryBrush}" />
     </Style>
 
     <!-- ─────────────────────────────────────────────────────────────────────────

@@ -107,9 +107,9 @@ public partial class EncounterDatabaseViewModel : ViewModelBase
             pk.ResetPartyStats();
             _onSelect(pk);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            // Could not convert, ignore
+            _ = _dialogService.ShowErrorAsync("Conversion Error", $"Could not convert encounter to PKM: {ex.Message}");
         }
     }
 }

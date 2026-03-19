@@ -106,8 +106,8 @@
                                             
                                             <!-- Illegal Warning -->
                                             <Path Data="M 8,0 L 16,14 L 0,14 Z M 8.5,12 H 7.5 V 10.5 H 8.5 V 12 Z M 8.5,9 H 7.5 V 4.5 H 8.5 V 9 Z" 
-                                                  Fill="#E3350D" 
-                                                  HorizontalAlignment="Right" 
+                                                  Fill="{StaticResource ThemeShinyBrush}"
+                                                  HorizontalAlignment="Right"
                                                   VerticalAlignment="Top"
                                                   IsVisible="{Binding !IsLegal}"
                                                   Margin="0,0,0,0"

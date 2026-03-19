@@ -14,8 +14,6 @@ public partial class AppSettings : ObservableObject, IProgramSettings
 
     IStartupSettings IProgramSettings.Startup => Startup;
 
-
-
     // Settings groups
     [ObservableProperty] private StartupSettings _startup = new();
     [ObservableProperty] private BackupSettings _backup = new();
@@ -54,9 +52,9 @@ public partial class AppSettings : ObservableObject, IProgramSettings
             var json = JsonSerializer.Serialize(this, options);
             File.WriteAllText(ConfigPath, json);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            // Ignore save errors for now
+            System.Diagnostics.Trace.TraceWarning($"Failed to save settings: {ex.Message}");
         }
     }
 

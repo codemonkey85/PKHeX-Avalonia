@@ -160,31 +160,31 @@ public partial class BatchEditorViewModel : ViewModelBase
         }
     }
 
-[RelayCommand]
-    private void SetMaxIVs()
+    [RelayCommand]
+    private async Task SetMaxIVs()
     {
         Instructions = ".IVs=$suggestPokemon MaxIVs($0)";
-        _ = RunBatchAsync();
+        await RunBatchAsync();
     }
 
     [RelayCommand]
-    private void SetMaxEVs()
+    private async Task SetMaxEVs()
     {
         Instructions = ".EVs=$suggestPokemon MaxEVs($0)";
-        _ = RunBatchAsync();
+        await RunBatchAsync();
     }
 
     [RelayCommand]
-    private void SetShiny()
+    private async Task SetShiny()
     {
         Instructions = ".Shiny=Star";
-        _ = RunBatchAsync();
+        await RunBatchAsync();
     }
 
     [RelayCommand]
-    private void HealAll()
+    private async Task HealAll()
     {
         Instructions = ".Heal";
-        _ = RunBatchAsync();
+        await RunBatchAsync();
     }
 }

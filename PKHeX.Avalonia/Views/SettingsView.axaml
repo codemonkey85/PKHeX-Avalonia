@@ -64,53 +64,6 @@
                 </StackPanel>
             </Border>
 
-            <!-- Privacy Settings Card -->
-            <Border Classes="section-card" Padding="20" CornerRadius="8">
-                <StackPanel Spacing="16">
-                    <StackPanel Orientation="Horizontal" Spacing="12">
-                        <TextBlock Text="🔒" FontSize="20" VerticalAlignment="Center"/>
-                        <TextBlock Text="Privacy" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center"/>
-                    </StackPanel>
-                    
-                    <Grid ColumnDefinitions="*,Auto">
-                        <StackPanel Grid.Column="0">
-                            <TextBlock Text="Hide Save Details" FontWeight="Medium"/>
-                            <TextBlock Text="Hide save file details in the program title." 
-                                       FontSize="12" Opacity="0.6" TextWrapping="Wrap"/>
-                        </StackPanel>
-                        <ToggleSwitch Grid.Column="1" IsChecked="{Binding HideSAVDetails}" OnContent="On" OffContent="Off"/>
-                    </Grid>
-                    
-                     <Grid ColumnDefinitions="*,Auto">
-                        <StackPanel Grid.Column="0">
-                            <TextBlock Text="Hide Secret Details" FontWeight="Medium"/>
-                            <TextBlock Text="Hide secret IDs and other sensitive info in editors." 
-                                       FontSize="12" Opacity="0.6" TextWrapping="Wrap"/>
-                        </StackPanel>
-                        <ToggleSwitch Grid.Column="1" IsChecked="{Binding HideSecretDetails}" OnContent="On" OffContent="Off"/>
-                    </Grid>
-                </StackPanel>
-            </Border>
-            
-            <!-- Legality/Advanced Settings Card -->
-             <Border Classes="section-card" Padding="20" CornerRadius="8">
-                <StackPanel Spacing="16">
-                    <StackPanel Orientation="Horizontal" Spacing="12">
-                        <TextBlock Text="⚖️" FontSize="20" VerticalAlignment="Center"/>
-                        <TextBlock Text="Legality / Advanced" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center"/>
-                    </StackPanel>
-                    
-                    <Grid ColumnDefinitions="*,Auto">
-                        <StackPanel Grid.Column="0">
-                            <TextBlock Text="Word Filter Check" FontWeight="Medium"/>
-                            <TextBlock Text="Check for offensive words/names." 
-                                       FontSize="12" Opacity="0.6" TextWrapping="Wrap"/>
-                        </StackPanel>
-                        <ToggleSwitch Grid.Column="1" IsChecked="{Binding WordFilterCheck}" OnContent="On" OffContent="Off"/>
-                    </Grid>
-                </StackPanel>
-            </Border>
-
             <Button Content="Save Changes" 
                     Command="{Binding SaveCommand}" 
                     Classes="accent"

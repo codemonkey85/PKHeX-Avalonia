@@ -25,7 +25,7 @@ public partial class MainWindowViewModel
     [RelayCommand]
     private async Task OpenSettingsAsync()
     {
-        var vm = new SettingsViewModel(_settings, _languageService);
+        var vm = new SettingsViewModel(_settings);
         var view = new SettingsView { DataContext = vm };
         vm.CloseRequested += () =>
         {

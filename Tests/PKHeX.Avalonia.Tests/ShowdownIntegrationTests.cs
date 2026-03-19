@@ -1,4 +1,4 @@
-
+using System;
 using System.Threading.Tasks;
 using Avalonia.Headless.XUnit;
 using Moq;
@@ -9,7 +9,7 @@ using Xunit;
 
 namespace PKHeX.Avalonia.Tests;
 
-public class ShowdownIntegrationTests
+public class ShowdownIntegrationTests : IDisposable
 {
     private readonly Mock<ISaveFileService> _saveFileServiceMock = new();
     private readonly Mock<IDialogService> _dialogServiceMock = new();
@@ -20,6 +20,13 @@ public class ShowdownIntegrationTests
     public ShowdownIntegrationTests()
     {
         PKHeX.Core.GameInfo.CurrentLanguage = "en";
+        PKHeX.Core.GameInfo.Strings = PKHeX.Core.GameInfo.GetStrings("en");
+    }
+
+    public void Dispose()
+    {
+        PKHeX.Core.GameInfo.CurrentLanguage = "en";
+        PKHeX.Core.GameInfo.Strings = PKHeX.Core.GameInfo.GetStrings("en");
     }
 
     private MainWindowViewModel CreateViewModel(SaveFile sav)
@@ -53,7 +60,6 @@ public class ShowdownIntegrationTests
         var sav = new SAV8SWSH();
         var vm = CreateViewModel(sav);
         
-        // Setup a Pokemon in the editor
         // Setup a Pokemon in the editor
         var pkm = new PK8 
         { 
