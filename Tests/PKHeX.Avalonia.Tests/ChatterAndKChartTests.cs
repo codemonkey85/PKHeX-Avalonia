@@ -18,6 +18,7 @@ public class ChatterAndKChartTests(ITestOutputHelper output)
     // -----------------------------------------------------------------------
 
     [Theory]
+    [InlineData(GameVersion.Pt, "Gen4-Platinum")]
     [InlineData(GameVersion.W2, "Gen5-White2")]
     public void Chatter_IsSupported(GameVersion version, string label)
     {
@@ -29,7 +30,6 @@ public class ChatterAndKChartTests(ITestOutputHelper output)
     }
 
     [Theory]
-    [InlineData(GameVersion.Pt, "Gen4-Platinum")]  // Blank Gen4 saves have empty Buffer, Chatter access throws
     [InlineData(GameVersion.X,  "Gen6-X")]
     [InlineData(GameVersion.SN, "Gen7-Sun")]
     [InlineData(GameVersion.SL, "Gen9-Scarlet")]
