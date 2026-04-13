@@ -111,6 +111,8 @@ jobs:
         id: analyze
         run: |
           # Compare our PKHeX.Core with upstream (exclude build artifacts)
+          # This is the ground truth — if files are identical, we're in sync
+          # regardless of SHA mismatches (e.g. upstream force-push/rebase).
           DIFF_OUTPUT=$(diff -rq PKHeX.Core /tmp/pkhex-upstream/PKHeX.Core 2>/dev/null | grep -v "bin\|obj\|\.git" || true)
           
           # Count different types
@@ -235,7 +237,16 @@ jobs:
         run: |
           EXISTING_ISSUE="${{ steps.check-upstream.outputs.existing_issue }}"
           LATEST_SHA="${{ steps.check-upstream.outputs.latest_sha }}"
-          
+          TOTAL_DIFF="${{ steps.analyze.outputs.total_diff }}"
+
+          # If no files actually differ, we're in sync despite SHA mismatch.
+          # This handles upstream force-pushes/rebases that change commit SHAs
+          # without changing file contents.
+          if [ "$TOTAL_DIFF" = "0" ] || [ -z "$TOTAL_DIFF" ]; then
+            echo "::notice::SHA mismatch but files are identical — no sync needed. Update last-synced-sha.txt to $LATEST_SHA to prevent future false positives."
+            exit 0
+          fi
+
           # If there's already an open sync issue, skip - no need to spam comments
           if [ -n "$EXISTING_ISSUE" ]; then
             echo "Sync issue #$EXISTING_ISSUE already exists, skipping..."
