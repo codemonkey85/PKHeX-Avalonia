@@ -10,6 +10,8 @@ on:
 
 permissions:
   contents: write
+  # Required when the tagged commit tree includes .github/workflows/ changes
+  workflows: write
 
 jobs:
   check-version:
