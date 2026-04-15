@@ -1,5 +1,8 @@
 Tests/PKHeX.Core.Tests/Legality/Private/
 
+# Downloaded/generated test save files (use Tests/savefiles/download_saves.sh to fetch)
+Tests/savefiles/gen*
+
 
 #################
 ## Eclipse
