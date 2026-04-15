@@ -6,8 +6,19 @@ on:
   pull_request:
     branches: [main]
 
+# Prevent duplicate runs: group by PR number for PR events, by ref for pushes.
+# cancel-in-progress drops stale runs when new commits land on the same PR/branch.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-and-test:
+    # Skip CI on PR merge commits — the PR check already validated this code.
+    # Direct pushes (sync, bump) still run CI normally.
+    if: >-
+      github.event_name == 'pull_request' ||
+      !startsWith(github.event.head_commit.message, 'Merge pull request #')
     strategy:
       fail-fast: false
       matrix:
