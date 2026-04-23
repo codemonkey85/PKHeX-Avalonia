@@ -60,47 +60,38 @@ public partial class BoxViewerViewModel : ViewModelBase
         Slots.Clear();
 
         var boxData = _sav.GetBoxData(box);
-        var strings = GameInfo.Strings;
-        
+
         for (int slot = 0; slot < boxData.Length; slot++)
         {
             var pk = boxData[slot];
             var isEmpty = pk.Species == 0;
 
-            SlotData slotData;
-            try
+            // Use StringResourceLookup for all string-table accesses to safely
+            // handle Gen 1/2 where Ability is -1 and some properties are placeholders.
+            var slotData = new SlotData
             {
-                slotData = new SlotData
-                {
-                    Slot = slot,
-                    Box = box,
-                    Species = pk.Species,
-                    Sprite = _spriteRenderer.GetSprite(pk),
-                    IsEmpty = isEmpty,
-                    IsShiny = pk.IsShiny,
-                    Nickname = isEmpty ? string.Empty : pk.Nickname,
-                    SpeciesName = isEmpty ? string.Empty : (pk.Species < strings.Species.Count ? strings.Species[pk.Species] : string.Empty),
-                    Level = pk.CurrentLevel,
-                    Gender = (byte)pk.Gender,
-                    HeldItem = (ushort)pk.HeldItem,
-                    HeldItemName = pk.HeldItem > 0 && pk.HeldItem < strings.Item.Count ? strings.Item[pk.HeldItem] : string.Empty,
-                    IsEgg = pk.IsEgg,
-                    Form = pk.Form,
-                    Ability = (ushort)pk.Ability,
-                    AbilityName = pk.Ability < strings.Ability.Count ? strings.Ability[pk.Ability] : string.Empty,
-                    Nature = (byte)pk.Nature,
-                    NatureName = (int)pk.Nature < strings.Natures.Count ? strings.Natures[(int)pk.Nature] : string.Empty,
-                    ShowdownSummary = isEmpty ? string.Empty : new ShowdownSet(pk).Text,
-                    IsLegal = isEmpty || new LegalityAnalysis(pk).Valid,
-                    IsSelected = false
-                };
-            }
-            catch
-            {
-                // Fallback: render as empty slot if any property read fails
-                // (can happen on Gen1/Gen2 where Ability, Nature etc. are not defined)
-                slotData = new SlotData { Slot = slot, Box = box, IsEmpty = true };
-            }
+                Slot = slot,
+                Box = box,
+                Species = pk.Species,
+                Sprite = _spriteRenderer.GetSprite(pk),
+                IsEmpty = isEmpty,
+                IsShiny = pk.IsShiny,
+                Nickname = isEmpty ? string.Empty : pk.Nickname,
+                SpeciesName = isEmpty ? string.Empty : StringResourceLookup.Species(pk.Species),
+                Level = pk.CurrentLevel,
+                Gender = (byte)pk.Gender,
+                HeldItem = (ushort)pk.HeldItem,
+                HeldItemName = pk.HeldItem > 0 ? StringResourceLookup.Item(pk.HeldItem) : string.Empty,
+                IsEgg = pk.IsEgg,
+                Form = pk.Form,
+                Ability = (ushort)pk.Ability,
+                AbilityName = StringResourceLookup.Ability(pk.Ability),
+                Nature = (byte)pk.Nature,
+                NatureName = StringResourceLookup.Nature((int)pk.Nature),
+                ShowdownSummary = isEmpty ? string.Empty : new ShowdownSet(pk).Text,
+                IsLegal = isEmpty || new LegalityAnalysis(pk).Valid,
+                IsSelected = false,
+            };
 
             Slots.Add(slotData);
         }

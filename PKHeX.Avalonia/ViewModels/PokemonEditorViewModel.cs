@@ -426,7 +426,7 @@ public partial class PokemonEditorViewModel : ViewModelBase
 
     private void UpdateTitle()
     {
-        var speciesName = GameInfo.Strings.Species[Species];
+        var speciesName = StringResourceLookup.Species((ushort)Species);
         Title = Species == 0 ? "Empty Slot" : $"Editing: {speciesName}";
     }
 

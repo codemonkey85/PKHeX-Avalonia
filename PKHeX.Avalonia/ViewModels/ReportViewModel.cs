@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using PKHeX.Avalonia.Services;
 using PKHeX.Core;
 
@@ -72,13 +68,12 @@ public partial class ReportEntryViewModel : ObservableObject
         Level = pk.CurrentLevel;
         Nature = ((Nature)pk.Nature).ToString();
 
-        var strings = GameInfo.Strings;
-        Ability = SafeLookup(strings.Ability, pk.Ability);
-        HeldItem = SafeLookup(strings.Item, pk.HeldItem);
-        Move1 = SafeLookup(strings.Move, pk.Move1);
-        Move2 = SafeLookup(strings.Move, pk.Move2);
-        Move3 = SafeLookup(strings.Move, pk.Move3);
-        Move4 = SafeLookup(strings.Move, pk.Move4);
+        Ability = StringResourceLookup.Ability(pk.Ability);
+        HeldItem = StringResourceLookup.Item(pk.HeldItem);
+        Move1 = StringResourceLookup.Move(pk.Move1);
+        Move2 = StringResourceLookup.Move(pk.Move2);
+        Move3 = StringResourceLookup.Move(pk.Move3);
+        Move4 = StringResourceLookup.Move(pk.Move4);
         
         IV_HP = pk.IV_HP;
         IV_Atk = pk.IV_ATK;
@@ -93,12 +88,5 @@ public partial class ReportEntryViewModel : ObservableObject
         EV_SpA = pk.EV_SPA;
         EV_SpD = pk.EV_SPD;
         EV_Spe = pk.EV_SPE;
-    }
-
-    private static string SafeLookup(IReadOnlyList<string> list, int index)
-    {
-        if (index < 0 || index >= list.Count)
-            return string.Empty;
-        return list[index];
     }
 }
