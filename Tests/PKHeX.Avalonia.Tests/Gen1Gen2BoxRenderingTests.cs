@@ -26,7 +26,7 @@ public class Gen1Gen2BoxRenderingTests(ITestOutputHelper output)
         "gen2_crystal.sav",
     ];
 
-    public static IEnumerable<object[]> Gen12Saves()
+    private static IEnumerable<(SaveFile Sav, string Name)> LoadGen12Saves()
     {
         var dir = SaveFileFixture.FindSaveFilesPath();
         if (dir == null) yield break;
@@ -36,7 +36,7 @@ public class Gen1Gen2BoxRenderingTests(ITestOutputHelper output)
             var path = Path.Combine(dir, name);
             var sav = SaveFileFixture.LoadSave(path);
             if (sav == null) continue;
-            yield return [sav, name];
+            yield return (sav, name);
         }
     }
 
@@ -64,48 +64,59 @@ public class Gen1Gen2BoxRenderingTests(ITestOutputHelper output)
     }
 
     /// <summary>
-    /// For a real Gen 1/2 save with occupied slots, BoxViewer must surface those
-    /// slots — not mark them empty. This was the user-visible symptom of #69.
-    /// Also walks every box via NextBoxCommand so we cover all boxes, not just the first.
+    /// For every real Gen 1/2 save with occupied slots, BoxViewer must surface
+    /// those slots — not mark them empty. This was the user-visible symptom of #69.
+    /// Walks every box via <see cref="BoxViewerViewModel.NextBoxCommand"/>.
+    ///
+    /// Uses <c>[Fact]</c> with internal iteration so the test passes cleanly
+    /// when save files are unavailable (CI without the download script run).
     /// </summary>
-    [Theory, MemberData(nameof(Gen12Saves))]
-    public void BoxViewer_Gen12_OccupiedSlotsAreVisible(SaveFile sav, string label)
+    [Fact]
+    public void BoxViewer_Gen12_OccupiedSlotsAreVisible()
     {
-        var totalOccupied = SaveFileFixture.CountOccupiedSlots(sav);
-        output.WriteLine($"{label}: {totalOccupied} occupied slots in save");
-        if (totalOccupied == 0)
+        var saves = LoadGen12Saves().ToList();
+        if (saves.Count == 0)
         {
-            output.WriteLine("  empty save — nothing to verify");
+            output.WriteLine("No Gen 1/2 save files present — run Tests/savefiles/download_saves.sh to enable this check.");
             return;
         }
 
-        var sprite = new Mock<ISpriteRenderer>();
-        var vm = new BoxViewerViewModel(sav, sprite.Object);
-
-        int visibleAcrossBoxes = 0;
-        for (int b = 0; b < sav.BoxCount; b++)
+        foreach (var (sav, label) in saves)
         {
-            // vm starts at box 0 (from constructor); walk forward via command
-            foreach (var slot in vm.Slots)
+            var totalOccupied = SaveFileFixture.CountOccupiedSlots(sav);
+            output.WriteLine($"{label}: {totalOccupied} occupied slots in save");
+            if (totalOccupied == 0)
             {
-                var raw = sav.GetBoxSlotAtIndex(vm.CurrentBox, slot.Slot);
-                var rawOccupied = raw.Species != 0;
-
-                Assert.Equal(rawOccupied, slot.IsEmpty == false);
-                if (!slot.IsEmpty)
-                {
-                    Assert.Equal(raw.Species, slot.Species);
-                    visibleAcrossBoxes++;
-                }
+                output.WriteLine("  empty save — nothing to verify");
+                continue;
             }
 
-            // Advance to next box for the next iteration (wraps; that's fine)
-            if (vm.NextBoxCommand.CanExecute(null))
-                vm.NextBoxCommand.Execute(null);
-        }
+            var sprite = new Mock<ISpriteRenderer>();
+            var vm = new BoxViewerViewModel(sav, sprite.Object);
 
-        Assert.Equal(totalOccupied, visibleAcrossBoxes);
-        output.WriteLine($"  {visibleAcrossBoxes} slots visible in BoxViewer (matches save)");
+            int visibleAcrossBoxes = 0;
+            for (int b = 0; b < sav.BoxCount; b++)
+            {
+                foreach (var slot in vm.Slots)
+                {
+                    var raw = sav.GetBoxSlotAtIndex(vm.CurrentBox, slot.Slot);
+                    var rawOccupied = raw.Species != 0;
+
+                    Assert.Equal(rawOccupied, slot.IsEmpty == false);
+                    if (!slot.IsEmpty)
+                    {
+                        Assert.Equal(raw.Species, slot.Species);
+                        visibleAcrossBoxes++;
+                    }
+                }
+
+                if (vm.NextBoxCommand.CanExecute(null))
+                    vm.NextBoxCommand.Execute(null);
+            }
+
+            Assert.Equal(totalOccupied, visibleAcrossBoxes);
+            output.WriteLine($"  {visibleAcrossBoxes} slots visible in BoxViewer (matches save)");
+        }
     }
 
     /// <summary>
@@ -113,22 +124,32 @@ public class Gen1Gen2BoxRenderingTests(ITestOutputHelper output)
     /// editor. With the old bug, the slot was marked empty so the click path
     /// short-circuited on <c>Species == 0</c>.
     /// </summary>
-    [Theory, MemberData(nameof(Gen12Saves))]
-    public void PokemonEditor_Gen12_LoadsFromOccupiedSlot(SaveFile sav, string label)
+    [Fact]
+    public void PokemonEditor_Gen12_LoadsFromOccupiedSlot()
     {
-        var first = SaveFileFixture.GetFirstOccupiedSlot(sav);
-        if (first == null)
+        var saves = LoadGen12Saves().ToList();
+        if (saves.Count == 0)
         {
-            output.WriteLine($"{label}: no occupied slots, skipping");
+            output.WriteLine("No Gen 1/2 save files present — run Tests/savefiles/download_saves.sh to enable this check.");
             return;
         }
 
-        var (pk, idx) = first.Value;
-        output.WriteLine($"{label}: slot {idx} species={pk.Species} ability={pk.Ability}");
+        foreach (var (sav, label) in saves)
+        {
+            var first = SaveFileFixture.GetFirstOccupiedSlot(sav);
+            if (first == null)
+            {
+                output.WriteLine($"{label}: no occupied slots, skipping");
+                continue;
+            }
 
-        var (vm, _, _) = TestHelpers.CreateTestViewModel(pk, sav);
-        Assert.NotEqual(0, vm.Species);
-        Assert.NotEqual("Empty Slot", vm.Title);
-        _ = vm.IsLegal; // must not throw
+            var (pk, idx) = first.Value;
+            output.WriteLine($"{label}: slot {idx} species={pk.Species} ability={pk.Ability}");
+
+            var (vm, _, _) = TestHelpers.CreateTestViewModel(pk, sav);
+            Assert.NotEqual(0, vm.Species);
+            Assert.NotEqual("Empty Slot", vm.Title);
+            _ = vm.IsLegal; // must not throw
+        }
     }
 }
