@@ -68,7 +68,6 @@ public partial class GroupViewerViewModel : ViewModelBase
         CurrentGroupName = group.GroupName;
 
         Slots.Clear();
-        var strings = GameInfo.Strings;
 
         for (int i = 0; i < group.Slots.Length; i++)
         {
@@ -88,17 +87,17 @@ public partial class GroupViewerViewModel : ViewModelBase
                 IsEmpty = isEmpty,
                 IsShiny = pk.IsShiny,
                 Nickname = isEmpty ? string.Empty : pk.Nickname,
-                SpeciesName = isEmpty ? string.Empty : strings.Species[pk.Species],
+                SpeciesName = isEmpty ? string.Empty : StringResourceLookup.Species(pk.Species),
                 Level = pk.CurrentLevel,
                 Gender = (byte)pk.Gender,
                 HeldItem = (ushort)pk.HeldItem,
-                HeldItemName = pk.HeldItem > 0 ? strings.Item[pk.HeldItem] : string.Empty,
+                HeldItemName = pk.HeldItem > 0 ? StringResourceLookup.Item(pk.HeldItem) : string.Empty,
                 IsEgg = pk.IsEgg,
                 Form = pk.Form,
                 Ability = (ushort)pk.Ability,
-                AbilityName = strings.Ability[pk.Ability],
+                AbilityName = StringResourceLookup.Ability(pk.Ability),
                 Nature = (byte)pk.Nature,
-                NatureName = strings.Natures[(int)pk.Nature],
+                NatureName = StringResourceLookup.Nature((int)pk.Nature),
                 ShowdownSummary = isEmpty ? string.Empty : new ShowdownSet(pk).Text,
             });
         }

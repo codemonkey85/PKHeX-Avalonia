@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using PKHeX.Avalonia.Services;
 using PKHeX.Core;
 
 namespace PKHeX.Avalonia.ViewModels;
@@ -31,7 +32,7 @@ public class PKMSummary
     public PKMSummary(PKM pk)
     {
         Species = pk.Species;
-        SpeciesName = GameInfo.Strings.Species[pk.Species];
+        SpeciesName = StringResourceLookup.Species(pk.Species);
         Level = pk.CurrentLevel;
         IsShiny = pk.IsShiny;
         OT = pk.OriginalTrainerName;

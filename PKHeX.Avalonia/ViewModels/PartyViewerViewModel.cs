@@ -43,7 +43,6 @@ public partial class PartyViewerViewModel : ViewModelBase
         var previousIndex = SelectedIndex;
         Slots.Clear();
         
-        var strings = GameInfo.Strings;
         var partyCount = _sav.PartyCount;
         
         for (int i = 0; i < 6; i++)
@@ -63,11 +62,11 @@ public partial class PartyViewerViewModel : ViewModelBase
                 IsEmpty = isEmpty,
                 IsShiny = pk.IsShiny,
                 Nickname = isEmpty ? string.Empty : pk.Nickname,
-                SpeciesName = isEmpty ? string.Empty : (pk.Species < strings.Species.Count ? strings.Species[pk.Species] : string.Empty),
+                SpeciesName = isEmpty ? string.Empty : StringResourceLookup.Species(pk.Species),
                 Level = pk.CurrentLevel,
                 Gender = (byte)pk.Gender,
                 HeldItem = (ushort)pk.HeldItem,
-                HeldItemName = pk.HeldItem > 0 && pk.HeldItem < strings.Item.Count ? strings.Item[pk.HeldItem] : string.Empty,
+                HeldItemName = pk.HeldItem > 0 ? StringResourceLookup.Item(pk.HeldItem) : string.Empty,
                 IsEgg = pk.IsEgg,
                 CurrentHp = (ushort)pk.Stat_HPCurrent,
                 MaxHp = (ushort)pk.Stat_HPMax,

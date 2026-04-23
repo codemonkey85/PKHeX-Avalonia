@@ -211,7 +211,7 @@ public partial class PKMDatabaseEntry : ObservableObject
     }
 
     public string Level => PKM.CurrentLevel.ToString();
-    public string NatureName => GameInfo.Strings.Natures[(int)PKM.Nature];
+    public string NatureName => StringResourceLookup.Nature((int)PKM.Nature);
     public string Gender => PKM.Gender switch { 0 => "♂", 1 => "♀", _ => "-" };
 
     public PKMDatabaseEntry(PKM pkm, ISpriteRenderer renderer)
