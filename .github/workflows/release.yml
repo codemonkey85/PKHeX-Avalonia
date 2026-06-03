@@ -111,7 +111,7 @@ jobs:
         run: |
           mkdir -p AppDir/usr/bin
 
-          cp publish/PKHeX.Avalonia AppDir/usr/bin/
+          cp publish/* AppDir/usr/bin/
 
           cp PKHeX.Avalonia/Assets/Icons/icon.png AppDir/pkhex.png
 
