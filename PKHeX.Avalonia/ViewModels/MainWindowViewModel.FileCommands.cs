@@ -113,22 +113,13 @@ public partial class MainWindowViewModel
         var path = await _dialogService.OpenFolderAsync("Select Folder to Dump Boxes");
         if (string.IsNullOrEmpty(path)) return;
 
-        int count = 0;
-        for (int b = 0; b < CurrentSave.BoxCount; b++)
+        // Core's DumpBoxes writes proper .pk* files (decrypted party format with
+        // OT/nickname blocks for Gen 1/2) that can be re-imported on any save.
+        int count = CurrentSave.DumpBoxes(path);
+        if (count < 0)
         {
-            var boxData = CurrentSave.GetBoxData(b);
-            for (int s = 0; s < boxData.Length; s++)
-            {
-                var pk = boxData[s];
-                if (pk.Species == 0) continue;
-
-                var fileName = $"{b + 1:00}_{s + 1:00} - {pk.Nickname} - {pk.PID:X8}.{pk.Extension}";
-                foreach (var c in Path.GetInvalidFileNameChars())
-                    fileName = fileName.Replace(c, '_');
-
-                File.WriteAllBytes(Path.Combine(path, fileName), pk.Data);
-                count++;
-            }
+            await _dialogService.ShowErrorAsync("Dump Boxes", "This save file has no boxes to dump.");
+            return;
         }
 
         await _dialogService.ShowInformationAsync("Dump Boxes", $"Dumped {count} Pokémon to {path}");
@@ -142,62 +133,15 @@ public partial class MainWindowViewModel
         var path = await _dialogService.OpenFolderAsync("Select Folder to Load Boxes");
         if (string.IsNullOrEmpty(path)) return;
 
-        var extensions = EntityFileExtension.GetExtensions()
-            .Select(e => "." + e)
-            .ToHashSet(StringComparer.OrdinalIgnoreCase);
-
-        var files = Directory.EnumerateFiles(path, "*.*", SearchOption.AllDirectories)
-            .Where(f => extensions.Contains(Path.GetExtension(f)))
-            .ToList();
-
-        if (files.Count == 0)
-        {
-            await _dialogService.ShowInformationAsync("Load Boxes", "No supported Pokémon files found in the selected folder.");
-            return;
-        }
-
-        int loaded = 0, skipped = 0, currentBox = 0, currentSlot = 0;
-
-        foreach (var file in files)
-        {
-            try
-            {
-                var pk = EntityFormat.GetFromBytes(File.ReadAllBytes(file), CurrentSave.Context);
-                if (pk is null) { skipped++; continue; }
-
-                bool placed = false;
-                while (currentBox < CurrentSave.BoxCount)
-                {
-                    while (currentSlot < CurrentSave.BoxSlotCount)
-                    {
-                        if (CurrentSave.GetBoxSlotAtIndex(currentBox, currentSlot).Species == 0)
-                        {
-                            CurrentSave.SetBoxSlotAtIndex(pk, currentBox, currentSlot);
-                            placed = true;
-                            loaded++;
-                            break;
-                        }
-                        currentSlot++;
-                    }
-                    if (placed) break;
-                    currentSlot = 0;
-                    currentBox++;
-                }
-
-                if (!placed) break;
-            }
-            catch
-            {
-                skipped++;
-            }
-        }
+        // Core's LoadBoxes handles file detection, format conversion between
+        // games/generations (e.g. Gold -> Crystal) and compatibility checks.
+        int count = CurrentSave.LoadBoxes(path, out var result, all: true);
 
         BoxViewer?.RefreshCurrentBox();
 
-        var message = $"Loaded {loaded} Pokémon.";
-        if (skipped > 0) message += $" Skipped {skipped} files.";
-        if (currentBox >= CurrentSave.BoxCount && loaded < files.Count) message += " Stopped — boxes are full.";
-
-        await _dialogService.ShowInformationAsync("Load Boxes", message);
+        if (count < 0)
+            await _dialogService.ShowErrorAsync("Load Boxes", result);
+        else
+            await _dialogService.ShowInformationAsync("Load Boxes", result);
     }
 }
