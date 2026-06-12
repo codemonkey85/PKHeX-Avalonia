@@ -84,7 +84,6 @@
                      <DataGrid ItemsSource="{Binding SelectedArea.Slots}" AutoGenerateColumns="False" CanUserResizeColumns="True" CanUserSortColumns="False">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Pos" Binding="{Binding SlotPosition}" IsReadOnly="True" />
-                            <DataGridCheckBoxColumn Header="Inv" Binding="{Binding Invisible}" />
                             
                             <DataGridTemplateColumn Header="Species" Width="150">
                                 <DataGridTemplateColumn.CellTemplate>

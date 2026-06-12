@@ -102,7 +102,7 @@ public partial class MedalCategoryViewModel : ViewModelBase
 
 public class MedalItemViewModel
 {
-    public MedalItemViewModel(int index, Medal5State state, bool isObtained)
+    public MedalItemViewModel(int index, MedalState5 state, bool isObtained)
     {
         Index = index;
         State = state;
@@ -110,16 +110,16 @@ public class MedalItemViewModel
     }
 
     public int Index { get; }
-    public Medal5State State { get; }
+    public MedalState5 State { get; }
     public bool IsObtained { get; }
 
     public string StateText => State switch
     {
-        Medal5State.Unobtained => "Not Obtained",
-        Medal5State.HintReady => "Hint Ready",
-        Medal5State.HintObtained => "Hint Obtained",
-        Medal5State.ObtainReady => "Ready to Obtain",
-        Medal5State.Obtained => "Obtained ✓",
+        MedalState5.Unobtained => "Not Obtained",
+        MedalState5.HintReady => "Hint Ready",
+        MedalState5.HintObtained => "Hint Obtained",
+        MedalState5.ObtainReady => "Ready to Obtain",
+        MedalState5.Obtained => "Obtained ✓",
         _ => State.ToString()
     };
 }

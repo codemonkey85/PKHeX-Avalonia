@@ -212,7 +212,7 @@ public partial class Misc4EditorViewModel : ViewModelBase
 
         if (_sav is SAV4HGSS hgss)
         {
-            PokeathlonPoints = hgss.PokeathlonPoints;
+            PokeathlonPoints = hgss.Pokeathlon.Points;
             var mapState = (int)hgss.MapUnlockState;
             MapUnlockState = mapState >= MapStates.Length ? MapStates.Length - 1 : mapState;
         }
@@ -228,7 +228,7 @@ public partial class Misc4EditorViewModel : ViewModelBase
 
         if (_sav is SAV4HGSS hgss)
         {
-            hgss.PokeathlonPoints = PokeathlonPoints;
+            hgss.Pokeathlon.Points = PokeathlonPoints;
             hgss.MapUnlockState = (MapUnlockState4)MapUnlockState;
         }
     }
