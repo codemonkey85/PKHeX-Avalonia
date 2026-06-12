@@ -37,8 +37,8 @@ public class RealSaveFileTests(ITestOutputHelper output)
         var savPath = FindSaveFilesPath();
         if (savPath == null) { skipReason = "savefiles directory not found"; return null; }
 
-        var sav = LoadSave(Path.Combine(savPath, "emerald.sav"));
-        if (sav == null) { skipReason = "emerald.sav missing"; return null; }
+        var sav = LoadSave(Path.Combine(savPath, "gen3_emerald.sav"));
+        if (sav == null) { skipReason = "gen3_emerald.sav missing"; return null; }
 
         skipReason = null;
         return sav;
@@ -231,7 +231,7 @@ public class RealSaveFileTests(ITestOutputHelper output)
     }
 
     // =======================================================================
-    // Gen7 Sun/Moon: Tests/savefiles/sun.main
+    // Gen7 Sun/Moon: Tests/savefiles/gen7_sun.main
     // =======================================================================
 
     private SaveFile? GetSun(out string? skipReason)
@@ -239,8 +239,8 @@ public class RealSaveFileTests(ITestOutputHelper output)
         var savPath = FindSaveFilesPath();
         if (savPath == null) { skipReason = "savefiles directory not found"; return null; }
 
-        var sav = LoadSave(Path.Combine(savPath, "sun.main"));
-        if (sav == null) { skipReason = "sun.main missing or unrecognised format"; return null; }
+        var sav = LoadSave(Path.Combine(savPath, "gen7_sun.main"));
+        if (sav == null) { skipReason = "gen7_sun.main missing or unrecognised format"; return null; }
 
         skipReason = null;
         return sav;
