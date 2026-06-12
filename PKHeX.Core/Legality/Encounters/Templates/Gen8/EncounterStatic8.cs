@@ -27,7 +27,7 @@ public sealed record EncounterStatic8(GameVersion Version = GameVersion.SWSH)
     public Crossover8 Crossover { get; init; }
     public AreaWeather8 Weather { get; init; } = AreaWeather8.Normal;
     public byte DynamaxLevel { get; init; }
-    public Nature Nature { get; init; }
+    public Nature Nature { get; init; } = Nature.Random;
     public Shiny Shiny { get; init; }
     public AbilityPermission Ability { get; init; }
     public byte Gender { get; init; } = FixedGenderUtil.GenderRandom;
@@ -104,6 +104,9 @@ public sealed record EncounterStatic8(GameVersion Version = GameVersion.SWSH)
             pk.SetMoves(Moves);
         else
             EncounterUtil.SetEncounterMoves(pk, version, Level);
+        if (Relearn.HasMoves)
+            pk.SetRelearnMoves(Relearn);
+
         pk.ResetPartyStats();
 
         return pk;

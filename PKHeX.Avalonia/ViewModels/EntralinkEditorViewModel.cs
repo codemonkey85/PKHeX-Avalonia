@@ -203,8 +203,7 @@ public partial class EntreeSlotViewModel : ViewModelBase
         Move = _slot.Move;
         Gender = _slot.Gender;
         Form = _slot.Form;
-        Animation = _slot.Animation;
-        Invisible = _slot.Invisible;
+        Animation = (int)_slot.Animation;
     }
 
     public string SlotPosition => GetPositionName(_slot.Area);
@@ -236,8 +235,5 @@ public partial class EntreeSlotViewModel : ViewModelBase
     partial void OnFormChanged(int value) => _slot.Form = (byte)value;
     
     [ObservableProperty] private int _animation;
-    partial void OnAnimationChanged(int value) => _slot.Animation = value;
-
-    [ObservableProperty] private bool _invisible;
-    partial void OnInvisibleChanged(bool value) => _slot.Invisible = value;
+    partial void OnAnimationChanged(int value) => _slot.Animation = (EntreeForestAnimation)value;
 }

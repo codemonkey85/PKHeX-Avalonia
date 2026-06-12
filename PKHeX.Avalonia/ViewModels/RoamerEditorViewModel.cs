@@ -73,7 +73,7 @@ public partial class RoamerEditorViewModel : ViewModelBase
     partial void OnActiveChanged(bool value)
     {
         if (_roamer3 is not null)
-            _roamer3.Active = value;
+            _roamer3.IsActive = value;
     }
 
     [ObservableProperty]
@@ -108,7 +108,7 @@ public partial class RoamerEditorViewModel : ViewModelBase
         IvSpA = _roamer3.IV_SPA;
         IvSpD = _roamer3.IV_SPD;
 
-        Active = _roamer3.Active;
+        Active = _roamer3.IsActive;
         CurrentLevel = _roamer3.CurrentLevel;
         CurrentHP = _roamer3.HP_Current;
     }

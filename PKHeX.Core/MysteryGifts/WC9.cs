@@ -575,7 +575,7 @@ public sealed class WC9(Memory<byte> raw) : DataMysteryGift(raw), ILangNick, INa
         var av = GetAbilityIndex(criteria);
         pk.RefreshAbility(av);
         SetPID(pk);
-        SetIVs(pk);
+        SetIVs(pk, criteria);
     }
 
     private int GetAbilityIndex(in EncounterCriteria criteria) => GetAbilityIndex(criteria, AbilityType);
@@ -630,31 +630,12 @@ public sealed class WC9(Memory<byte> raw) : DataMysteryGift(raw), ILangNick, INa
         pk.PID = GetPID(pk, PIDType);
     }
 
-    private void SetIVs(PK9 pk)
+    private void SetIVs(PK9 pk, in EncounterCriteria criteria)
     {
         Span<int> finalIVs = stackalloc int[6];
         GetIVs(finalIVs);
-        var ivflag = finalIVs.IndexOfAny(0xFC, 0xFD, 0xFE);
         var rng = Util.Rand;
-        if (ivflag == -1) // Random IVs
-        {
-            for (int i = 0; i < finalIVs.Length; i++)
-            {
-                if (finalIVs[i] > 31)
-                    finalIVs[i] = rng.Next(32);
-            }
-        }
-        else // 1/2/3 perfect IVs
-        {
-            int IVCount = finalIVs[ivflag] - 0xFB;
-            do { finalIVs[rng.Next(6)] = 31; }
-            while (finalIVs.Count(31) < IVCount);
-            for (int i = 0; i < finalIVs.Length; i++)
-            {
-                if (finalIVs[i] != 31)
-                    finalIVs[i] = rng.Next(32);
-            }
-        }
+        ApplyTemplateIVs(finalIVs, criteria, rng, _ => rng.Next(32));
         pk.SetIVs(finalIVs);
     }
 
@@ -740,15 +721,9 @@ public sealed class WC9(Memory<byte> raw) : DataMysteryGift(raw), ILangNick, INa
 
     private bool IsMatchSize(PKM pk, IScaledSize s)
     {
-        if (CardID == 1513 && s is { HeightScalar: 255, WeightScalar: 255 } and IHomeTrack { HasTracker: true })
-        {
-            // Hisiuan Zoroark was locked to 128 but could be bumped to 255 via HOME misapplying PLA's fix for Cavern alphas.
-            // This is an OK case of mismatch.
-            // This was fixed on HOME 4.0.0 update (2026, a few years after this event distribution ended), and samples could be deposited afterward (thus not requiring 255-all).
-            if (pk is not IScaledSize3 { Scale: not 255 }) // if Scale is also present, should be 255.
-                return true;
-            // Otherwise, fall through and check via usual logic, which will return false if it doesn't match 128.
-        }
+        var cardID = CardID;
+        if (HomeQuirks.IsGlitchedHisuianZoroarkSV(pk, s, cardID))
+            return true;
 
         // Check for strict match of Height/Weight.
         if (!Encounter9RNG.IsHeightMatchSV(pk, (byte)HeightValue))
@@ -758,7 +733,7 @@ public sealed class WC9(Memory<byte> raw) : DataMysteryGift(raw), ILangNick, INa
 
         // S/V 1.2.0 added scale specification to all available (replaced) and future cards.
         // If it is a pre-patch card, double check that the date was possible to redeem before the patch.
-        if (IsBeforePatch120(CardID) && (pk.MetDate is not { } valid || IsBeforePatch120(valid)))
+        if (IsBeforePatch120(cardID) && (pk.MetDate is not { } valid || IsBeforePatch120(valid)))
             return true; // No scale to check, can be anything random triangular = rand(127) + rand(128);
 
         if (Scale == 256) // Random

@@ -45,6 +45,9 @@
     <!-- Explicitly upgrade transitive native assets to avoid version conflicts -->
     <PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="3.116.1" />
 
+    <!-- Security: override vulnerable transitive dependency from Avalonia (NU1903 / GHSA-xrw6-gwf8-vvr9) -->
+    <PackageReference Include="Tmds.DBus.Protocol" Version="0.21.3" />
+
     <!-- Diagnostics (dev only) -->
     <PackageReference Include="Avalonia.Diagnostics" Version="11.2.3" Condition="'$(Configuration)' == 'Debug'" />
   </ItemGroup>

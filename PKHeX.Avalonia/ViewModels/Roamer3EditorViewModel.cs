@@ -91,7 +91,7 @@ public partial class Roamer3EditorViewModel : ViewModelBase
             }
         }
 
-        IsActive = _roamer.Active;
+        IsActive = _roamer.IsActive;
         CurrentLevel = _roamer.CurrentLevel;
         CurrentHp = _roamer.HP_Current;
 
@@ -139,7 +139,7 @@ public partial class Roamer3EditorViewModel : ViewModelBase
         if (SelectedSpeciesIndex >= 0 && SelectedSpeciesIndex < SpeciesList.Count)
             _roamer.Species = (ushort)SpeciesList[SelectedSpeciesIndex].Value;
 
-        _roamer.Active = IsActive;
+        _roamer.IsActive = IsActive;
         _roamer.CurrentLevel = CurrentLevel;
         _roamer.HP_Current = CurrentHp;
 
