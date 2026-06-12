@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.Input;
+using PKHeX.Avalonia.Services;
 using PKHeX.Avalonia.Views;
 using PKHeX.Core;
 
@@ -11,7 +12,7 @@ public partial class MainWindowViewModel
     {
         var path = await _dialogService.OpenFileAsync(
             "Open Save File",
-            ["*.sav", "*.bin", "main", "*"]);
+            FileDialogFilterFactory.OpenSaveFilePatterns);
 
         if (string.IsNullOrEmpty(path))
             return;

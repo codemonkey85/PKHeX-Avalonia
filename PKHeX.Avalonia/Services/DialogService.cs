@@ -21,15 +21,7 @@ public sealed class DialogService : IDialogService
         var window = GetMainWindow();
         if (window is null) return null;
 
-        var fileTypes = new List<FilePickerFileType>
-        {
-            new("All Files") { Patterns = ["*.*"] }
-        };
-
-        if (filters is not null)
-        {
-            fileTypes.Insert(0, new FilePickerFileType("Supported Files") { Patterns = filters });
-        }
+        var fileTypes = FileDialogFilterFactory.BuildOpenFileTypes(filters);
 
         var options = new FilePickerOpenOptions
         {
