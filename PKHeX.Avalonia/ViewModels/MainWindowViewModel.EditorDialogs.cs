@@ -33,6 +33,15 @@ public partial class MainWindowViewModel
             window?.Close();
         };
         await _dialogService.ShowDialogAsync(view, "Settings");
+
+        // The sprite preference may have changed; re-apply the style and refresh open views.
+        if (CurrentSave is not null)
+        {
+            _spriteRenderer.Initialize(CurrentSave);
+            BoxViewer?.RefreshCurrentBox();
+            PartyViewer?.RefreshParty();
+            CurrentPokemonEditor?.RefreshSprite();
+        }
     }
 
     [RelayCommand]

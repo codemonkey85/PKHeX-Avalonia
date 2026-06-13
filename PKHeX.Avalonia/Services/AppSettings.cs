@@ -23,6 +23,7 @@ public partial class AppSettings : ObservableObject, IProgramSettings
     [ObservableProperty] private LegalitySettings _legality = new();
     [ObservableProperty] private EntityConverterSettings _converter = new();
     [ObservableProperty] private LocalResourceSettings _localResources = new();
+    [ObservableProperty] private SpriteSettings _sprite = new();
 
     public static AppSettings Load()
     {
@@ -79,5 +80,13 @@ public partial class AppSettings : ObservableObject, IProgramSettings
         public string Version { get; set; } = string.Empty;
         public bool ShowChangelogOnUpdate { get; set; } = true;
         public bool ForceHaXOnLaunch { get; set; } = false;
+    }
+
+    /// <summary>
+    /// Sprite display preferences. Defined locally since Core does not expose a sprite settings type.
+    /// </summary>
+    public class SpriteSettings
+    {
+        public SpritePreference SpritePreference { get; set; } = SpritePreference.UseSuggested;
     }
 }

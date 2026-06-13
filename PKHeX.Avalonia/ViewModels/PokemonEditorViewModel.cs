@@ -416,6 +416,9 @@ public partial class PokemonEditorViewModel : ViewModelBase
         OnPropertyChanged(nameof(HasForms));
     }
 
+    /// <summary>Re-renders the editor preview sprite (e.g. after the sprite style changes).</summary>
+    public void RefreshSprite() => UpdateSprite();
+
     private void UpdateSprite()
     {
         _pk.Species = (ushort)Species;

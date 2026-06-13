@@ -16,10 +16,21 @@ public sealed class SpriteLoader
     private readonly ConcurrentDictionary<string, SKBitmap?> _cache = new();
     private readonly HashSet<string> _availableResources;
 
-    private const string SpritePrefix = "PKHeX.Avalonia.Assets.Images.Big_Pokemon_Sprites.";
-    private const string ShinyPrefix = "PKHeX.Avalonia.Assets.Images.Big_Shiny_Sprites.";
-    private const string ItemPrefix = "PKHeX.Avalonia.Assets.Images.Big_Items.";
-    private const string OverlayPrefix = "PKHeX.Avalonia.Assets.Images.Pokemon_Sprite_Overlays.";
+    private const string ImagePrefix = "PKHeX.Avalonia.Assets.Images.";
+    private const string ItemPrefix = ImagePrefix + "Big_Items.";
+    private const string OverlayPrefix = ImagePrefix + "Pokemon_Sprite_Overlays.";
+
+    /// <summary>Active sprite style; set per loaded save by <see cref="AvaloniaSpriteRenderer"/>.</summary>
+    public SpriteStyle Style { get; set; } = SpriteStyle.Classic;
+
+    private readonly record struct StyleResources(string NormalFolder, string? ShinyFolder, char Letter, string EggFile);
+
+    private static StyleResources GetStyleResources(SpriteStyle style) => style switch
+    {
+        SpriteStyle.Mugshot => new StyleResources("Legends_Arceus_Sprites.", "Legends_Arceus_Shiny_Sprites.", 'c', "c_egg.png"),
+        SpriteStyle.Artwork => new StyleResources("Artwork_Pokemon_Sprites.", null, 'a', "a_egg.png"),
+        _ => new StyleResources("Big_Pokemon_Sprites.", "Big_Shiny_Sprites.", 'b', "b_egg.png"),
+    };
 
     // Species that show default sprite regardless of form
     private static readonly HashSet<ushort> SpeciesDefaultFormSprite =
@@ -86,10 +97,11 @@ public sealed class SpriteLoader
             }
         }
 
-        // Ultimate fallback: just species
+        // Ultimate fallback: just species, in the active style
         if (bitmap is null)
         {
-            var speciesOnlyName = $"{SpritePrefix}b_{species}.png";
+            var res = GetStyleResources(Style);
+            var speciesOnlyName = $"{ImagePrefix}{res.NormalFolder}{res.Letter}_{species}.png";
             bitmap = LoadSprite(speciesOnlyName);
         }
 
@@ -104,11 +116,14 @@ public sealed class SpriteLoader
 
     public SKBitmap? GetEggSprite(ushort species)
     {
-        // Manaphy has a special egg
-        if (species == (ushort)Species.Manaphy)
-            return LoadFromPrefix(SpritePrefix, "b_490_e.png");
+        var res = GetStyleResources(Style);
+        var folder = $"{ImagePrefix}{res.NormalFolder}";
 
-        return LoadFromPrefix(SpritePrefix, "b_egg.png");
+        // Manaphy has a special egg sprite, only present in the classic set.
+        if (species == (ushort)Species.Manaphy && Style == SpriteStyle.Classic)
+            return LoadFromPrefix(folder, "b_490_e.png");
+
+        return LoadFromPrefix(folder, res.EggFile);
     }
 
     public SKBitmap? GetItemSprite(int itemId)
@@ -122,9 +137,12 @@ public sealed class SpriteLoader
 
     private string GetResourceName(ushort species, byte form, byte gender, uint formarg, bool shiny, EntityContext context)
     {
-        var prefix = shiny ? ShinyPrefix : SpritePrefix;
+        var res = GetStyleResources(Style);
         var spriteName = GetSpriteName(species, form, gender, formarg, context);
-        return $"{prefix}b{spriteName}.png";
+        var useShiny = shiny && res.ShinyFolder is not null;
+        var folder = useShiny ? res.ShinyFolder! : res.NormalFolder;
+        var shinySuffix = useShiny ? "s" : string.Empty;
+        return $"{ImagePrefix}{folder}{res.Letter}{spriteName}{shinySuffix}.png";
     }
 
     private static string GetSpriteName(ushort species, byte form, byte gender, uint formarg, EntityContext context)
@@ -167,7 +185,6 @@ public sealed class SpriteLoader
             sb.Append('-').Append(formarg);
         }
 
-        // Note: Shiny uses separate folder (ShinyPrefix), not a filename suffix
         return sb.ToString();
     }
 

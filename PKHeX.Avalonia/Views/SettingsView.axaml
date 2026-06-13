@@ -1,8 +1,13 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:PKHeX.Avalonia.ViewModels"
+             xmlns:conv="using:PKHeX.Avalonia.Converters"
              x:Class="PKHeX.Avalonia.Views.SettingsView"
              x:DataType="vm:SettingsViewModel">
+
+    <UserControl.Resources>
+        <conv:SpritePreferenceLabelConverter x:Key="SpritePrefLabel"/>
+    </UserControl.Resources>
 
     <ScrollViewer>
         <StackPanel Margin="24" Spacing="24">
@@ -64,7 +69,34 @@
                 </StackPanel>
             </Border>
 
-            <Button Content="Save Changes" 
+            <!-- Sprite Settings Card -->
+            <Border Classes="section-card" Padding="20" CornerRadius="8">
+                <StackPanel Spacing="16">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <TextBlock Text="🎨" FontSize="20" VerticalAlignment="Center"/>
+                        <TextBlock Text="Sprites" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <Grid ColumnDefinitions="*,Auto">
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Sprite Style" FontWeight="Medium"/>
+                            <TextBlock Text="Which Pokémon sprite set to display. 'Use Suggested' matches the loaded save's game (artwork for Scarlet/Violet, mugshots for Legends: Arceus, classic otherwise)."
+                                       FontSize="12" Opacity="0.6" TextWrapping="Wrap"/>
+                        </StackPanel>
+                        <ComboBox Grid.Column="1" MinWidth="170" VerticalAlignment="Center"
+                                  ItemsSource="{Binding SpritePreferences}"
+                                  SelectedItem="{Binding SpritePreference}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate x:CompileBindings="False">
+                                    <TextBlock Text="{Binding Converter={StaticResource SpritePrefLabel}}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <Button Content="Save Changes"
                     Command="{Binding SaveCommand}" 
                     Classes="accent"
                     HorizontalAlignment="Right" 
