@@ -39,6 +39,10 @@ public partial class SettingsViewModel : ViewModelBase
     [ObservableProperty] private bool _setUpdateRecords;
     [ObservableProperty] private bool _modifyUnset;
 
+    // Sprites
+    [ObservableProperty] private SpritePreference _spritePreference;
+    public IReadOnlyList<SpritePreference> SpritePreferences { get; } = Enum.GetValues<SpritePreference>();
+
     private void Load()
     {
         DefaultSaveVersion = _settings.Startup.DefaultSaveVersion;
@@ -53,6 +57,8 @@ public partial class SettingsViewModel : ViewModelBase
         SetUpdatePKM = _settings.SlotWrite.SetUpdatePKM;
         SetUpdateRecords = _settings.SlotWrite.SetUpdateRecords;
         ModifyUnset = _settings.SlotWrite.ModifyUnset;
+
+        SpritePreference = _settings.Sprite.SpritePreference;
     }
 
     [RelayCommand]
@@ -70,6 +76,8 @@ public partial class SettingsViewModel : ViewModelBase
         _settings.SlotWrite.SetUpdatePKM = SetUpdatePKM;
         _settings.SlotWrite.SetUpdateRecords = SetUpdateRecords;
         _settings.SlotWrite.ModifyUnset = ModifyUnset;
+
+        _settings.Sprite.SpritePreference = SpritePreference;
 
         _settings.Save();
         _settings.InitializeCore();

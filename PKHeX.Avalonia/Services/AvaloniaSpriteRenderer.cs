@@ -13,11 +13,19 @@ public sealed class AvaloniaSpriteRenderer : ISpriteRenderer
     private const int SpriteHeight = 56;
 
     private readonly SpriteLoader _loader = new();
+    private readonly AppSettings _settings;
     private EntityContext _context = EntityContext.None;
+
+    public AvaloniaSpriteRenderer(AppSettings settings)
+    {
+        _settings = settings;
+    }
 
     public void Initialize(SaveFile sav)
     {
         _context = sav.Context;
+        _loader.Style = SpriteStyleSelector.Resolve(_settings.Sprite.SpritePreference, sav);
+        _loader.ClearCache();
     }
 
     public Bitmap? GetSprite(PKM pk, bool isEgg = false)
