@@ -197,6 +197,13 @@ render ─► AvaloniaSpriteRenderer.GetSprite(pk)
   fallback chain (shiny→non-shiny→base form→species-only) applies; if all fail, the
   type-colored placeholder with `#<species>` is drawn. No crash.
 - **Shiny in Artwork mode:** non-shiny artwork + star overlay (documented above).
+- **Gen 9 species in Classic/Mugshot mode:** the classic (`b_*`) and mugshot (`c_*`) sets
+  only cover species up to #905; the artwork (`a_*`) set covers the full dex to #1025.
+  Under `UseSuggested` this never bites (SV/ZA auto-select Artwork). But if a user *forces*
+  Classic/Mugshot on a Gen 9 save, species 906–1025 have no sprite in that style and fall
+  back to the type-colored `#<species>` placeholder — same behavior as upstream, which also
+  lacks classic Gen 9 box sprites. This is also why Gen 9 species currently render as
+  placeholders in the app today (everything is forced classic).
 - **Style switch between saves:** cache keys include the folder namespace, so stale entries
   can't collide; `ClearCache()` on `Initialize` keeps memory bounded.
 - **Eggs:** style-appropriate egg sprite; Manaphy special egg only for Classic.
