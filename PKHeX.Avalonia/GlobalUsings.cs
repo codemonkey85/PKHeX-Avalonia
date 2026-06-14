@@ -1,7 +1,6 @@
-// Transitional global usings (removed in Phase 6 once the host's own files carry explicit usings).
-// While services/ViewModels migrate out of PKHeX.Avalonia.* into the inner layers, these keep the
-// host (App, Views, Services, Converters, and the not-yet-moved ViewModels) compiling without
-// touching every file's using list mid-migration.
+// The host is the composition root and Frameworks-&-Drivers layer: it implements the Application
+// ports (Abstractions) and references the Application services + Infrastructure it wires together.
+// These layers are used pervasively across the host's services/converters, so they are global usings.
 global using PKHeX.Application.Abstractions;
 global using PKHeX.Application.Services;
 global using PKHeX.Infrastructure;
