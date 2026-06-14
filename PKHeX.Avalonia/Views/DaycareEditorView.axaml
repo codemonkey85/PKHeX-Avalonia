@@ -25,7 +25,7 @@
                     <DataTemplate DataType="vm:DaycareSlotViewModel">
                         <Border Classes="section-card" Margin="0,0,0,8">
                             <Grid ColumnDefinitions="Auto,*,Auto">
-                                <Image Grid.Column="0" Source="{Binding Sprite}" Width="56" Height="48" Margin="0,0,12,0" />
+                                <Image Grid.Column="0" Source="{Binding Sprite, Converter={StaticResource PngBytesToBitmap}}" Width="56" Height="48" Margin="0,0,12,0" />
                                 <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
                                     <TextBlock Text="{Binding Species}" FontWeight="SemiBold" />
                                     <TextBlock Text="{Binding Level}" FontSize="12" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />

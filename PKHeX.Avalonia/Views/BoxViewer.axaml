@@ -118,7 +118,7 @@
                                             IsVisible="{Binding IsEmpty}" />
 
                                     <!-- Pokemon Sprite - scales with slot size -->
-                                    <Image Source="{Binding Sprite}"
+                                    <Image Source="{Binding Sprite, Converter={StaticResource PngBytesToBitmap}}"
                                            Stretch="Uniform"
                                            RenderOptions.BitmapInterpolationMode="HighQuality"
                                            IsVisible="{Binding !IsEmpty}"

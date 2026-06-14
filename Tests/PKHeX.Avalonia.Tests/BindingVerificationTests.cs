@@ -56,7 +56,7 @@ public class BindingVerificationTests
             
             // Skip DataTemplate bindings (these bind to item ViewModels, not the main ViewModel)
             // RibbonItemViewModel properties used in Ribbons tab ItemTemplate
-            var dataTemplateBindings = new[] { "DisplayName", "HasRibbon", "IsBooleanRibbon", "MaxCount", "RibbonCount", "Icon" };
+            var dataTemplateBindings = new[] { "DisplayName", "HasRibbon", "IsBooleanRibbon", "MaxCount", "RibbonCount", "IconResource" };
             if (dataTemplateBindings.Contains(bindingPath))
                 continue;
             

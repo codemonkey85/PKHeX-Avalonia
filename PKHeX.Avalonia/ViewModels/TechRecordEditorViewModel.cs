@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PKHeX.Avalonia.Services;
@@ -17,7 +16,7 @@ public partial class TechRecordItemViewModel : ObservableObject
     public string Name { get; init; } = "";
     public string TypeName { get; init; } = "";
     public int TypeId { get; init; }
-    public Bitmap? TypeIcon { get; init; }
+    public byte[]? TypeIcon { get; init; }
     
     // Status
     [ObservableProperty] private bool _isActive;

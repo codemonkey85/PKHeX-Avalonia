@@ -1,11 +1,10 @@
-using Avalonia.Media.Imaging;
 using PKHeX.Core;
 using SkiaSharp;
 
 namespace PKHeX.Avalonia.Services;
 
 /// <summary>
-/// Renders PKM sprites using SkiaSharp with real Pokémon sprites.
+/// Renders PKM sprites using SkiaSharp with real Pokémon sprites, returning PNG bytes.
 /// </summary>
 public sealed class AvaloniaSpriteRenderer : ISpriteRenderer
 {
@@ -28,7 +27,7 @@ public sealed class AvaloniaSpriteRenderer : ISpriteRenderer
         _loader.ClearCache();
     }
 
-    public Bitmap? GetSprite(PKM pk, bool isEgg = false)
+    public byte[]? GetSprite(PKM pk, bool isEgg = false)
     {
         if (pk.Species == 0)
             return GetEmptySlot();
@@ -45,21 +44,21 @@ public sealed class AvaloniaSpriteRenderer : ISpriteRenderer
             return CreatePlaceholderSprite(pk);
 
         using var composed = ComposeSprite(baseSprite, pk);
-        return ConvertToBitmap(composed);
+        return EncodePng(composed);
     }
 
-    public Bitmap? GetSprite(ushort species, byte form, byte gender, uint formarg, bool shiny, EntityContext context)
+    public byte[]? GetSprite(ushort species, byte form, byte gender, uint formarg, bool shiny, EntityContext context)
     {
         var skBitmap = _loader.GetSprite(species, form, gender, formarg, shiny, context);
         if (skBitmap == null) return null;
-        return ConvertToBitmap(skBitmap);
+        return EncodePng(skBitmap);
     }
 
-    public Bitmap? GetEmptySlot()
+    public byte[]? GetEmptySlot()
     {
         using var surface = SKSurface.Create(new SKImageInfo(SpriteWidth, SpriteHeight));
         surface.Canvas.Clear(SKColors.Transparent);
-        return ConvertToBitmap(surface);
+        return EncodePng(surface);
     }
 
     private SKBitmap ComposeSprite(SKBitmap baseSprite, PKM pk)
@@ -144,7 +143,7 @@ public sealed class AvaloniaSpriteRenderer : ISpriteRenderer
         return 0;
     }
 
-    private Bitmap CreatePlaceholderSprite(PKM pk)
+    private byte[] CreatePlaceholderSprite(PKM pk)
     {
         using var surface = SKSurface.Create(new SKImageInfo(SpriteWidth, SpriteHeight));
         var canvas = surface.Canvas;
@@ -179,23 +178,21 @@ public sealed class AvaloniaSpriteRenderer : ISpriteRenderer
         canvas.DrawText(text, SpriteWidth / 2 + 1, SpriteHeight / 2 + 5, SKTextAlign.Center, font, shadowPaint);
         canvas.DrawText(text, SpriteWidth / 2, SpriteHeight / 2 + 4, SKTextAlign.Center, font, textPaint);
 
-        return ConvertToBitmap(surface);
+        return EncodePng(surface);
     }
 
-    private static Bitmap ConvertToBitmap(SKSurface surface)
+    private static byte[] EncodePng(SKSurface surface)
     {
         using var image = surface.Snapshot();
         using var data = image.Encode(SKEncodedImageFormat.Png, 100);
-        using var stream = new MemoryStream(data.ToArray());
-        return new Bitmap(stream);
+        return data.ToArray();
     }
 
-    private static Bitmap ConvertToBitmap(SKBitmap bitmap)
+    private static byte[] EncodePng(SKBitmap bitmap)
     {
         using var image = SKImage.FromBitmap(bitmap);
         using var data = image.Encode(SKEncodedImageFormat.Png, 100);
-        using var stream = new MemoryStream(data.ToArray());
-        return new Bitmap(stream);
+        return data.ToArray();
     }
 
     private static SKColor GetTypeColor(int type)

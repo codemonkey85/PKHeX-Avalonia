@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PKHeX.Avalonia.Services;
@@ -156,7 +155,7 @@ public partial class HallOfFameMemberViewModel : ViewModelBase
         ? SpeciesName
         : $"{Nickname} ({SpeciesName})";
 
-    public Bitmap? Sprite
+    public byte[]? Sprite
     {
         get
         {

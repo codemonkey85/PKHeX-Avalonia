@@ -105,5 +105,5 @@ public partial class DaycareSlotViewModel : ViewModelBase
 
     public string Species => Pk?.Species > 0 ? StringResourceLookup.Species(Pk.Species) : "(Empty)";
     public string Level => Pk is not null && Pk.Species > 0 ? $"Lv. {Pk.CurrentLevel}" : "";
-    public object? Sprite => Pk is not null && Pk.Species > 0 ? _spriteRenderer.GetSprite(Pk) : null;
+    public byte[]? Sprite => Pk is not null && Pk.Species > 0 ? _spriteRenderer.GetSprite(Pk) : null;
 }

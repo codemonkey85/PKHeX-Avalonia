@@ -75,7 +75,7 @@
                                         <Border Margin="4" Padding="8" CornerRadius="4"
                                                 Background="{DynamicResource SystemControlBackgroundBaseLowBrush}">
                                             <StackPanel Width="80">
-                                                <Image Source="{Binding Sprite}"
+                                                <Image Source="{Binding Sprite, Converter={StaticResource PngBytesToBitmap}}"
                                                        Width="68" Height="56"
                                                        HorizontalAlignment="Center" />
                                                 <TextBlock Text="{Binding DisplayName}"

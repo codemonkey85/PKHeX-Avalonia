@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Avalonia.Media.Imaging;
 using PKHeX.Avalonia.Services;
 using PKHeX.Core;
 
@@ -126,7 +125,7 @@ public class EncounterResultViewModel // Removed 'partial' as it's not needed un
     }
     
     public IEncounterable Encounter { get; }
-    public Bitmap? Sprite { get; }
+    public byte[]? Sprite { get; }
     public string Species => GameInfo.Strings.Species.Count > _encounter.Species ? GameInfo.Strings.Species[_encounter.Species] : $"#{_encounter.Species}";
     public string Level => $"Lv. {_encounter.LevelMin}" + (_encounter.LevelMin != _encounter.LevelMax ? $"-{_encounter.LevelMax}" : "");
     public string Version => _encounter.Version.ToString();

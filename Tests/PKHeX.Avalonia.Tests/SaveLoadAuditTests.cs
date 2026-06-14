@@ -148,7 +148,7 @@ public class SaveLoadAuditTests(ITestOutputHelper output)
     public void ViewModel_BoxViewer_DoesNotThrow(SaveFile sav, string label)
     {
         output.WriteLine(label);
-        var spriteMock = new Moq.Mock<Services.ISpriteRenderer>();
+        var spriteMock = new Moq.Mock<ISpriteRenderer>();
         var ex = Record.Exception(() =>
         {
             var vm = new BoxViewerViewModel(sav, spriteMock.Object);
@@ -166,7 +166,7 @@ public class SaveLoadAuditTests(ITestOutputHelper output)
     public void ViewModel_PartyViewer_DoesNotThrow(SaveFile sav, string label)
     {
         output.WriteLine(label);
-        var spriteMock = new Moq.Mock<Services.ISpriteRenderer>();
+        var spriteMock = new Moq.Mock<ISpriteRenderer>();
         var ex = Record.Exception(() =>
         {
             var vm = new PartyViewerViewModel(sav, spriteMock.Object);
@@ -241,7 +241,7 @@ public class SaveLoadAuditTests(ITestOutputHelper output)
     public void ViewModel_DaycareEditor_DoesNotThrow(SaveFile sav, string label)
     {
         output.WriteLine(label);
-        var spriteMock = new Moq.Mock<Services.ISpriteRenderer>();
+        var spriteMock = new Moq.Mock<ISpriteRenderer>();
         var ex = Record.Exception(() =>
         {
             var vm = new DaycareEditorViewModel(sav, spriteMock.Object);

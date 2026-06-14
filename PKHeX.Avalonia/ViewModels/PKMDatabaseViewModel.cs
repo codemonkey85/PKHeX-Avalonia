@@ -1,6 +1,5 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Messaging;
-using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PKHeX.Avalonia.Services;
@@ -190,7 +189,7 @@ public partial class PKMDatabaseViewModel : ViewModelBase
 public partial class PKMDatabaseEntry : ObservableObject
 {
     public PKM PKM { get; }
-    public Bitmap? Sprite { get; }
+    public byte[]? Sprite { get; }
     
     public string SpeciesName
     {

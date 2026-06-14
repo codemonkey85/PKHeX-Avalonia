@@ -1,6 +1,5 @@
 
 using System.Collections.ObjectModel;
-using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PKHeX.Avalonia.Services;
@@ -40,7 +39,7 @@ public partial class PokemonEditorViewModel : ViewModelBase
     private ObservableCollection<ComboItem> _formList = [];
 
     [ObservableProperty]
-    private Bitmap? _sprite;
+    private byte[]? _sprite;
 
     [ObservableProperty]
     private string _title = "Pokémon Editor";

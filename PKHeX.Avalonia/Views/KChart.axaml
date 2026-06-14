@@ -14,7 +14,7 @@
             <DataGridTemplateColumn Header="Sprite">
                 <DataGridTemplateColumn.CellTemplate>
                     <DataTemplate>
-                        <Image Source="{Binding Sprite}" Width="40" Height="30" Stretch="Uniform"/>
+                        <Image Source="{Binding Sprite, Converter={StaticResource PngBytesToBitmap}}" Width="40" Height="30" Stretch="Uniform"/>
                     </DataTemplate>
                 </DataGridTemplateColumn.CellTemplate>
             </DataGridTemplateColumn>

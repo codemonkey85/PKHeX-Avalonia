@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using Avalonia.Media;
-using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PKHeX.Core;
@@ -51,12 +49,11 @@ public partial class RibbonEditorViewModel : ViewModelBase
         foreach (var info in allRibbons)
         {
             var vm = new RibbonItemViewModel(_pkm, info);
-            
-            // Load Icon (Avalonia Resource)
-            // Resource path: resm:PKHeX.Avalonia.Resources.Ribbons.ribbonname.png?assembly=PKHeX.Avalonia
-            // Name mapping: lowercase, remove "CountG3" -> "G3"
+
+            // Compute the ribbon icon resource name; the View resolves it to an image asset.
+            // Name mapping: lowercase, remove "CountG3" -> "G3".
             var resourceName = info.Name.Replace("CountG3", "G3").ToLowerInvariant();
-            
+
             // Handle Gold memory ribbons if max count reached
             if (info.Type == RibbonValueType.Byte)
             {
@@ -64,20 +61,16 @@ public partial class RibbonEditorViewModel : ViewModelBase
                 if (max == 8 && info.Name == nameof(IRibbonSetMemory6.RibbonCountMemoryBattle) && _pkm.Format >= 9)
                     max = 7;
 
-                if ((info.Name == nameof(IRibbonSetMemory6.RibbonCountMemoryBattle) || 
-                     info.Name == nameof(IRibbonSetMemory6.RibbonCountMemoryContest)) && 
+                if ((info.Name == nameof(IRibbonSetMemory6.RibbonCountMemoryBattle) ||
+                     info.Name == nameof(IRibbonSetMemory6.RibbonCountMemoryContest)) &&
                      info.RibbonCount == max)
                 {
                      resourceName += "2";
                 }
             }
 
-            var uri = new Uri($"avares://PKHeX.Avalonia/Resources/Ribbons/{resourceName}.png");
-            if (global::Avalonia.Platform.AssetLoader.Exists(uri))
-            {
-                vm.Icon = new global::Avalonia.Media.Imaging.Bitmap(global::Avalonia.Platform.AssetLoader.Open(uri));
-            }
-            
+            vm.IconResource = resourceName;
+
             list.Add(vm);
         }
 

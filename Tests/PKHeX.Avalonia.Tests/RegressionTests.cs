@@ -199,7 +199,7 @@ public class RegressionTests(ITestOutputHelper output)
         // Verify that HP stats are read via direct property access (not through
         // always-true pattern match that looked conditional)
         var sav = BlankSaveFile.Get(GameVersion.E);
-        var spriteMock = new Moq.Mock<Services.ISpriteRenderer>();
+        var spriteMock = new Moq.Mock<ISpriteRenderer>();
 
         var vm = new PartyViewerViewModel(sav, spriteMock.Object);
         Assert.Equal(6, vm.Slots.Count);

@@ -39,9 +39,9 @@
                                         Margin="0,1">
                                     <Grid ColumnDefinitions="40,*,80">
                                         <!-- Icon -->
-                                        <Image Grid.Column="0" 
-                                               Source="{Binding Icon}" 
-                                               Width="32" Height="32" 
+                                        <Image Grid.Column="0"
+                                               Source="{Binding IconResource, Converter={StaticResource RibbonIcon}}"
+                                               Width="32" Height="32"
                                                VerticalAlignment="Center" />
                                         
                                         <!-- Name -->

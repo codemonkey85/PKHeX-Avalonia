@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PKHeX.Avalonia.Services;
@@ -144,7 +143,7 @@ public partial class MysteryGiftDatabaseViewModel : ViewModelBase
 public class MysteryGiftDatabaseEntry
 {
     public MysteryGift Gift { get; }
-    public Bitmap? Sprite { get; }
+    public byte[]? Sprite { get; }
     public string SpeciesName => Gift.IsItem ? GameInfo.Strings.Item[Gift.ItemID] : GameInfo.Strings.Species[Gift.Species];
     public string Level => Gift.IsEntity ? Gift.Level.ToString() : "-";
     public string CardTitle => Gift.CardTitle;

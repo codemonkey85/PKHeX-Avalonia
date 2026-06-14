@@ -21,8 +21,9 @@ public partial class RibbonItemViewModel : ObservableObject
     [ObservableProperty]
     private int _ribbonCount;
 
+    /// <summary>Bare ribbon icon resource name (lowercased). The View resolves it to an image asset.</summary>
     [ObservableProperty]
-    private global::Avalonia.Media.Imaging.Bitmap? _icon;
+    private string? _iconResource;
     
     public RibbonItemViewModel(PKM pk, RibbonInfo info)
     {

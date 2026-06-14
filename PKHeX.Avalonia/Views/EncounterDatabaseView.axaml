@@ -48,7 +48,7 @@
                                         CornerRadius="6" Padding="8" Width="240" Height="70"
                                         BoxShadow="{StaticResource ThemeShadowSmall}">
                                     <Grid ColumnDefinitions="50,*">
-                                        <Image Grid.Column="0" Source="{Binding Sprite}" Width="40" Height="40" VerticalAlignment="Center"/>
+                                        <Image Grid.Column="0" Source="{Binding Sprite, Converter={StaticResource PngBytesToBitmap}}" Width="40" Height="40" VerticalAlignment="Center"/>
                                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
                                             <DockPanel LastChildFill="False">
                                                 <TextBlock DockPanel.Dock="Left" Text="{Binding Species}" FontWeight="SemiBold"/>

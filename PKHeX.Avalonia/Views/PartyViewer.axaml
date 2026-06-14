@@ -100,7 +100,7 @@
                                     <Grid RowDefinitions="*,Auto" IsVisible="{Binding !IsEmpty}">
                                         <!-- Sprite with warning indicator -->
                                         <Panel Grid.Row="0" HorizontalAlignment="Center">
-                                            <Image Source="{Binding Sprite}" 
+                                            <Image Source="{Binding Sprite, Converter={StaticResource PngBytesToBitmap}}" 
                                                    Width="56" Height="48" 
                                                    RenderOptions.BitmapInterpolationMode="HighQuality" />
                                             

@@ -54,7 +54,7 @@ public partial class KChartEntryViewModel : ObservableObject
     public ushort Species { get; }
     public byte Form { get; }
     public string Name { get; }
-    public global::Avalonia.Media.IImage? Sprite { get; }
+    public byte[]? Sprite { get; }
     public string DisplayID { get; }
     public string BST { get; }
     public string CatchRate { get; }
@@ -76,7 +76,7 @@ public partial class KChartEntryViewModel : ObservableObject
     public string Ability2 { get; }
     public string AbilityH { get; }
 
-    public KChartEntryViewModel(ushort species, byte form, string name, IPersonalInfo info, global::Avalonia.Media.IImage? sprite, int generation)
+    public KChartEntryViewModel(ushort species, byte form, string name, IPersonalInfo info, byte[]? sprite, int generation)
     {
         Species = species;
         Form = form;

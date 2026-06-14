@@ -1,6 +1,5 @@
 using System.Collections.ObjectModel;
 using System.Linq;
-using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PKHeX.Avalonia.Services;
@@ -238,7 +237,7 @@ public partial class SecretBaseTeamMemberViewModel : ViewModelBase
         }
     }
 
-    public Bitmap? Sprite
+    public byte[]? Sprite
     {
         get
         {
