@@ -223,7 +223,7 @@ public class RegressionTests(ITestOutputHelper output)
     [Fact]
     public void UndoRedoService_Initialize_ReportsCannotUndoOrRedo()
     {
-        var service = new Services.UndoRedoService();
+        var service = new UndoRedoService();
         var sav = BlankSaveFile.Get(GameVersion.X); // Gen6 blank save writes correctly
         service.Initialize(sav);
 
@@ -236,7 +236,7 @@ public class RegressionTests(ITestOutputHelper output)
     [Fact]
     public void UndoRedoService_AfterAddChange_CanUndoBecomesTrue()
     {
-        var service = new Services.UndoRedoService();
+        var service = new UndoRedoService();
         var sav = BlankSaveFile.Get(GameVersion.X);
         service.Initialize(sav);
 

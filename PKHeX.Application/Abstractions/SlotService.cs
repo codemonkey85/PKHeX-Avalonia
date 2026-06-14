@@ -1,7 +1,7 @@
 using PKHeX.Core;
 using System;
 
-namespace PKHeX.Avalonia.Services;
+namespace PKHeX.Application.Abstractions;
 
 /// <summary>
 /// Represents a slot location in the save file (box or party).

@@ -1,36 +1,37 @@
-using System;
-using System.IO;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using CommunityToolkit.Mvvm.ComponentModel;
 using PKHeX.Core;
 
-namespace PKHeX.Avalonia.Services;
+namespace PKHeX.Application.Services;
 
-public partial class AppSettings : ObservableObject, IProgramSettings
+/// <summary>
+/// Application-layer settings model. Implements Core's <see cref="IProgramSettings"/> and persists
+/// itself as JSON. Plain POCO (no MVVM-framework coupling) — the settings screen binds to
+/// <c>SettingsViewModel</c>, which wraps this model.
+/// </summary>
+public sealed class AppSettings : IProgramSettings
 {
     private const string ConfigFileName = "config.json";
     private static readonly string ConfigPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ConfigFileName);
 
     IStartupSettings IProgramSettings.Startup => Startup;
 
-    // Settings groups
-    [ObservableProperty] private StartupSettings _startup = new();
-    [ObservableProperty] private BackupSettings _backup = new();
-    [ObservableProperty] private SaveLanguageSettings _saveLanguage = new();
-    [ObservableProperty] private SlotWriteSettings _slotWrite = new();
-    [ObservableProperty] private SetImportSettings _import = new();
-    [ObservableProperty] private LegalitySettings _legality = new();
-    [ObservableProperty] private EntityConverterSettings _converter = new();
-    [ObservableProperty] private LocalResourceSettings _localResources = new();
-    [ObservableProperty] private SpriteSettings _sprite = new();
+    // Settings groups (Core-defined types; locally-defined where Core only ships an interface).
+    public StartupSettings Startup { get; set; } = new();
+    public BackupSettings Backup { get; set; } = new();
+    public SaveLanguageSettings SaveLanguage { get; set; } = new();
+    public SlotWriteSettings SlotWrite { get; set; } = new();
+    public SetImportSettings Import { get; set; } = new();
+    public LegalitySettings Legality { get; set; } = new();
+    public EntityConverterSettings Converter { get; set; } = new();
+    public LocalResourceSettings LocalResources { get; set; } = new();
+    public SpriteSettings Sprite { get; set; } = new();
+
+    public string DisplayLanguage { get; set; } = "en";
 
     public static AppSettings Load()
     {
         if (!File.Exists(ConfigPath))
-        {
             return new AppSettings();
-        }
 
         try
         {
@@ -59,14 +60,10 @@ public partial class AppSettings : ObservableObject, IProgramSettings
         }
     }
 
-    [ObservableProperty] private string _displayLanguage = "en";
-
     public void InitializeCore()
     {
         if (!string.IsNullOrEmpty(DisplayLanguage))
-        {
             GameInfo.CurrentLanguage = DisplayLanguage;
-        }
     }
 
     /// <summary>

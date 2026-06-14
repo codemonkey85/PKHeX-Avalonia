@@ -15,7 +15,7 @@ namespace PKHeX.Avalonia.ViewModels;
 
 public partial class FolderListViewModel : ViewModelBase
 {
-    private readonly ISaveFileService _saveFileService;
+    private readonly ISaveFileGateway _saveFileService;
     private readonly AppSettings _settings;
     private readonly IDialogService _dialogService;
     private readonly CancellationTokenSource _cts = new();
@@ -42,7 +42,7 @@ public partial class FolderListViewModel : ViewModelBase
     [ObservableProperty]
     private string _filterText = string.Empty;
 
-    public FolderListViewModel(ISaveFileService saveFileService, AppSettings settings, IDialogService dialogService)
+    public FolderListViewModel(ISaveFileGateway saveFileService, AppSettings settings, IDialogService dialogService)
     {
         _saveFileService = saveFileService;
         _settings = settings;

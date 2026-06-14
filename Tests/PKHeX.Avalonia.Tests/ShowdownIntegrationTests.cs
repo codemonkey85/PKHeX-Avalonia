@@ -11,7 +11,7 @@ namespace PKHeX.Avalonia.Tests;
 
 public class ShowdownIntegrationTests : IDisposable
 {
-    private readonly Mock<ISaveFileService> _saveFileServiceMock = new();
+    private readonly Mock<ISaveFileGateway> _saveFileServiceMock = new();
     private readonly Mock<IDialogService> _dialogServiceMock = new();
     private readonly Mock<ISpriteRenderer> _spriteRendererMock = new();
     private readonly Mock<ISlotService> _slotServiceMock = new();

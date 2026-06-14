@@ -1,6 +1,6 @@
 using PKHeX.Core;
 
-namespace PKHeX.Avalonia.Services;
+namespace PKHeX.Application.Services;
 
 /// <summary>
 /// Safe bounds-checked lookups into <see cref="GameInfo.Strings"/> arrays.

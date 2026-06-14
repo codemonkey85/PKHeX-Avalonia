@@ -1,8 +1,9 @@
+using PKHeX.Application.Abstractions;
 using PKHeX.Core;
 
-namespace PKHeX.Avalonia.Services;
+namespace PKHeX.Infrastructure;
 
-public sealed class SaveFileService : ISaveFileService
+public sealed class SaveFileService : ISaveFileGateway
 {
     public SaveFile? CurrentSave { get; private set; }
     public bool HasSave => CurrentSave is not null;

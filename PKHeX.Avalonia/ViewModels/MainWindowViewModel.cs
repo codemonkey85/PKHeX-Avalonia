@@ -8,7 +8,7 @@ namespace PKHeX.Avalonia.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
-    private readonly ISaveFileService _saveFileService;
+    private readonly ISaveFileGateway _saveFileService;
     private readonly IDialogService _dialogService;
     private readonly ISpriteRenderer _spriteRenderer;
     private readonly ISlotService _slotService;
@@ -50,7 +50,7 @@ public partial class MainWindowViewModel : ViewModelBase
     public LanguageService LanguageService => _languageService;
 
     public MainWindowViewModel(
-        ISaveFileService saveFileService,
+        ISaveFileGateway saveFileService,
         IDialogService dialogService,
         ISpriteRenderer spriteRenderer,
         ISlotService slotService,
@@ -74,7 +74,7 @@ public partial class MainWindowViewModel : ViewModelBase
         _slotService.DeleteRequested += OnDeleteRequested;
         _slotService.MoveRequested += OnMoveRequested;
 
-        _undoRedo.PropertyChanged += (_, _) =>
+        _undoRedo.StateChanged += (_, _) =>
         {
             UndoCommand.NotifyCanExecuteChanged();
             RedoCommand.NotifyCanExecuteChanged();
@@ -83,7 +83,6 @@ public partial class MainWindowViewModel : ViewModelBase
         _undoRedo.RedoPerformed += OnUndoRedoPerformed;
 
         _languageService.LanguageChanged += OnLanguageChanged;
-        WeakReferenceMessenger.Default.Register<LanguageChangedMessage>(this, (r, m) => OnLanguageChanged());
     }
 
     private void OnLanguageChanged()
@@ -96,6 +95,9 @@ public partial class MainWindowViewModel : ViewModelBase
         BoxViewer?.RefreshCurrentBox();
         TrainerEditor?.RefreshLanguage();
         InventoryEditor?.RefreshLanguage();
+
+        // Relay to on-demand dialog ViewModels (e.g. PKM database) that subscribe via the messenger.
+        WeakReferenceMessenger.Default.Send(new LanguageChangedMessage(_languageService.CurrentLanguage));
     }
 
     private void OnSaveFileChanged(SaveFile? sav)

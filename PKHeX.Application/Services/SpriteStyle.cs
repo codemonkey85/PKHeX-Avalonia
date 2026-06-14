@@ -1,4 +1,4 @@
-namespace PKHeX.Avalonia.Services;
+namespace PKHeX.Application.Services;
 
 /// <summary>
 /// Resolved sprite rendering style. Selects which bundled sprite set <see cref="SpriteLoader"/> reads.

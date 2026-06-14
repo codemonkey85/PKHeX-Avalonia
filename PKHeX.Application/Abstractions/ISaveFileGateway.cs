@@ -1,8 +1,8 @@
 using PKHeX.Core;
 
-namespace PKHeX.Avalonia.Services;
+namespace PKHeX.Application.Abstractions;
 
-public interface ISaveFileService
+public interface ISaveFileGateway
 {
     SaveFile? CurrentSave { get; }
     bool HasSave { get; }

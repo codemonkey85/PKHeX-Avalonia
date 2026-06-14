@@ -1,7 +1,7 @@
 
 using System.Threading.Tasks;
 
-namespace PKHeX.Avalonia.Services;
+namespace PKHeX.Application.Abstractions;
 
 /// <summary>
 /// Abstracted clipboard service for cross-platform access and testability.

@@ -1,6 +1,6 @@
 using PKHeX.Core;
 
-namespace PKHeX.Avalonia.Services;
+namespace PKHeX.Application.Services;
 
 /// <summary>
 /// Chooses the <see cref="SpriteStyle"/> for a loaded save, mirroring upstream PKHeX's

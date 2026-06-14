@@ -46,7 +46,7 @@ public partial class App : global::Avalonia.Application
         services.AddSingleton(config);
 
         // Services (Singleton - shared state)
-        services.AddSingleton<ISaveFileService, SaveFileService>();
+        services.AddSingleton<ISaveFileGateway, SaveFileService>();
         services.AddSingleton<IDialogService, DialogService>();
         services.AddSingleton<ISpriteRenderer, AvaloniaSpriteRenderer>();
         services.AddSingleton<ISlotService, SlotService>();

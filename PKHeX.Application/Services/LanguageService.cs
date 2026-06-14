@@ -1,32 +1,49 @@
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Messaging;
+using System.ComponentModel;
 using PKHeX.Core;
 
-namespace PKHeX.Avalonia.Services;
+namespace PKHeX.Application.Services;
 
-public partial class LanguageService : ObservableObject
+/// <summary>
+/// Application service that owns the ordered mutation of Core's global localization state
+/// (<see cref="GameInfo.CurrentLanguage"/> / <see cref="GameInfo.Strings"/>). It is data-bound by the
+/// language selector, so it implements <see cref="INotifyPropertyChanged"/> directly (BCL only — no
+/// MVVM-framework dependency).
+/// </summary>
+public sealed class LanguageService : INotifyPropertyChanged
 {
     private static readonly string[] SupportedLanguages = ["en", "ja", "fr", "it", "de", "es", "ko", "zh-Hans", "zh-Hant"];
     private static readonly string[] LanguageNames = ["English", "日本語", "Français", "Italiano", "Deutsch", "Español", "한국어", "简体中文", "繁體中文"];
 
-    [ObservableProperty]
     private string _currentLanguage = "en";
 
+    public string CurrentLanguage
+    {
+        get => _currentLanguage;
+        private set
+        {
+            if (_currentLanguage == value) return;
+            _currentLanguage = value;
+            OnPropertyChanged(nameof(CurrentLanguage));
+        }
+    }
+
     public IReadOnlyList<LanguageOption> AvailableLanguages { get; }
-    
+
     public LanguageOption? CurrentLanguageOption
     {
         get => AvailableLanguages.FirstOrDefault(l => l.Code == CurrentLanguage);
         set
         {
             if (value is not null && value.Code != CurrentLanguage)
-            {
                 SetLanguage(value.Code);
-            }
         }
     }
 
     public event Action? LanguageChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    private void OnPropertyChanged(string name) =>
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
     public LanguageService()
     {
@@ -45,11 +62,8 @@ public partial class LanguageService : ObservableObject
         GameInfo.CurrentLanguage = languageCode;
         GameInfo.Strings = GameInfo.GetStrings(languageCode);
         LanguageChanged?.Invoke();
-        WeakReferenceMessenger.Default.Send(new LanguageChangedMessage(languageCode));
     }
 }
-
-public record LanguageChangedMessage(string LanguageCode);
 
 public record LanguageOption(string Code, string Name)
 {
