@@ -37,21 +37,21 @@ public class FileDialogFilterTests
     [Fact]
     public void OpenSavePatterns_IncludeDotMainExtension()
     {
-        Assert.Contains("*.main", FileDialogFilterFactory.OpenSaveFilePatterns);
+        Assert.Contains("*.main", FileDialogFilters.OpenSaveFile);
     }
 
     [Fact]
     public void OpenSavePatterns_KeepExtensionlessMainAndWildcard()
     {
         // Windows/Linux match the literal file name "main" and arbitrary names via glob.
-        Assert.Contains("main", FileDialogFilterFactory.OpenSaveFilePatterns);
-        Assert.Contains("*", FileDialogFilterFactory.OpenSaveFilePatterns);
+        Assert.Contains("main", FileDialogFilters.OpenSaveFile);
+        Assert.Contains("*", FileDialogFilters.OpenSaveFile);
     }
 
     [Fact]
     public void SupportedFiles_OnMacOs_AllowMainExtension()
     {
-        var types = FileDialogFilterFactory.BuildOpenFileTypes(FileDialogFilterFactory.OpenSaveFilePatterns);
+        var types = FileDialogFilterFactory.BuildOpenFileTypes(FileDialogFilters.OpenSaveFile);
         var supported = types[0];
 
         Assert.Equal("Supported Files", supported.Name);

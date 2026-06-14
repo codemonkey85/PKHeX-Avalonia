@@ -6,7 +6,7 @@ using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Moq;
 using PKHeX.Avalonia.Services;
-using PKHeX.Avalonia.ViewModels;
+using PKHeX.Presentation.ViewModels;
 using PKHeX.Core;
 using Xunit;
 
@@ -49,13 +49,13 @@ public static class LogicAuditor
         var savCtor = ctors.FirstOrDefault(c => c.GetParameters().Length == 1 && c.GetParameters()[0].ParameterType == typeof(SaveFile));
         if (savCtor != null) return savCtor.Invoke([sav]);
 
-        var pkmSavCtor = ctors.FirstOrDefault(c => c.GetParameters().Length == 4 
+        var pkmSavCtor = ctors.FirstOrDefault(c => c.GetParameters().Length == 5
             && c.GetParameters()[0].ParameterType == typeof(PKM)
             && c.GetParameters()[1].ParameterType == typeof(SaveFile));
         if (pkmSavCtor != null)
         {
             var pkm = sav.BlankPKM;
-            return pkmSavCtor.Invoke([pkm, sav, new Mock<ISpriteRenderer>().Object, new Mock<IDialogService>().Object]);
+            return pkmSavCtor.Invoke([pkm, sav, new Mock<ISpriteRenderer>().Object, new Mock<IDialogService>().Object, new Mock<IWindowService>().Object]);
         }
 
         var emptyCtor = ctors.FirstOrDefault(c => c.GetParameters().Length == 0);

@@ -1,7 +1,7 @@
 using System;
 using Xunit;
 using PKHeX.Core;
-using PKHeX.Avalonia.ViewModels;
+using PKHeX.Presentation.ViewModels;
 using PKHeX.Avalonia.Services;
 using Moq;
 using System.Linq;
@@ -56,7 +56,7 @@ public class DatabaseTests : IDisposable
 
         GameInfo.FilteredSources = new FilteredGameDataSource(sav, GameInfo.Sources);
 
-        var vm = new PokemonEditorViewModel(sav.BlankPKM, sav, spriteMock.Object, dialogMock.Object);
+        var vm = new PokemonEditorViewModel(sav.BlankPKM, sav, spriteMock.Object, dialogMock.Object, new Mock<IWindowService>().Object);
 
         var engName = vm.SpeciesList.First(x => x.Value == 1).Text;
         Assert.Equal("Bulbasaur", engName);

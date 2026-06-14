@@ -1,4 +1,4 @@
-using PKHeX.Avalonia.ViewModels;
+using PKHeX.Presentation.ViewModels;
 using PKHeX.Core;
 using Xunit.Abstractions;
 
@@ -259,7 +259,7 @@ public class RegressionTests(ITestOutputHelper output)
     public void BatchEditorViewModel_Constructs_Without_Exception()
     {
         var sav = new SAV6XY();
-        var dialogMock = new Moq.Mock<Services.IDialogService>();
+        var dialogMock = new Moq.Mock<IDialogService>();
         var ex = Record.Exception(() =>
         {
             var vm = new BatchEditorViewModel(sav, dialogMock.Object);

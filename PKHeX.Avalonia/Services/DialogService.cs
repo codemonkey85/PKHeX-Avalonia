@@ -128,25 +128,6 @@ public sealed class DialogService : IDialogService
         await dialog.ShowDialog(window);
     }
 
-    public async Task ShowDialogAsync(Control content, string title)
-    {
-        var window = GetMainWindow();
-        if (window is null) return;
-
-        var dialog = new Window
-        {
-            Title = title,
-            Content = content,
-            SizeToContent = SizeToContent.WidthAndHeight,
-            WindowStartupLocation = WindowStartupLocation.CenterOwner,
-            CanResize = true,
-            MaxWidth = 1400,
-            MaxHeight = 820,
-        };
-
-        await dialog.ShowDialog(window);
-    }
-
     public async Task<string?> GetClipboardTextAsync()
     {
         var window = GetMainWindow();

@@ -1,4 +1,4 @@
-using PKHeX.Avalonia.ViewModels;
+using PKHeX.Presentation.ViewModels;
 using PKHeX.Core;
 using Xunit;
 using Xunit.Abstractions;
@@ -273,7 +273,7 @@ public class SaveLoadAuditTests(ITestOutputHelper output)
     public void ViewModel_BoxManip_DoesNotThrow(SaveFile sav, string label)
     {
         output.WriteLine(label);
-        var dialogMock = new Moq.Mock<Services.IDialogService>();
+        var dialogMock = new Moq.Mock<IDialogService>();
         var ex = Record.Exception(() =>
         {
             var vm = new BoxManipViewModel(sav, dialogMock.Object, () => { });
@@ -327,7 +327,7 @@ public class SaveLoadAuditTests(ITestOutputHelper output)
     public void ViewModel_BoxExporter_DoesNotThrow(SaveFile sav, string label)
     {
         output.WriteLine(label);
-        var dialogMock = new Moq.Mock<Services.IDialogService>();
+        var dialogMock = new Moq.Mock<IDialogService>();
         var ex = Record.Exception(() =>
         {
             var vm = new BoxExporterViewModel(sav, dialogMock.Object);

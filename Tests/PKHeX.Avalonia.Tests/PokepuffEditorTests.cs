@@ -1,4 +1,4 @@
-using PKHeX.Avalonia.ViewModels;
+using PKHeX.Presentation.ViewModels;
 using PKHeX.Core;
 using Xunit;
 using System.Linq;

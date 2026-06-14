@@ -6,7 +6,7 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using PKHeX.Avalonia.Converters;
 using PKHeX.Avalonia.Services;
-using PKHeX.Avalonia.ViewModels;
+using PKHeX.Presentation.ViewModels;
 using PKHeX.Avalonia.Views;
 using PKHeX.Core;
 using SkiaSharp;

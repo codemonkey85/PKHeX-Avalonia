@@ -3,7 +3,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
 using PKHeX.Avalonia.Services;
-using PKHeX.Avalonia.ViewModels;
+using PKHeX.Presentation.ViewModels;
 using PKHeX.Avalonia.Views;
 
 namespace PKHeX.Avalonia;
@@ -48,6 +48,7 @@ public partial class App : global::Avalonia.Application
         // Services (Singleton - shared state)
         services.AddSingleton<ISaveFileGateway, SaveFileService>();
         services.AddSingleton<IDialogService, DialogService>();
+        services.AddSingleton<IWindowService, WindowService>();
         services.AddSingleton<ISpriteRenderer, AvaloniaSpriteRenderer>();
         services.AddSingleton<ISlotService, SlotService>();
         services.AddSingleton<IClipboardService, ClipboardService>();

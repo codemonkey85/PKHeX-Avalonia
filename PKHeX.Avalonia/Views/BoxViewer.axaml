@@ -1,7 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="using:PKHeX.Avalonia.ViewModels"
-             xmlns:models="using:PKHeX.Avalonia.Models"
+             xmlns:vm="clr-namespace:PKHeX.Presentation.ViewModels;assembly=PKHeX.Presentation"
+             xmlns:models="clr-namespace:PKHeX.Presentation.Models;assembly=PKHeX.Presentation"
              x:Class="PKHeX.Avalonia.Views.BoxViewer"
              x:DataType="vm:BoxViewerViewModel"
              Focusable="True">

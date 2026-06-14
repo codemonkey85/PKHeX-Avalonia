@@ -2,8 +2,8 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using PKHeX.Avalonia.Models;
-using PKHeX.Avalonia.ViewModels;
+using PKHeX.Presentation.Models;
+using PKHeX.Presentation.ViewModels;
 
 namespace PKHeX.Avalonia.Views;
 
@@ -83,7 +83,7 @@ public partial class BoxViewer : UserControl
         bool clone = e.KeyModifiers.HasFlag(KeyModifiers.Control);
         
         // Use a service or ViewModel method to request the move
-        vm.RequestMoveCommand.Execute((data, destSlot, e.KeyModifiers));
+        vm.RequestMoveCommand.Execute((data, destSlot, e.KeyModifiers.HasFlag(global::Avalonia.Input.KeyModifiers.Control)));
     }
 
     private void OnSlotClicked(object? sender, RoutedEventArgs e)

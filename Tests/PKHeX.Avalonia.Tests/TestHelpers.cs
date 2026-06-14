@@ -1,7 +1,7 @@
 
 using Moq;
 using PKHeX.Avalonia.Services;
-using PKHeX.Avalonia.ViewModels;
+using PKHeX.Presentation.ViewModels;
 using PKHeX.Core;
 
 namespace PKHeX.Avalonia.Tests;
@@ -12,8 +12,9 @@ public static class TestHelpers
     {
         var spriteRendererMock = new Mock<ISpriteRenderer>();
         var dialogServiceMock = new Mock<IDialogService>();
-        
-        var vm = new PokemonEditorViewModel(pkm, sav, spriteRendererMock.Object, dialogServiceMock.Object);
+        var windowServiceMock = new Mock<IWindowService>();
+
+        var vm = new PokemonEditorViewModel(pkm, sav, spriteRendererMock.Object, dialogServiceMock.Object, windowServiceMock.Object);
         
         return (vm, spriteRendererMock, dialogServiceMock);
     }

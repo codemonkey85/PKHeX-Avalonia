@@ -29,7 +29,7 @@ public class BindingVerificationTests
         var xamlContent = File.ReadAllText(xamlPath);
         
         // Get all ViewModel property names via Reflection
-        var vmType = typeof(PKHeX.Avalonia.ViewModels.PokemonEditorViewModel);
+        var vmType = typeof(PKHeX.Presentation.ViewModels.PokemonEditorViewModel);
         var vmProperties = vmType.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)
             .Select(p => p.Name)
             .ToHashSet();
@@ -105,7 +105,7 @@ public class BindingVerificationTests
         var xamlContent = File.ReadAllText(xamlPath);
         
         // Get all commands from ViewModel
-        var vmType = typeof(PKHeX.Avalonia.ViewModels.PokemonEditorViewModel);
+        var vmType = typeof(PKHeX.Presentation.ViewModels.PokemonEditorViewModel);
         var commandProperties = vmType.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)
             .Where(p => p.Name.EndsWith("Command"))
             .Select(p => p.Name)
