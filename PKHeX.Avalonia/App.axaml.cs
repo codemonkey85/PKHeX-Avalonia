@@ -8,7 +8,7 @@ using PKHeX.Avalonia.Views;
 
 namespace PKHeX.Avalonia;
 
-public partial class App : Application
+public partial class App : global::Avalonia.Application
 {
     public static IServiceProvider Services { get; private set; } = null!;
 
