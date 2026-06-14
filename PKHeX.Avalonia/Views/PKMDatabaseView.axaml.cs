@@ -1,7 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
-using PKHeX.Avalonia.ViewModels;
+using PKHeX.Presentation.ViewModels;
 
 namespace PKHeX.Avalonia.Views;
 

@@ -55,6 +55,9 @@
   <ItemGroup>
     <!-- Reference existing PKHeX.Core (no modifications!) -->
     <ProjectReference Include="..\PKHeX.Core\PKHeX.Core.csproj" />
+    <ProjectReference Include="..\PKHeX.Application\PKHeX.Application.csproj" />
+    <ProjectReference Include="..\PKHeX.Infrastructure\PKHeX.Infrastructure.csproj" />
+    <ProjectReference Include="..\PKHeX.Presentation\PKHeX.Presentation.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -78,30 +81,7 @@
     <Move SourceFiles="@(PublishFiles)" DestinationFolder="$(MacOSDir)" />
     <Move SourceFiles="$(MacOSDir)/icon.icns" DestinationFolder="$(ResourcesDir)" Condition="Exists('$(MacOSDir)/icon.icns')" />
     <!-- Info.plist -->
-    <WriteLinesToFile File="$(ContentsDir)/Info.plist" Lines="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;!DOCTYPE plist PUBLIC &quot;-//Apple//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;&gt;
-&lt;plist version=&quot;1.0&quot;&gt;
-&lt;dict&gt;
-    &lt;key&gt;CFBundleName&lt;/key&gt;
-    &lt;string&gt;$(AssemblyName)&lt;/string&gt;
-    &lt;key&gt;CFBundleDisplayName&lt;/key&gt;
-    &lt;string&gt;PKHeX&lt;/string&gt;
-    &lt;key&gt;CFBundleIdentifier&lt;/key&gt;
-    &lt;string&gt;io.pkhex.avalonia&lt;/string&gt;
-    &lt;key&gt;CFBundleVersion&lt;/key&gt;
-    &lt;string&gt;$(UIVersion)&lt;/string&gt;
-    &lt;key&gt;CFBundlePackageType&lt;/key&gt;
-    &lt;string&gt;APPL&lt;/string&gt;
-    &lt;key&gt;CFBundleSignature&lt;/key&gt;
-    &lt;string&gt;????&lt;/string&gt;
-    &lt;key&gt;CFBundleExecutable&lt;/key&gt;
-    &lt;string&gt;$(AssemblyName)&lt;/string&gt;
-    &lt;key&gt;CFBundleIconFile&lt;/key&gt;
-    &lt;string&gt;icon.icns&lt;/string&gt;
-    &lt;key&gt;NSHighResolutionCapable&lt;/key&gt;
-    &lt;true/&gt;
-&lt;/dict&gt;
-&lt;/plist&gt;" Overwrite="true" />
+    <WriteLinesToFile File="$(ContentsDir)/Info.plist" Lines="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&#xA;&lt;!DOCTYPE plist PUBLIC &quot;-//Apple//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;&gt;&#xA;&lt;plist version=&quot;1.0&quot;&gt;&#xA;&lt;dict&gt;&#xA;    &lt;key&gt;CFBundleName&lt;/key&gt;&#xA;    &lt;string&gt;$(AssemblyName)&lt;/string&gt;&#xA;    &lt;key&gt;CFBundleDisplayName&lt;/key&gt;&#xA;    &lt;string&gt;PKHeX&lt;/string&gt;&#xA;    &lt;key&gt;CFBundleIdentifier&lt;/key&gt;&#xA;    &lt;string&gt;io.pkhex.avalonia&lt;/string&gt;&#xA;    &lt;key&gt;CFBundleVersion&lt;/key&gt;&#xA;    &lt;string&gt;$(UIVersion)&lt;/string&gt;&#xA;    &lt;key&gt;CFBundlePackageType&lt;/key&gt;&#xA;    &lt;string&gt;APPL&lt;/string&gt;&#xA;    &lt;key&gt;CFBundleSignature&lt;/key&gt;&#xA;    &lt;string&gt;????&lt;/string&gt;&#xA;    &lt;key&gt;CFBundleExecutable&lt;/key&gt;&#xA;    &lt;string&gt;$(AssemblyName)&lt;/string&gt;&#xA;    &lt;key&gt;CFBundleIconFile&lt;/key&gt;&#xA;    &lt;string&gt;icon.icns&lt;/string&gt;&#xA;    &lt;key&gt;NSHighResolutionCapable&lt;/key&gt;&#xA;    &lt;true/&gt;&#xA;&lt;/dict&gt;&#xA;&lt;/plist&gt;" Overwrite="true" />
     <!-- PkgInfo -->
     <WriteLinesToFile File="$(ContentsDir)/PkgInfo" Lines="APPL????" Overwrite="true" />
   </Target>

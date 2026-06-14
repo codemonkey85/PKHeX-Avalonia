@@ -25,6 +25,8 @@
             <converters:ObjectNullConverter x:Key="ObjectNullConverter" />
             <converters:ObjectTrueConverter x:Key="ObjectTrueConverter" />
             <converters:ObjectFalseConverter x:Key="ObjectFalseConverter" />
+            <converters:PngBytesToBitmapConverter x:Key="PngBytesToBitmap" />
+            <converters:RibbonIconConverter x:Key="RibbonIcon" />
         </ResourceDictionary>
     </Application.Resources>
 

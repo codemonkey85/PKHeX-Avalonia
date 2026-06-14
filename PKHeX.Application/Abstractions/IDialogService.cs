@@ -1,0 +1,16 @@
+namespace PKHeX.Application.Abstractions;
+
+/// <summary>
+/// Framework-free dialog/file services: native pickers (returning paths) and message boxes.
+/// Showing a ViewModel as a window is handled separately by <see cref="IWindowService"/>.
+/// </summary>
+public interface IDialogService
+{
+    Task<string?> OpenFileAsync(string title, string[]? filters = null);
+    Task<string?> OpenFolderAsync(string title);
+    Task<string?> SaveFileAsync(string title, string? defaultFileName = null, string[]? filters = null);
+    Task ShowErrorAsync(string title, string message);
+    Task ShowInformationAsync(string title, string message);
+    Task<string?> GetClipboardTextAsync();
+    Task SetClipboardTextAsync(string text);
+}

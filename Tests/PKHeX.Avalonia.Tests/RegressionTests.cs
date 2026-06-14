@@ -1,4 +1,4 @@
-using PKHeX.Avalonia.ViewModels;
+using PKHeX.Presentation.ViewModels;
 using PKHeX.Core;
 using Xunit.Abstractions;
 
@@ -199,7 +199,7 @@ public class RegressionTests(ITestOutputHelper output)
         // Verify that HP stats are read via direct property access (not through
         // always-true pattern match that looked conditional)
         var sav = BlankSaveFile.Get(GameVersion.E);
-        var spriteMock = new Moq.Mock<Services.ISpriteRenderer>();
+        var spriteMock = new Moq.Mock<ISpriteRenderer>();
 
         var vm = new PartyViewerViewModel(sav, spriteMock.Object);
         Assert.Equal(6, vm.Slots.Count);
@@ -223,7 +223,7 @@ public class RegressionTests(ITestOutputHelper output)
     [Fact]
     public void UndoRedoService_Initialize_ReportsCannotUndoOrRedo()
     {
-        var service = new Services.UndoRedoService();
+        var service = new UndoRedoService();
         var sav = BlankSaveFile.Get(GameVersion.X); // Gen6 blank save writes correctly
         service.Initialize(sav);
 
@@ -236,7 +236,7 @@ public class RegressionTests(ITestOutputHelper output)
     [Fact]
     public void UndoRedoService_AfterAddChange_CanUndoBecomesTrue()
     {
-        var service = new Services.UndoRedoService();
+        var service = new UndoRedoService();
         var sav = BlankSaveFile.Get(GameVersion.X);
         service.Initialize(sav);
 
@@ -259,7 +259,7 @@ public class RegressionTests(ITestOutputHelper output)
     public void BatchEditorViewModel_Constructs_Without_Exception()
     {
         var sav = new SAV6XY();
-        var dialogMock = new Moq.Mock<Services.IDialogService>();
+        var dialogMock = new Moq.Mock<IDialogService>();
         var ex = Record.Exception(() =>
         {
             var vm = new BatchEditorViewModel(sav, dialogMock.Object);

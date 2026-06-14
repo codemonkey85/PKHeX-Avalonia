@@ -1,7 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="using:PKHeX.Avalonia.ViewModels"
-             xmlns:models="using:PKHeX.Avalonia.Models"
+             xmlns:vm="clr-namespace:PKHeX.Presentation.ViewModels;assembly=PKHeX.Presentation"
+             xmlns:models="clr-namespace:PKHeX.Presentation.Models;assembly=PKHeX.Presentation"
              x:Class="PKHeX.Avalonia.Views.PartyViewer"
              x:DataType="vm:PartyViewerViewModel"
              Focusable="True">
@@ -100,7 +100,7 @@
                                     <Grid RowDefinitions="*,Auto" IsVisible="{Binding !IsEmpty}">
                                         <!-- Sprite with warning indicator -->
                                         <Panel Grid.Row="0" HorizontalAlignment="Center">
-                                            <Image Source="{Binding Sprite}" 
+                                            <Image Source="{Binding Sprite, Converter={StaticResource PngBytesToBitmap}}" 
                                                    Width="56" Height="48" 
                                                    RenderOptions.BitmapInterpolationMode="HighQuality" />
                                             

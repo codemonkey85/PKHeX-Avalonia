@@ -2,7 +2,7 @@ using System.IO;
 using Avalonia.Headless.XUnit;
 using Moq;
 using PKHeX.Avalonia.Services;
-using PKHeX.Avalonia.ViewModels;
+using PKHeX.Presentation.ViewModels;
 using PKHeX.Core;
 using Xunit;
 

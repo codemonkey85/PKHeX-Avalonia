@@ -1,6 +1,6 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="using:PKHeX.Avalonia.ViewModels"
+             xmlns:vm="clr-namespace:PKHeX.Presentation.ViewModels;assembly=PKHeX.Presentation"
              xmlns:converters="using:PKHeX.Avalonia.Converters"
              x:Class="PKHeX.Avalonia.Views.MysteryGiftDatabaseView"
              x:DataType="vm:MysteryGiftDatabaseViewModel"
@@ -62,7 +62,7 @@
                     <DataGridTemplateColumn Header="Sprite" Width="60">
                         <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Image Source="{Binding Sprite}" Width="40" Height="40" HorizontalAlignment="Center"/>
+                                    <Image Source="{Binding Sprite, Converter={StaticResource PngBytesToBitmap}}" Width="40" Height="40" HorizontalAlignment="Center"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>

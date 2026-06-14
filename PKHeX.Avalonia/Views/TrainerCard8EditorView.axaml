@@ -1,6 +1,6 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="using:PKHeX.Avalonia.ViewModels"
+             xmlns:vm="clr-namespace:PKHeX.Presentation.ViewModels;assembly=PKHeX.Presentation"
              x:Class="PKHeX.Avalonia.Views.TrainerCard8EditorView"
              x:DataType="vm:TrainerCard8EditorViewModel"
              MinWidth="450" MinHeight="500">

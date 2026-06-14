@@ -11,7 +11,7 @@ public sealed class DialogService : IDialogService
 {
     private Window? GetMainWindow()
     {
-        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        if (global::Avalonia.Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             return desktop.MainWindow;
         return null;
     }
@@ -124,25 +124,6 @@ public sealed class DialogService : IDialogService
 
         var button = ((StackPanel)dialog.Content).Children[1] as Button;
         button!.Click += (_, _) => dialog.Close();
-
-        await dialog.ShowDialog(window);
-    }
-
-    public async Task ShowDialogAsync(Control content, string title)
-    {
-        var window = GetMainWindow();
-        if (window is null) return;
-
-        var dialog = new Window
-        {
-            Title = title,
-            Content = content,
-            SizeToContent = SizeToContent.WidthAndHeight,
-            WindowStartupLocation = WindowStartupLocation.CenterOwner,
-            CanResize = true,
-            MaxWidth = 1400,
-            MaxHeight = 820,
-        };
 
         await dialog.ShowDialog(window);
     }

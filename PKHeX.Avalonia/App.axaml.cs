@@ -2,13 +2,15 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
+using PKHeX.Application;
+using PKHeX.Infrastructure;
 using PKHeX.Avalonia.Services;
-using PKHeX.Avalonia.ViewModels;
+using PKHeX.Presentation.ViewModels;
 using PKHeX.Avalonia.Views;
 
 namespace PKHeX.Avalonia;
 
-public partial class App : Application
+public partial class App : global::Avalonia.Application
 {
     public static IServiceProvider Services { get; private set; } = null!;
 
@@ -40,22 +42,23 @@ public partial class App : Application
 
     private static void ConfigureServices(IServiceCollection services)
     {
-        // Initialize Config
+        // Inner layers (framework-free): use cases, ports + app-side impls, non-UI drivers.
+        services.AddApplication();
+        services.AddInfrastructure();
+
+        // Config: load + seed Core localization, then register as the IProgramSettings model.
         var config = AppSettings.Load();
         config.InitializeCore();
         services.AddSingleton(config);
 
-        // Services (Singleton - shared state)
-        services.AddSingleton<ISaveFileService, SaveFileService>();
+        // Host (Frameworks & Drivers): Avalonia/Skia implementations of the Application ports.
         services.AddSingleton<IDialogService, DialogService>();
+        services.AddSingleton<IWindowService, WindowService>();
         services.AddSingleton<ISpriteRenderer, AvaloniaSpriteRenderer>();
-        services.AddSingleton<ISlotService, SlotService>();
         services.AddSingleton<IClipboardService, ClipboardService>();
-        services.AddSingleton<UndoRedoService>();
-        services.AddSingleton<LanguageService>();
 
-        // ViewModels (Transient - created fresh each time)
+        // Root ViewModel (transient). Child/editor ViewModels are created by their parent presenter
+        // with the current save, so they are not registered in the container.
         services.AddTransient<MainWindowViewModel>();
-        services.AddTransient<BoxViewerViewModel>();
     }
 }

@@ -2,8 +2,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="using:PKHeX.Avalonia.ViewModels"
-             xmlns:models="using:PKHeX.Avalonia.Models"
+             xmlns:vm="clr-namespace:PKHeX.Presentation.ViewModels;assembly=PKHeX.Presentation"
+             xmlns:models="clr-namespace:PKHeX.Presentation.Models;assembly=PKHeX.Presentation"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="PKHeX.Avalonia.Views.GroupViewer"
              x:DataType="vm:GroupViewerViewModel">
@@ -40,7 +40,7 @@
                                 CommandParameter="{Binding}">
                             <Grid RowDefinitions="*, Auto, Auto">
                                 <!-- Sprite -->
-                                <Image Grid.Row="0" Source="{Binding Sprite}" Stretch="Uniform" Height="60"/>
+                                <Image Grid.Row="0" Source="{Binding Sprite, Converter={StaticResource PngBytesToBitmap}}" Stretch="Uniform" Height="60"/>
                                 
                                 <!-- Info -->
                                 <TextBlock Grid.Row="1" Text="{Binding SpeciesName}" FontSize="10" HorizontalAlignment="Center" TextTrimming="CharacterEllipsis"/>

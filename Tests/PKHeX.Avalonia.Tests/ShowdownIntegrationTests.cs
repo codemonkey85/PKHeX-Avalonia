@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Avalonia.Headless.XUnit;
 using Moq;
 using PKHeX.Avalonia.Services;
-using PKHeX.Avalonia.ViewModels;
+using PKHeX.Presentation.ViewModels;
 using PKHeX.Core;
 using Xunit;
 
@@ -11,7 +11,7 @@ namespace PKHeX.Avalonia.Tests;
 
 public class ShowdownIntegrationTests : IDisposable
 {
-    private readonly Mock<ISaveFileService> _saveFileServiceMock = new();
+    private readonly Mock<ISaveFileGateway> _saveFileServiceMock = new();
     private readonly Mock<IDialogService> _dialogServiceMock = new();
     private readonly Mock<ISpriteRenderer> _spriteRendererMock = new();
     private readonly Mock<ISlotService> _slotServiceMock = new();
@@ -34,6 +34,7 @@ public class ShowdownIntegrationTests : IDisposable
         var vm = new MainWindowViewModel(
             _saveFileServiceMock.Object,
             _dialogServiceMock.Object,
+            new Mock<IWindowService>().Object,
             _spriteRendererMock.Object,
             _slotServiceMock.Object,
             _clipboardServiceMock.Object,

@@ -12,7 +12,7 @@ public class ClipboardService : IClipboardService
     {
         if (clipboard is not null) return clipboard;
 
-        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime { MainWindow: { } window })
+        if (global::Avalonia.Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime { MainWindow: { } window })
         {
             clipboard = window.Clipboard;
             return clipboard;

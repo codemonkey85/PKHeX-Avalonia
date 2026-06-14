@@ -1,6 +1,6 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="using:PKHeX.Avalonia.ViewModels"
+             xmlns:vm="clr-namespace:PKHeX.Presentation.ViewModels;assembly=PKHeX.Presentation"
              x:Class="PKHeX.Avalonia.Views.PokemonEditor"
              x:DataType="vm:PokemonEditorViewModel"
              Focusable="False"
@@ -38,7 +38,7 @@
                             BoxShadow="{StaticResource ThemeShadowSmall}"
                             ClipToBounds="True">
                         <Panel>
-                            <Image Source="{Binding Sprite}"
+                            <Image Source="{Binding Sprite, Converter={StaticResource PngBytesToBitmap}}"
                                    Width="64" Height="52"
                                    RenderOptions.BitmapInterpolationMode="HighQuality"
                                    HorizontalAlignment="Center"
@@ -728,7 +728,7 @@
                                                 <Grid ColumnDefinitions="36,*,60">
                                                     <!-- Icon -->
                                                     <Image Grid.Column="0" 
-                                                           Source="{Binding Icon}" 
+                                                           Source="{Binding IconResource, Converter={StaticResource RibbonIcon}}" 
                                                            Width="28" Height="28" 
                                                            VerticalAlignment="Center" />
                                                     

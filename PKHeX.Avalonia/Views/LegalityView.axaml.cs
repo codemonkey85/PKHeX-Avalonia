@@ -12,11 +12,6 @@ public partial class LegalityView : UserControl
         InitializeComponent();
     }
 
-    public LegalityView(string report) : this()
-    {
-        ReportText.Text = report;
-    }
-
     private void OnCloseClick(object sender, RoutedEventArgs e)
     {
         var window = this.GetVisualRoot() as Window;

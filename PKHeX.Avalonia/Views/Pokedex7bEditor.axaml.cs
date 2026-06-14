@@ -1,6 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
-using PKHeX.Avalonia.ViewModels;
+using PKHeX.Presentation.ViewModels;
 
 namespace PKHeX.Avalonia.Views;
 
