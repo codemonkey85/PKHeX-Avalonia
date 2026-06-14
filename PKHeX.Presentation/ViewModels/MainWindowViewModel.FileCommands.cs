@@ -49,26 +49,14 @@ public partial class MainWindowViewModel
         if (CurrentSave is null || CurrentPokemonEditor is null) return;
 
         var text = await _clipboardService.GetTextAsync();
-        if (string.IsNullOrWhiteSpace(text))
+        var result = new ImportShowdownSetUseCase().Execute(CurrentSave, text);
+        if (!result.Success)
         {
-            await _dialogService.ShowErrorAsync("Import Failed", "Clipboard is empty.");
+            await _dialogService.ShowErrorAsync("Import Failed", result.Error!);
             return;
         }
 
-        var set = new ShowdownSet(text.Trim());
-        if (set.Species <= 0)
-        {
-            await _dialogService.ShowErrorAsync("Import Failed", "Invalid Showdown set text.");
-            return;
-        }
-
-        var pk = CurrentSave.BlankPKM;
-        pk.ApplySetDetails(set);
-        if (pk.Format >= 8)
-            pk.Nature = pk.StatNature;
-        pk.SetPIDGender(pk.Gender);
-
-        CurrentPokemonEditor.LoadPKM(pk);
+        CurrentPokemonEditor.LoadPKM(result.Pokemon!);
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -76,10 +64,10 @@ public partial class MainWindowViewModel
     {
         if (CurrentPokemonEditor is null) return;
 
-        var pk = CurrentPokemonEditor.PreparePKM();
-        if (pk.Species == 0) return;
+        var text = new ExportShowdownSetUseCase().Execute(CurrentPokemonEditor.PreparePKM());
+        if (text is null) return;
 
-        await _clipboardService.SetTextAsync(new ShowdownSet(pk).Text);
+        await _clipboardService.SetTextAsync(text);
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -112,16 +100,14 @@ public partial class MainWindowViewModel
         var path = await _dialogService.OpenFolderAsync("Select Folder to Dump Boxes");
         if (string.IsNullOrEmpty(path)) return;
 
-        // Core's DumpBoxes writes proper .pk* files (decrypted party format with
-        // OT/nickname blocks for Gen 1/2) that can be re-imported on any save.
-        int count = CurrentSave.DumpBoxes(path);
-        if (count < 0)
+        var result = new DumpBoxesUseCase().Execute(CurrentSave, path);
+        if (!result.Success)
         {
-            await _dialogService.ShowErrorAsync("Dump Boxes", "This save file has no boxes to dump.");
+            await _dialogService.ShowErrorAsync("Dump Boxes", result.Message);
             return;
         }
 
-        await _dialogService.ShowInformationAsync("Dump Boxes", $"Dumped {count} Pokémon to {path}");
+        await _dialogService.ShowInformationAsync("Dump Boxes", result.Message);
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -132,15 +118,13 @@ public partial class MainWindowViewModel
         var path = await _dialogService.OpenFolderAsync("Select Folder to Load Boxes");
         if (string.IsNullOrEmpty(path)) return;
 
-        // Core's LoadBoxes handles file detection, format conversion between
-        // games/generations (e.g. Gold -> Crystal) and compatibility checks.
-        int count = CurrentSave.LoadBoxes(path, out var result, all: true);
+        var result = new LoadBoxesUseCase().Execute(CurrentSave, path);
 
         BoxViewer?.RefreshCurrentBox();
 
-        if (count < 0)
-            await _dialogService.ShowErrorAsync("Load Boxes", result);
+        if (!result.Success)
+            await _dialogService.ShowErrorAsync("Load Boxes", result.Message);
         else
-            await _dialogService.ShowInformationAsync("Load Boxes", result);
+            await _dialogService.ShowInformationAsync("Load Boxes", result.Message);
     }
 }
