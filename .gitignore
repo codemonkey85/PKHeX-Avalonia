@@ -234,3 +234,10 @@ pingme.txt
 #################
 
 *.userprefs
+
+
+#############
+## Superpowers planning/spec docs (never commit to repo)
+#############
+
+docs/superpowers/
