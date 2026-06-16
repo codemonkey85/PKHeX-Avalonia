@@ -22,7 +22,7 @@ public sealed class ImportShowdownSetUseCase
         var pk = sav.BlankPKM;
         pk.ApplySetDetails(set);
         if (pk.Format >= 8)
-            pk.Nature = pk.StatNature;
+            pk.Nature = pk.StatAlignment;
         pk.SetPIDGender(pk.Gender);
         return new ImportShowdownResult(true, pk, null);
     }

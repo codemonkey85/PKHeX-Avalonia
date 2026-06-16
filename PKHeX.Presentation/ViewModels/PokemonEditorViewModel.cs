@@ -256,7 +256,7 @@ public partial class PokemonEditorViewModel : ViewModelBase
 
             // Misc
             AbilityNumber = _pk.AbilityNumber;
-            StatNature = (int)_pk.StatNature;
+            StatNature = (int)_pk.StatAlignment;
             HpType = _pk.HPType;
             IsPokerusInfected = _pk.IsPokerusInfected;
             IsPokerusCured = _pk.IsPokerusCured;
