@@ -67,7 +67,7 @@ public class ShowdownIntegrationTests : IDisposable
             Species = (int)Species.Charizard,
             Move1 = (int)Move.Flamethrower,
             Nature = Nature.Timid,
-            StatNature = Nature.Timid, // Gen 8 uses StatNature for stats/export
+            StatAlignment = Nature.Timid, // Gen 8 uses StatAlignment for stats/export
             IV_HP = 31, IV_ATK = 0, IV_DEF = 31, IV_SPA = 31, IV_SPD = 31, IV_SPE = 31,
             EV_SPA = 252, EV_SPE = 252,
             HeldItem = 270 // Life Orb
