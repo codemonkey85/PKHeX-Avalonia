@@ -229,4 +229,139 @@ public class DatabaseTests : IDisposable
         var name = strings.Species[1];
         Assert.Equal("Bulbizarre", name);
     }
+
+    private static PKMDatabaseViewModel CreateDatabaseVm()
+    {
+        var sav = BlankSaveFile.Get(GameVersion.SL);
+        var spriteMock = new Mock<ISpriteRenderer>();
+        var dialogMock = new Mock<IDialogService>();
+        return new PKMDatabaseViewModel(sav, spriteMock.Object, dialogMock.Object);
+    }
+
+    [Fact]
+    public void Verify_Database_Default_Filters_Map_To_Any()
+    {
+        var vm = CreateDatabaseVm();
+        var settings = vm.GetSearchSettings();
+
+        // Existing wildcard expectations.
+        Assert.Equal(0, settings.Species);
+        Assert.Equal(PKHeX.Core.Nature.Random, settings.Nature);
+        Assert.Equal(-1, settings.Ability);
+        Assert.Equal(-1, settings.Item);
+        Assert.Null(settings.SearchShiny);
+        Assert.Null(settings.SearchLegal);
+
+        // New filters default to "any"/disabled.
+        Assert.Null(settings.SearchEgg);
+        Assert.Equal(-1, settings.HiddenPowerType);
+        Assert.Null(settings.Level);
+        Assert.Equal(PKHeX.Core.Searching.SearchComparison.None, settings.SearchLevel);
+        Assert.Equal(0, settings.IVType);
+        Assert.Equal(0, settings.EVType);
+        Assert.Null(settings.ESV);
+    }
+
+    [Fact]
+    public void Verify_Database_HiddenPower_Filter_Maps()
+    {
+        var vm = CreateDatabaseVm();
+
+        // "Any" sentinel is present and selected by default.
+        Assert.Contains(vm.HiddenPowerList, x => x.Value == -1);
+        Assert.Equal(PKHeX.Core.HiddenPower.TypeCount, vm.HiddenPowerList.Count - 1);
+
+        vm.HiddenPowerType = 3; // arbitrary HP type index
+        Assert.Equal(3, vm.GetSearchSettings().HiddenPowerType);
+    }
+
+    [Fact]
+    public void Verify_Database_Egg_Tristate_Maps()
+    {
+        var vm = CreateDatabaseVm();
+
+        vm.IsEgg = true;
+        Assert.True(vm.GetSearchSettings().SearchEgg);
+
+        vm.IsEgg = false;
+        Assert.False(vm.GetSearchSettings().SearchEgg);
+
+        vm.IsEgg = null;
+        Assert.Null(vm.GetSearchSettings().SearchEgg);
+    }
+
+    [Fact]
+    public void Verify_Database_Level_Filter_Maps()
+    {
+        var vm = CreateDatabaseVm();
+
+        // With no comparison selected, Level is not applied even if a value is set.
+        vm.Level = 50;
+        vm.LevelComparison = (int)PKHeX.Core.Searching.SearchComparison.None;
+        var none = vm.GetSearchSettings();
+        Assert.Null(none.Level);
+        Assert.Equal(PKHeX.Core.Searching.SearchComparison.None, none.SearchLevel);
+
+        // With a comparison selected, Level + SearchLevel flow through.
+        vm.LevelComparison = (int)PKHeX.Core.Searching.SearchComparison.GreaterThanEquals;
+        var ge = vm.GetSearchSettings();
+        Assert.Equal((byte)50, ge.Level);
+        Assert.Equal(PKHeX.Core.Searching.SearchComparison.GreaterThanEquals, ge.SearchLevel);
+    }
+
+    [Fact]
+    public void Verify_Database_IV_EV_Type_Filters_Map()
+    {
+        var vm = CreateDatabaseVm();
+
+        vm.IvType = 6; // Flawless (186)
+        vm.EvType = 1; // None (0)
+        var settings = vm.GetSearchSettings();
+        Assert.Equal(6, settings.IVType);
+        Assert.Equal(1, settings.EVType);
+    }
+
+    [Fact]
+    public void Verify_Database_ESV_Filter_Maps()
+    {
+        var vm = CreateDatabaseVm();
+
+        // Disabled => null regardless of value.
+        vm.Esv = 1234;
+        vm.EsvEnabled = false;
+        Assert.Null(vm.GetSearchSettings().ESV);
+
+        // Enabled => value flows through.
+        vm.EsvEnabled = true;
+        Assert.Equal(1234, vm.GetSearchSettings().ESV);
+    }
+
+    [Fact]
+    public void Verify_Database_New_Filters_Actually_Search()
+    {
+        var sav = BlankSaveFile.Get(GameVersion.SL);
+        var spriteMock = new Mock<ISpriteRenderer>();
+        var dialogMock = new Mock<IDialogService>();
+
+        var pkm = sav.BlankPKM;
+        pkm.Species = 25;
+        pkm.CurrentLevel = 50;
+        sav.SetBoxSlotAtIndex(pkm, 0, 0);
+
+        var vm = new PKMDatabaseViewModel(sav, spriteMock.Object, dialogMock.Object);
+        var allPkms = sav.BoxData.Concat(sav.PartyData);
+
+        // Level >= 50 should match the level-50 Pikachu.
+        vm.Level = 50;
+        vm.LevelComparison = (int)PKHeX.Core.Searching.SearchComparison.GreaterThanEquals;
+        var hit = vm.GetSearchSettings().Search(allPkms).Where(p => p.Species != 0).ToList();
+        Assert.Single(hit);
+        Assert.Equal(25, hit[0].Species);
+
+        // Level <= 10 should exclude it.
+        vm.LevelComparison = (int)PKHeX.Core.Searching.SearchComparison.LessThanEquals;
+        vm.Level = 10;
+        var miss = vm.GetSearchSettings().Search(allPkms).Where(p => p.Species != 0).ToList();
+        Assert.Empty(miss);
+    }
 }

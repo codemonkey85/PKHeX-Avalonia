@@ -36,12 +36,24 @@ public partial class PKMDatabaseViewModel : ViewModelBase
     [ObservableProperty] private string _nickname = string.Empty;
     [ObservableProperty] private bool? _isShiny;
     [ObservableProperty] private bool? _isLegal;
+    [ObservableProperty] private bool? _isEgg;
+    [ObservableProperty] private int _hiddenPowerType;
+    [ObservableProperty] private int _level;
+    [ObservableProperty] private int _levelComparison;
+    [ObservableProperty] private int _ivType;
+    [ObservableProperty] private int _evType;
+    [ObservableProperty] private bool _esvEnabled;
+    [ObservableProperty] private int _esv;
 
     // Data Sources for View
     [ObservableProperty] private IReadOnlyList<ComboItem> _speciesList = [];
     [ObservableProperty] private IReadOnlyList<ComboItem> _natureList = [];
     [ObservableProperty] private IReadOnlyList<ComboItem> _abilityList = [];
     [ObservableProperty] private IReadOnlyList<ComboItem> _itemList = [];
+    [ObservableProperty] private IReadOnlyList<ComboItem> _hiddenPowerList = [];
+    [ObservableProperty] private IReadOnlyList<ComboItem> _levelComparisonList = [];
+    [ObservableProperty] private IReadOnlyList<ComboItem> _ivTypeList = [];
+    [ObservableProperty] private IReadOnlyList<ComboItem> _evTypeList = [];
 
     public PKMDatabaseViewModel(SaveFile sav, ISpriteRenderer spriteRenderer, IDialogService dialogService)
     {
@@ -55,6 +67,15 @@ public partial class PKMDatabaseViewModel : ViewModelBase
         Ability = -1;
         Item = -1;
 
+        // Extended filter defaults ("Any"/disabled)
+        HiddenPowerType = -1;       // -1 = any HP type
+        LevelComparison = (int)SearchComparison.None; // None = don't filter by level
+        Level = 0;
+        IvType = 0;                 // 0 = any IV total bucket
+        EvType = 0;                 // 0 = any EV total bucket
+        EsvEnabled = false;
+        Esv = 0;
+
         InitDataSources();
         WeakReferenceMessenger.Default.Register<LanguageChangedMessage>(this, (r, m) => RefreshLanguage());
     }
@@ -65,6 +86,44 @@ public partial class PKMDatabaseViewModel : ViewModelBase
         NatureList = new List<ComboItem> { new("Any", 25) }.Concat(GameInfo.Sources.NatureDataSource).ToList();
         AbilityList = new List<ComboItem> { new("Any", -1) }.Concat(GameInfo.Sources.AbilityDataSource).ToList();
         ItemList = new List<ComboItem> { new("Any", -1) }.Concat(GameInfo.Sources.GetItemDataSource(_sav.Version, _sav.Context, _sav.HeldItems)).ToList();
+
+        // Hidden Power type: value is the 0-based HP type index (matches PKM.HPType); -1 = any.
+        var hpTypes = new List<ComboItem> { new("Any", -1) };
+        var hpNames = GameInfo.Strings.HiddenPowerTypes;
+        for (int i = 0; i < hpNames.Length; i++)
+            hpTypes.Add(new ComboItem(hpNames[i], i));
+        HiddenPowerList = hpTypes;
+
+        // Level comparison operands (mirrors SearchUtil.SatisfiesFilterLevel).
+        LevelComparisonList = new List<ComboItem>
+        {
+            new("Any", (int)SearchComparison.None),
+            new("= (equal)", (int)SearchComparison.Equals),
+            new(">= (at least)", (int)SearchComparison.GreaterThanEquals),
+            new("<= (at most)", (int)SearchComparison.LessThanEquals),
+        };
+
+        // IV total buckets (mirrors SearchUtil.SatisfiesFilterIVs); 0 = any.
+        IvTypeList = new List<ComboItem>
+        {
+            new("Any", 0),
+            new("<= 90", 1),
+            new("91-120", 2),
+            new("121-150", 3),
+            new("151-179", 4),
+            new("180+", 5),
+            new("Flawless (186)", 6),
+        };
+
+        // EV total buckets (mirrors SearchUtil.SatisfiesFilterEVs); 0 = any.
+        EvTypeList = new List<ComboItem>
+        {
+            new("Any", 0),
+            new("None (0)", 1),
+            new("Some (1-127)", 2),
+            new("Half (128-507)", 3),
+            new("Full (508+)", 4),
+        };
     }
 
     [RelayCommand]
@@ -159,7 +218,7 @@ public partial class PKMDatabaseViewModel : ViewModelBase
         }
     }
 
-    private SearchSettings GetSearchSettings() => new()
+    public SearchSettings GetSearchSettings() => new()
     {
         Species = (ushort)Species,
         Nature = (Nature)Nature,
@@ -168,6 +227,15 @@ public partial class PKMDatabaseViewModel : ViewModelBase
         Nickname = Nickname,
         SearchShiny = IsShiny,
         SearchLegal = IsLegal,
+        SearchEgg = IsEgg,
+        HiddenPowerType = HiddenPowerType,
+        // Only filter by level when a comparison operand is selected; otherwise leave null.
+        Level = (SearchComparison)LevelComparison == SearchComparison.None ? null : (byte)Level,
+        SearchLevel = (SearchComparison)LevelComparison,
+        IVType = IvType,
+        EVType = EvType,
+        // ESV is only meaningful alongside Egg=Yes (see SearchSettings.FilterResultEgg).
+        ESV = EsvEnabled ? Esv : null,
         Context = _sav.Context
     };
 
