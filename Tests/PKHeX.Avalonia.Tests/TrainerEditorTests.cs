@@ -165,6 +165,63 @@ public class TrainerEditorTests
     }
 
     [AvaloniaFact]
+    public void BattleChateau_ShouldPersist_RoundTrip()
+    {
+        // 1. Setup SaveFile (SAV6XY exposes SUBE chateau data)
+        var sav = new SAV6XY();
+
+        // 2. Load ViewModel
+        var vm = new TrainerEditorViewModel(sav);
+
+        // Assert detected for XY
+        Assert.True(vm.HasBattleChateau);
+        Assert.NotEmpty(vm.ChateauRankList);
+
+        // 3. Modify
+        vm.ChateauRank = (int)BattleChateauRank6.Duke; // 4
+        vm.ChateauPoints = 1234;
+
+        // 4. Save
+        vm.SaveCommand.Execute(null);
+
+        // 5. Verify persistence in SaveFile
+        Assert.Equal((ushort)BattleChateauRank6.Duke, sav.SUBE.ChateauRank);
+        Assert.Equal((ushort)1234, sav.SUBE.ChateauPoints);
+
+        // 6. Verify reload
+        var reloadedVm = new TrainerEditorViewModel(sav);
+        Assert.Equal((int)BattleChateauRank6.Duke, reloadedVm.ChateauRank);
+        Assert.Equal(1234, reloadedVm.ChateauPoints);
+    }
+
+    [AvaloniaFact]
+    public void BattleChateau_SetPointsForRank_UsesRankTable()
+    {
+        var sav = new SAV6XY();
+        var vm = new TrainerEditorViewModel(sav);
+
+        vm.ChateauRank = (int)BattleChateauRank6.GrandDuke; // 5 -> 1000 points
+        vm.SetChateauPointsForRankCommand.Execute(null);
+
+        Assert.Equal((int)SubEventLog6XY.GetChateauPointsForRank((ushort)BattleChateauRank6.GrandDuke), vm.ChateauPoints);
+        Assert.Equal(1000, vm.ChateauPoints);
+    }
+
+    [AvaloniaFact]
+    public void BattleChateau_ShouldHide_ForNonXYSave()
+    {
+        // ORAS (SAV6AO) does not expose chateau data
+        var ao = new SAV6AO();
+        var vmAo = new TrainerEditorViewModel(ao);
+        Assert.False(vmAo.HasBattleChateau);
+
+        // A later-gen save also lacks it
+        var swsh = new SAV8SWSH();
+        var vmSwsh = new TrainerEditorViewModel(swsh);
+        Assert.False(vmSwsh.HasBattleChateau);
+    }
+
+    [AvaloniaFact]
     public void Badges_ShouldHide_ForUnsupportedSave()
     {
         // 1. Setup generic SaveFile without Badges property (mock or base)

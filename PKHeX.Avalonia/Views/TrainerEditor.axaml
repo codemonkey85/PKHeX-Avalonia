@@ -181,6 +181,31 @@
                     </StackPanel>
                 </Border>
                 
+                <!-- Battle Chateau (Gen 6 XY) -->
+                <Border IsVisible="{Binding HasBattleChateau}" Classes="section-card" Padding="12">
+                    <StackPanel Spacing="12">
+                        <TextBlock Text="Battle Chateau" FontWeight="SemiBold" Opacity="0.6" />
+                        <Grid ColumnDefinitions="*,12,*,12,Auto" RowDefinitions="Auto,4,Auto">
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Rank" FontSize="11" FontWeight="SemiBold" Opacity="0.7" />
+                            <ComboBox Grid.Row="2" Grid.Column="0"
+                                      ItemsSource="{Binding ChateauRankList}"
+                                      SelectedValue="{Binding ChateauRank}"
+                                      SelectedValueBinding="{Binding Value}"
+                                      DisplayMemberBinding="{Binding Text}"
+                                      HorizontalAlignment="Stretch" />
+
+                            <TextBlock Grid.Row="0" Grid.Column="2" Text="Points" FontSize="11" FontWeight="SemiBold" Opacity="0.7" />
+                            <NumericUpDown Grid.Row="2" Grid.Column="2" Value="{Binding ChateauPoints}" Minimum="0" Maximum="4095" FormatString="0" ShowButtonSpinner="False" />
+
+                            <Button Grid.Row="2" Grid.Column="4"
+                                    Content="Set points for rank"
+                                    Command="{Binding SetChateauPointsForRankCommand}"
+                                    VerticalAlignment="Bottom"
+                                    Padding="12,6" FontSize="12" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
                 <!-- Adventure & Coordinates (2 Columns) -->
                 <Grid ColumnDefinitions="*,16,*" IsVisible="{Binding HasAdventureInfo}">
                     <Border Grid.Column="0" Classes="section-card" Padding="12">
