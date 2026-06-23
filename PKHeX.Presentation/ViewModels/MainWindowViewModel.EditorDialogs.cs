@@ -43,6 +43,15 @@ public partial class MainWindowViewModel
         await _windowService.ShowDialogAsync(vm, "Save Folder List");
     }
 
+    // No HasSave gate: the troubleshooter exists to open a save the normal loader cannot recognize,
+    // so it must be reachable with no save loaded.
+    [RelayCommand]
+    private async Task OpenSaveHandlerTroubleshooterAsync()
+    {
+        var vm = new SaveHandlerTroubleshooterViewModel(_dialogService, _saveFileService);
+        await _windowService.ShowDialogAsync(vm, "Save Handler Troubleshooter");
+    }
+
     [RelayCommand(CanExecute = nameof(HasSave))]
     private async Task OpenBatchEditorAsync()
     {

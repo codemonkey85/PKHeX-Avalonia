@@ -37,6 +37,13 @@ public sealed class SaveFileService : ISaveFileGateway
         return true;
     }
 
+    public void OpenLoadedSave(SaveFile sav, string? path = null)
+    {
+        CurrentSave = sav;
+        _currentPath = path ?? sav.Metadata.FilePath;
+        SaveFileChanged?.Invoke(CurrentSave);
+    }
+
     public Task<bool> SaveFileAsync(string? path = null)
     {
         return Task.Run(() =>

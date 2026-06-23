@@ -93,6 +93,7 @@ public static class ViewLocator
         [typeof(Roamer3EditorViewModel)] = () => new Roamer3Editor(),
         [typeof(Roamer6EditorViewModel)] = () => new Roamer6Editor(),
         [typeof(RoamerEditorViewModel)] = () => new RoamerEditor(),
+        [typeof(SaveHandlerTroubleshooterViewModel)] = () => new SaveHandlerTroubleshooter(),
         [typeof(SealStickers8bEditorViewModel)] = () => new SealStickers8bEditor(),
         [typeof(SecretBase3EditorViewModel)] = () => new SecretBase3Editor(),
         [typeof(SecretBase6EditorViewModel)] = () => new SecretBase6Editor(),
