@@ -150,6 +150,23 @@ public partial class TrainerEditorViewModel : ViewModelBase
 
     [ObservableProperty] private bool _anyCurrencyVisible;
 
+    // Battle Chateau (Gen 6 XY)
+    [ObservableProperty] private bool _hasBattleChateau;
+    [ObservableProperty] private int _chateauRank;
+    [ObservableProperty] private int _chateauPoints;
+
+    public IReadOnlyList<ComboItem> ChateauRankList { get; } = BuildChateauRankList();
+
+    private static IReadOnlyList<ComboItem> BuildChateauRankList()
+    {
+        var names = Enum.GetNames<BattleChateauRank6>();
+        var values = Enum.GetValues<BattleChateauRank6>();
+        var list = new List<ComboItem>(names.Length);
+        for (int i = 0; i < names.Length; i++)
+            list.Add(new ComboItem(names[i], Convert.ToInt32(values[i])));
+        return list;
+    }
+
     private void LoadFromSave()
     {
         TrainerName = _sav.OT;
@@ -172,6 +189,22 @@ public partial class TrainerEditorViewModel : ViewModelBase
         LoadAdventureInfo();
         LoadCoordinates();
         LoadCurrencies();
+        LoadBattleChateau();
+    }
+
+    private void LoadBattleChateau()
+    {
+        if (_sav is SAV6XY xy)
+        {
+            HasBattleChateau = true;
+            var sube = xy.SUBE;
+            ChateauRank = sube.ChateauRank;
+            ChateauPoints = sube.ChateauPoints;
+        }
+        else
+        {
+            HasBattleChateau = false;
+        }
     }
 
     private void LoadCurrencies()
@@ -345,6 +378,26 @@ public partial class TrainerEditorViewModel : ViewModelBase
         SaveAdventureInfo();
         SaveCoordinates();
         SaveCurrencies();
+        SaveBattleChateau();
+    }
+
+    private void SaveBattleChateau()
+    {
+        if (!HasBattleChateau) return;
+
+        if (_sav is SAV6XY xy)
+        {
+            xy.SUBE.SetChateau((ushort)ChateauRank, (ushort)ChateauPoints);
+        }
+    }
+
+    [RelayCommand]
+    private void SetChateauPointsForRank()
+    {
+        // GetChateauPointsForRank only defines values for the named ranks (Baron..GrandDuke).
+        // Guard against higher raw rank values (ChateauRankMax is 0xF) which would throw.
+        if (ChateauRank <= (int)BattleChateauRank6.GrandDuke)
+            ChateauPoints = SubEventLog6XY.GetChateauPointsForRank((ushort)ChateauRank);
     }
 
     private void SaveCurrencies()
