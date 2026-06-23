@@ -135,6 +135,58 @@ public partial class PokemonEditorViewModel
     [ObservableProperty]
     private int _happiness;
 
+    /// <summary>
+    /// Progress through the current level as a fraction in [0,1], used to fill the Experience bar.
+    /// At <see cref="Experience.MaxLevel"/> the bar is full.
+    /// </summary>
+    public double ExpPercent => Level >= Experience.MaxLevel
+        ? 1.0
+        : Experience.GetEXPToLevelUpPercentage((byte)Level, (uint)Exp, _pk.PersonalInfo.EXPGrowth);
+
+    partial void OnExpChanged(long value)
+    {
+        if (_isLoading) return;
+        OnPropertyChanged(nameof(ExpPercent));
+    }
+
+    /// <summary>
+    /// Sets <see cref="Exp"/> from a horizontal fraction [0,1) along the Experience bar, staying within the
+    /// current level (mirrors upstream's left-click/drag behavior, which never changes the level).
+    /// </summary>
+    /// <param name="fraction">Fractional position along the bar; clamped to [0,1).</param>
+    public void SetExpFromFraction(double fraction)
+    {
+        if (Level >= Experience.MaxLevel)
+            return;
+
+        fraction = Math.Clamp(fraction, 0.0, 1.0);
+        var growth = _pk.PersonalInfo.EXPGrowth;
+        var start = Experience.GetEXP((byte)Level, growth);
+        var range = Experience.GetEXPToLevelUp((byte)Level, growth);
+        if (range == 0)
+            return;
+
+        // Stay strictly below the next level's threshold (range-1 is the level's high edge).
+        var progress = Math.Min(range - 1, (uint)(range * fraction));
+        Exp = start + progress;
+    }
+
+    /// <summary>
+    /// Snaps <see cref="Exp"/> to the high edge of the current level (one EXP below the next level-up),
+    /// mirroring upstream's modifier-click behavior.
+    /// </summary>
+    public void SetExpToLevelEdgeHigh()
+    {
+        if (Level >= Experience.MaxLevel)
+            return;
+
+        var growth = _pk.PersonalInfo.EXPGrowth;
+        var range = Experience.GetEXPToLevelUp((byte)Level, growth);
+        if (range == 0)
+            return;
+        Exp = Experience.GetEXP((byte)Level, growth) + range - 1;
+    }
+
     // Pokerus
     [ObservableProperty]
     private int _pkrsStrain;

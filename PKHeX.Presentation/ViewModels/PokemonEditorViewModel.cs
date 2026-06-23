@@ -324,6 +324,7 @@ public partial class PokemonEditorViewModel : ViewModelBase
 
         OnPropertyChanged(nameof(IVTotal));
         OnPropertyChanged(nameof(EVTotal));
+        OnPropertyChanged(nameof(ExpPercent));
         UpdateSprite();
         Validate();
         LoadRibbons();
@@ -377,7 +378,7 @@ public partial class PokemonEditorViewModel : ViewModelBase
     }
 
     partial void OnNicknameChanged(string value) { if (!_isLoading) Validate(); }
-    partial void OnLevelChanged(int value) { if (!_isLoading) { RecalculateStats(); Validate(); } }
+    partial void OnLevelChanged(int value) { if (!_isLoading) { RecalculateStats(); OnPropertyChanged(nameof(ExpPercent)); Validate(); } }
     partial void OnNatureChanged(int value) { if (!_isLoading) { RecalculateStats(); Validate(); } }
     partial void OnAbilityChanged(int value) { if (!_isLoading) Validate(); }
     partial void OnHeldItemChanged(int value) { if (!_isLoading) Validate(); }
@@ -613,8 +614,9 @@ public partial class PokemonEditorViewModel : ViewModelBase
         UpdateFormList();
         UpdateAbilityList();
         UpdateFormArgument();
-        UpdateSprite();
+        UpdateSprite(); // sets _pk.Species so the new growth rate is used below
         UpdateTitle();
+        OnPropertyChanged(nameof(ExpPercent));
         OnPropertyChanged(nameof(CanOpenTechRecord));
     }
 }
