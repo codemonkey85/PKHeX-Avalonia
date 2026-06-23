@@ -71,6 +71,19 @@ public class SpriteStyleTests
     }
 
     [Fact]
+    public void Loader_Artwork_ShinyDiffersFromNonShiny()
+    {
+        var loader = new SpriteLoader { Style = SpriteStyle.Artwork };
+        using var shiny = loader.GetSprite(6, 0, 0, 0, true, EntityContext.Gen9);   // Charizard, a_6s.png
+        using var normal = loader.GetSprite(6, 0, 0, 0, false, EntityContext.Gen9); // a_6.png
+        Assert.NotNull(shiny);
+        Assert.NotNull(normal);
+        // The new "Artwork Shiny Sprites" set now resolves to a distinct sprite
+        // (before wiring the ShinyFolder, shiny Artwork fell back to the non-shiny image).
+        Assert.False(shiny!.Bytes.SequenceEqual(normal!.Bytes));
+    }
+
+    [Fact]
     public void Loader_Classic_MissingGen9Species_ReturnsNull()
     {
         // Classic set has no Gen 9 sprites; loader returns null (renderer then draws a placeholder).
