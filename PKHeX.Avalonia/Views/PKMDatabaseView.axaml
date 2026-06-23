@@ -57,6 +57,60 @@
                                 <RadioButton Content="Illegal" IsChecked="{Binding IsLegal, Converter={StaticResource ObjectFalseConverter}}"/>
                             </StackPanel>
                         </StackPanel>
+
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Egg" Opacity="0.7" FontSize="12"/>
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <RadioButton Content="Any" IsChecked="{Binding IsEgg, Converter={StaticResource ObjectNullConverter}}"/>
+                                <RadioButton Content="Yes" IsChecked="{Binding IsEgg, Converter={StaticResource ObjectTrueConverter}}"/>
+                                <RadioButton Content="No" IsChecked="{Binding IsEgg, Converter={StaticResource ObjectFalseConverter}}"/>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Hidden Power" Opacity="0.7" FontSize="12"/>
+                            <ComboBox ItemsSource="{Binding HiddenPowerList}"
+                                      SelectedValue="{Binding HiddenPowerType}"
+                                      SelectedValueBinding="{Binding Value}"
+                                      DisplayMemberBinding="{Binding Text}"
+                                      HorizontalAlignment="Stretch"/>
+                        </StackPanel>
+
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Level" Opacity="0.7" FontSize="12"/>
+                            <ComboBox ItemsSource="{Binding LevelComparisonList}"
+                                      SelectedValue="{Binding LevelComparison}"
+                                      SelectedValueBinding="{Binding Value}"
+                                      DisplayMemberBinding="{Binding Text}"
+                                      HorizontalAlignment="Stretch"/>
+                            <NumericUpDown Value="{Binding Level}" Minimum="1" Maximum="100" Increment="1"
+                                           FormatString="0" HorizontalAlignment="Stretch"/>
+                        </StackPanel>
+
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="IV Total" Opacity="0.7" FontSize="12"/>
+                            <ComboBox ItemsSource="{Binding IvTypeList}"
+                                      SelectedValue="{Binding IvType}"
+                                      SelectedValueBinding="{Binding Value}"
+                                      DisplayMemberBinding="{Binding Text}"
+                                      HorizontalAlignment="Stretch"/>
+                        </StackPanel>
+
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="EV Total" Opacity="0.7" FontSize="12"/>
+                            <ComboBox ItemsSource="{Binding EvTypeList}"
+                                      SelectedValue="{Binding EvType}"
+                                      SelectedValueBinding="{Binding Value}"
+                                      DisplayMemberBinding="{Binding Text}"
+                                      HorizontalAlignment="Stretch"/>
+                        </StackPanel>
+
+                        <StackPanel Spacing="4">
+                            <CheckBox Content="ESV (requires Egg = Yes)" IsChecked="{Binding EsvEnabled}"/>
+                            <NumericUpDown Value="{Binding Esv}" Minimum="0" Maximum="4095" Increment="1"
+                                           FormatString="0" IsEnabled="{Binding EsvEnabled}"
+                                           HorizontalAlignment="Stretch"/>
+                        </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
             </DockPanel>
