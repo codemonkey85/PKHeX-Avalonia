@@ -70,6 +70,7 @@
                     <MenuItem Header="Roamer" Command="{Binding OpenRoamerCommand}" />
                     <Separator />
                     <MenuItem Header="PokeGear (HGSS)" Command="{Binding OpenPokeGear4Command}" />
+                    <MenuItem Header="Pokéathlon (HGSS)" Command="{Binding OpenPokeathlonCommand}" />
                     <MenuItem Header="Geonet (DPPt)" Command="{Binding OpenGeonet4Command}" />
                     <MenuItem Header="Battle Pass Editor (PBR)" Command="{Binding OpenBattlePassCommand}" />
                     <MenuItem Header="Pokédex" Command="{Binding OpenPokedexCommand}" />
