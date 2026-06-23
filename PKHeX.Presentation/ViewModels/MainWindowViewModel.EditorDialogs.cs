@@ -608,6 +608,15 @@ public partial class MainWindowViewModel
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
+    private async Task OpenJoinAvenueAsync()
+    {
+        if (CurrentSave is not SAV5B2W2 sav) return;
+        await _windowService.ShowDialogAsync(
+            new JoinAvenueEditorViewModel(sav, _spriteRenderer, _dialogService),
+            "Join Avenue Editor (B2W2)");
+    }
+
+    [RelayCommand(CanExecute = nameof(HasSave))]
     private async Task OpenMisc7Async()
     {
         if (CurrentSave is not SAV7 sav) return;
