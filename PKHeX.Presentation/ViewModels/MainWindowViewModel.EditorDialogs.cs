@@ -307,6 +307,15 @@ public partial class MainWindowViewModel
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
+    private async Task OpenGlobalLink5Async()
+    {
+        if (CurrentSave is not SAV5 sav) return;
+        await _windowService.ShowDialogAsync(
+            new GlobalLink5EditorViewModel(sav, _spriteRenderer),
+            "Global Link Editor (Gen 5)");
+    }
+
+    [RelayCommand(CanExecute = nameof(HasSave))]
     private async Task OpenPokedexAsync()
     {
         if (CurrentSave is null) return;
