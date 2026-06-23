@@ -79,6 +79,7 @@
                     <MenuItem Header="Pokédex" Command="{Binding OpenPokedexCommand}" />
                     <MenuItem Header="Chatter" Command="{Binding OpenChatterCommand}" />
                     <MenuItem Header="Medal Rally (B2W2)" Command="{Binding OpenMedalCommand}" />
+                    <MenuItem Header="Join Avenue (B2W2)" Command="{Binding OpenJoinAvenueCommand}" />
                     <MenuItem Header="Unity Tower (BW/B2W2)" Command="{Binding OpenUnityTower5Command}" />
                     <MenuItem Header="Entralink Forest" Command="{Binding OpenEntralinkCommand}" />
                     <MenuItem Header="Global Link (Dream World)" Command="{Binding OpenGlobalLink5Command}" />
