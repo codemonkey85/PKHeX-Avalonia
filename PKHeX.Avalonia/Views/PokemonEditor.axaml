@@ -180,6 +180,15 @@
                                         <ComboBox ItemsSource="{Binding NatureList}"
                                                   SelectedValue="{Binding Nature}" SelectedValueBinding="{Binding Value}"
                                                   DisplayMemberBinding="{Binding Text}" HorizontalAlignment="Stretch" />
+
+                                        <!-- Stat Alignment (gen8+) -->
+                                        <StackPanel IsVisible="{Binding ShowStatAlignment}" Margin="0,12,0,0">
+                                            <TextBlock Text="Stat Alignment" FontWeight="SemiBold" Margin="0,0,0,4" />
+                                            <ComboBox ItemsSource="{Binding NatureList}"
+                                                      SelectedValue="{Binding StatAlignment}" SelectedValueBinding="{Binding Value}"
+                                                      DisplayMemberBinding="{Binding Text}" HorizontalAlignment="Stretch"
+                                                      AutomationProperties.Name="Stat Alignment" />
+                                        </StackPanel>
                                     </StackPanel>
 
                                     <!-- Ability -->
@@ -518,17 +527,22 @@
                                                   DisplayMemberBinding="{Binding Text}" HorizontalAlignment="Stretch" />
                                     </StackPanel>
 
-                                    <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" ColumnDefinitions="*,16,*" Margin="0,12,0,0">
-                                        <StackPanel Grid.Column="0">
+                                    <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" ColumnDefinitions="*,16,*" RowDefinitions="Auto,Auto" Margin="0,12,0,0">
+                                        <StackPanel Grid.Row="0" Grid.Column="0">
                                             <TextBlock Text="TID" FontWeight="SemiBold" Margin="0,0,0,4" />
                                             <NumericUpDown Value="{Binding TrainerID}" Minimum="0" Maximum="4294967295" FormatString="0" ShowButtonSpinner="False"
-                                                           AutomationProperties.Name="Trainer ID" />
+                                                           AutomationProperties.Name="Trainer ID"
+                                                           ToolTip.Tip="{Binding Tsv, StringFormat='TSV: {0}'}" />
                                         </StackPanel>
-                                        <StackPanel Grid.Column="2">
+                                        <StackPanel Grid.Row="0" Grid.Column="2">
                                             <TextBlock Text="SID" FontWeight="SemiBold" Margin="0,0,0,4" />
                                             <NumericUpDown Value="{Binding Sid}" Minimum="0" Maximum="65535" FormatString="0" ShowButtonSpinner="False"
-                                                           AutomationProperties.Name="Secret ID" />
+                                                           AutomationProperties.Name="Secret ID"
+                                                           ToolTip.Tip="{Binding Tsv, StringFormat='TSV: {0}'}" />
                                         </StackPanel>
+                                        <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,4,0,0"
+                                                   Opacity="0.6" Text="{Binding Tsv, StringFormat='TSV: {0}'}"
+                                                   AutomationProperties.Name="Trainer Shiny Value" />
                                     </Grid>
                                 </Grid>
                             </Border>
@@ -570,6 +584,24 @@
                                             </Grid>
                                         </StackPanel>
                                     </Grid>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Form Argument -->
+                            <Border IsVisible="{Binding ShowFormArgument}" Classes="section-card"
+                                    CornerRadius="4" Padding="12">
+                                <StackPanel>
+                                    <TextBlock Text="Form Argument" FontWeight="Bold" Margin="0,0,0,8" Opacity="0.6" />
+                                    <ComboBox IsVisible="{Binding ShowFormArgumentNamed}"
+                                              ItemsSource="{Binding FormArgumentList}"
+                                              SelectedIndex="{Binding FormArgumentValue}"
+                                              HorizontalAlignment="Stretch"
+                                              AutomationProperties.Name="Form Argument" />
+                                    <NumericUpDown IsVisible="{Binding ShowFormArgumentRaw}"
+                                                   Value="{Binding FormArgumentValue}" Minimum="0"
+                                                   Maximum="{Binding FormArgumentMax}" FormatString="0"
+                                                   ShowButtonSpinner="True"
+                                                   AutomationProperties.Name="Form Argument" />
                                 </StackPanel>
                             </Border>
 

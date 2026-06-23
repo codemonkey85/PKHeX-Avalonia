@@ -1,6 +1,7 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using PKHeX.Core;
 
 namespace PKHeX.Presentation.ViewModels;
 
@@ -14,7 +15,7 @@ public partial class PokemonEditorViewModel
     private int _statHPMax;
 
     [ObservableProperty]
-    private int _statNature;
+    private int _statAlignment;
 
     [ObservableProperty]
     private int _hpType;
@@ -89,6 +90,11 @@ public partial class PokemonEditorViewModel
     public int IVTotal => IvHP + IvATK + IvDEF + IvSPA + IvSPD + IvSPE;
     public int EVTotal => EvHP + EvATK + EvDEF + EvSPA + EvSPD + EvSPE;
 
+    /// <summary>
+    /// Gen8+ formats store the displayed-stat alignment independently of <see cref="PKM.Nature"/>.
+    /// </summary>
+    public bool ShowStatAlignment => _pk.Format >= 8;
+
     private void RecalculateStats()
     {
         if (_isLoading) return; // Don't overwrite _pk during loading
@@ -130,6 +136,9 @@ public partial class PokemonEditorViewModel
         EvSPD = 0;
         EvSPE = 0;
     }
+
+    // Stat Alignment changes the displayed stats (gen8+ stores it independently of Nature).
+    partial void OnStatAlignmentChanged(int value) { if (!_isLoading) { _pk.StatAlignment = (Nature)value; RecalculateStats(); Validate(); } }
 
     // Recalculate once per change, then let NotifyPropertyChangedFor push the new values to the UI.
     partial void OnIvHPChanged(int value) { if (!_isLoading) { RecalculateStats(); Validate(); } }

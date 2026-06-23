@@ -176,6 +176,94 @@ public partial class PokemonEditorViewModel
     [ObservableProperty]
     private int _abilityNumber;
 
+    // Form Argument (species/form-dependent extra value, e.g. Alcremie topping, Furfrou trim days)
+    private FormArgumentType _formArgumentType = FormArgumentType.None;
+
+    [ObservableProperty]
+    private int _formArgumentValue;
+
+    [ObservableProperty]
+    private int _formArgumentMax;
+
+    [ObservableProperty]
+    private IReadOnlyList<string> _formArgumentList = [];
+
+    /// <summary>Whether the current entity/species/form uses a Form Argument at all.</summary>
+    public bool ShowFormArgument => _pk is IFormArgument && _formArgumentType != FormArgumentType.None;
+
+    /// <summary>The Form Argument is a named selection (e.g. Alcremie topping).</summary>
+    public bool ShowFormArgumentNamed => ShowFormArgument && _formArgumentType == FormArgumentType.Named;
+
+    /// <summary>The Form Argument is a raw numeric value (everything editable that isn't Named).</summary>
+    public bool ShowFormArgumentRaw => ShowFormArgument && _formArgumentType != FormArgumentType.Named;
+
+    /// <summary>Re-evaluates the Form Argument type/range for the current species/form and reloads its value.</summary>
+    private void UpdateFormArgument()
+    {
+        if (_pk is not IFormArgument fa)
+        {
+            _formArgumentType = FormArgumentType.None;
+            FormArgumentList = [];
+            FormArgumentMax = 0;
+            NotifyFormArgumentVisibility();
+            return;
+        }
+
+        var species = (ushort)Species;
+        var form = (byte)Form;
+        _formArgumentType = FormArgumentUtil.GetType(species, form, _pk.Context);
+        FormArgumentList = _formArgumentType == FormArgumentType.Named
+            ? FormConverter.GetFormArgumentStrings(species)
+            : [];
+        FormArgumentMax = (int)FormArgumentUtil.GetFormArgumentMaxEdge(species, form, _pk.Context);
+
+        // Triple types (Furfrou/Hoopa) pack remain/elapsed/max into FormArgument; surface the "remain" value.
+        var current = FormArgumentUtil.IsFormArgumentTypeDateTriple(species, form)
+            ? fa.FormArgumentRemain
+            : fa.FormArgument;
+
+        var wasLoading = _isLoading;
+        _isLoading = true;
+        FormArgumentValue = (int)Math.Min(current, (uint)FormArgumentMax);
+        _isLoading = wasLoading;
+
+        NotifyFormArgumentVisibility();
+    }
+
+    private void NotifyFormArgumentVisibility()
+    {
+        OnPropertyChanged(nameof(ShowFormArgument));
+        OnPropertyChanged(nameof(ShowFormArgumentNamed));
+        OnPropertyChanged(nameof(ShowFormArgumentRaw));
+    }
+
+    partial void OnFormArgumentValueChanged(int value)
+    {
+        if (_isLoading) return;
+        if (_pk is not IFormArgument)
+            return;
+        _pk.ChangeFormArgument((uint)value);
+        Validate();
+    }
+
+    /// <summary>Trainer Shiny Value derived from the current TID/SID (format-aware via Core).</summary>
+    public int Tsv => (int)_pk.TSV;
+
     partial void OnOriginalTrainerGenderChanged(int value) { if (!_isLoading) Validate(); }
-    partial void OnTrainerIDChanged(long value) { if (!_isLoading) Validate(); }
+
+    partial void OnTrainerIDChanged(long value)
+    {
+        if (_isLoading) return;
+        _pk.DisplayTID = (uint)value;
+        OnPropertyChanged(nameof(Tsv));
+        Validate();
+    }
+
+    partial void OnSidChanged(int value)
+    {
+        if (_isLoading) return;
+        _pk.DisplaySID = (uint)value;
+        OnPropertyChanged(nameof(Tsv));
+        Validate();
+    }
 }
