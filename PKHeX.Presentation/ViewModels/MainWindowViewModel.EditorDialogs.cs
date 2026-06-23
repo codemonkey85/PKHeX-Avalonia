@@ -590,6 +590,15 @@ public partial class MainWindowViewModel
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
+    private async Task OpenPokeathlonAsync()
+    {
+        if (CurrentSave is not SAV4HGSS sav) return;
+        await _windowService.ShowDialogAsync(
+            new PokeathlonEditorViewModel(sav, _spriteRenderer),
+            "Pokéathlon Editor (HGSS)");
+    }
+
+    [RelayCommand(CanExecute = nameof(HasSave))]
     private async Task OpenMisc5Async()
     {
         if (CurrentSave is not SAV5 sav) return;

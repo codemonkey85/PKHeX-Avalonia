@@ -68,6 +68,7 @@ public static class ViewLocator
         [typeof(PokeBlock3CaseEditorViewModel)] = () => new PokeBlock3CaseEditorView(),
         [typeof(PokeBlockEditorViewModel)] = () => new PokeBlockEditor(),
         [typeof(PokeGear4EditorViewModel)] = () => new PokeGear4Editor(),
+        [typeof(PokeathlonEditorViewModel)] = () => new PokeathlonEditor(),
         [typeof(PokebeanEditorViewModel)] = () => new PokebeanEditor(),
         [typeof(Pokedex4EditorViewModel)] = () => new Pokedex4Editor(),
         [typeof(Pokedex5EditorViewModel)] = () => new Pokedex5Editor(),
