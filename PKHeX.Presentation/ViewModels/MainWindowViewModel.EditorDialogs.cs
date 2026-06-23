@@ -468,7 +468,7 @@ public partial class MainWindowViewModel
     {
         if (CurrentSave is null) return;
         await _windowService.ShowDialogAsync(
-            new MedalEditorViewModel(CurrentSave),
+            new MedalEditorViewModel(CurrentSave, _dialogService),
             "Medal Rally Editor");
     }
 

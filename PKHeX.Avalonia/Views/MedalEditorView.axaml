@@ -3,7 +3,7 @@
              xmlns:vm="clr-namespace:PKHeX.Presentation.ViewModels;assembly=PKHeX.Presentation"
              x:Class="PKHeX.Avalonia.Views.MedalEditorView"
              x:DataType="vm:MedalEditorViewModel"
-             MinWidth="500" MinHeight="450">
+             MinWidth="640" MinHeight="560">
     <DockPanel Margin="16">
         <StackPanel DockPanel.Dock="Top" Spacing="4" Margin="0,0,0,12">
             <TextBlock Text="Medal Rally" FontSize="20" FontWeight="SemiBold" />
@@ -16,60 +16,166 @@
         </StackPanel>
 
         <!-- Not Supported Message -->
-        <TextBlock IsVisible="{Binding !IsSupported}" Text="This save file does not support Medal editing. (B2W2 only)" 
-                   Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" 
+        <TextBlock IsVisible="{Binding !IsSupported}" Text="This save file does not support Medal editing. (B2W2 only)"
+                   Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                    FontStyle="Italic" HorizontalAlignment="Center" VerticalAlignment="Center" />
 
         <!-- Medal Content -->
         <DockPanel IsVisible="{Binding IsSupported}">
             <!-- Action Buttons -->
             <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="8" Margin="0,12,0,0">
-                <Button Content="Obtain All" Command="{Binding ObtainAllCommand}" Padding="16,6" />
+                <Button Content="Give All" Command="{Binding GiveAllCommand}" Padding="16,6" />
                 <Button Content="Clear All" Command="{Binding ClearAllCommand}" Padding="16,6" />
                 <Button Content="Refresh" Command="{Binding RefreshCommand}" Padding="16,6" />
             </StackPanel>
 
-            <!-- Categories -->
-            <ItemsControl ItemsSource="{Binding Categories}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate DataType="vm:MedalCategoryViewModel">
-                        <Border Classes="section-card" Margin="0,0,0,8">
-                            <Expander Header="{Binding Name}">
-                                <Expander.HeaderTemplate>
-                                    <DataTemplate>
-                                        <StackPanel Orientation="Horizontal" Spacing="12">
-                                            <TextBlock Text="{Binding}" FontWeight="SemiBold" />
-                                            <TextBlock Text="{Binding $parent[Expander].((vm:MedalCategoryViewModel)DataContext).Summary}" 
-                                                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </Expander.HeaderTemplate>
-                                <ItemsControl ItemsSource="{Binding Medals}" Margin="0,8,0,0">
-                                    <ItemsControl.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <WrapPanel />
-                                        </ItemsPanelTemplate>
-                                    </ItemsControl.ItemsPanel>
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate DataType="vm:MedalItemViewModel">
-                                            <Border MinWidth="80" Height="50" Margin="4" Padding="4" CornerRadius="4"
-                                                    Classes="view-container"
-                                                    ToolTip.Tip="{Binding StateText}">
-                                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                                                    <TextBlock Text="{Binding Index}" HorizontalAlignment="Center" FontSize="14" FontWeight="SemiBold" />
-                                                    <TextBlock Text="{Binding StateText}" 
-                                                               HorizontalAlignment="Center" FontSize="10"
-                                                               Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
-                                                </StackPanel>
-                                            </Border>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </Expander>
+            <TabControl>
+                <!-- ===================== Medals Tab ===================== -->
+                <TabItem Header="Medals">
+                    <DockPanel>
+                        <!-- Settings + Import/Export -->
+                        <Border DockPanel.Dock="Top" Classes="section-card" Margin="0,8,0,8" Padding="12">
+                            <StackPanel Spacing="10">
+                                <TextBlock Text="Settings" FontWeight="SemiBold" />
+                                <Grid ColumnDefinitions="Auto,160,Auto,160" RowDefinitions="Auto,Auto" >
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Pinned Medal" VerticalAlignment="Center" Margin="0,0,8,6" />
+                                    <NumericUpDown Grid.Row="0" Grid.Column="1" Value="{Binding PinnedMedal}"
+                                                   Minimum="0" Maximum="255" FormatString="0"
+                                                   Classes="compact" Margin="0,0,16,6" />
+
+                                    <TextBlock Grid.Row="0" Grid.Column="2" Text="Rank" VerticalAlignment="Center" Margin="0,0,8,6" />
+                                    <StackPanel Grid.Row="0" Grid.Column="3" Orientation="Horizontal" Spacing="6" Margin="0,0,0,6">
+                                        <ComboBox ItemsSource="{Binding RankChoices}" SelectedIndex="{Binding RankIndex}"
+                                                  MinWidth="110" />
+                                        <Button Content="Recalculate" Command="{Binding RecalculateRankCommand}" Padding="8,4" />
+                                    </StackPanel>
+
+                                    <CheckBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                                              Content="Tutorial Complete" IsChecked="{Binding IsTutorialComplete}" />
+                                </Grid>
+
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <Button Content="Import (.ml5)" Command="{Binding ImportAllCommand}" Padding="12,4" />
+                                    <Button Content="Export (.ml5)" Command="{Binding ExportAllCommand}" Padding="12,4" />
+                                </StackPanel>
+                            </StackPanel>
                         </Border>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+
+                        <!-- Editable Medal Grid -->
+                        <Border Classes="section-card" CornerRadius="4" Padding="0" ClipToBounds="True">
+                            <DataGrid ItemsSource="{Binding MedalRows}"
+                                      AutoGenerateColumns="False"
+                                      CanUserResizeColumns="True"
+                                      CanUserSortColumns="False"
+                                      IsReadOnly="False"
+                                      MinHeight="320">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="#" Binding="{Binding Index}" Width="48" IsReadOnly="True" />
+                                    <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="120" IsReadOnly="True" />
+                                    <DataGridTemplateColumn Header="State" Width="160">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate DataType="vm:MedalItemViewModel">
+                                                <ComboBox ItemsSource="{Binding StateChoices}"
+                                                          SelectedIndex="{Binding StateIndex}"
+                                                          HorizontalAlignment="Stretch" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTemplateColumn Header="Unread" Width="70">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate DataType="vm:MedalItemViewModel">
+                                                <CheckBox IsChecked="{Binding IsUnread}"
+                                                          HorizontalAlignment="Center" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTemplateColumn Header="Date (yyyy-MM-dd)" Width="*">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate DataType="vm:MedalItemViewModel">
+                                                <TextBox Text="{Binding Date}"
+                                                         IsEnabled="{Binding CanHaveDate}"
+                                                         Watermark="—"
+                                                         HorizontalAlignment="Stretch" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Border>
+                    </DockPanel>
+                </TabItem>
+
+                <!-- ===================== Habitat Tab ===================== -->
+                <TabItem Header="Habitat">
+                    <DockPanel>
+                        <!-- Habitat Settings + Actions -->
+                        <Border DockPanel.Dock="Top" Classes="section-card" Margin="0,8,0,8" Padding="12">
+                            <StackPanel Spacing="10">
+                                <TextBlock Text="Settings" FontWeight="SemiBold" />
+                                <Grid ColumnDefinitions="Auto,160" RowDefinitions="Auto">
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Last Encounter Type" VerticalAlignment="Center" Margin="0,0,8,0" />
+                                    <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding EncounterTypeChoices}"
+                                              SelectedIndex="{Binding LastEncounterTypeIndex}" MinWidth="120" />
+                                </Grid>
+                                <CheckBox Content="Tutorial Viewed" IsChecked="{Binding HabitatTutorialViewed}" />
+                                <CheckBox Content="Tutorial Complete (Capture)" IsChecked="{Binding HabitatTutorialCompleteCapture}" />
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <Button Content="Complete All" Command="{Binding HabitatCompleteAllCommand}" Padding="12,4" />
+                                    <Button Content="Clear All" Command="{Binding HabitatClearAllCommand}" Padding="12,4" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Editable Habitat Grid -->
+                        <Border Classes="section-card" CornerRadius="4" Padding="0" ClipToBounds="True">
+                            <DataGrid ItemsSource="{Binding HabitatRows}"
+                                      AutoGenerateColumns="False"
+                                      CanUserResizeColumns="True"
+                                      CanUserSortColumns="False"
+                                      IsReadOnly="False"
+                                      MinHeight="320">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="#" Binding="{Binding Index}" Width="48" IsReadOnly="True" />
+                                    <DataGridTemplateColumn Header="Complete" Width="80">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate DataType="vm:HabitatRowViewModel">
+                                                <CheckBox IsChecked="{Binding IsComplete}" HorizontalAlignment="Center" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTemplateColumn Header="Grass" Width="*">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate DataType="vm:HabitatRowViewModel">
+                                                <ComboBox ItemsSource="{Binding HabitatCompletionChoices}"
+                                                          SelectedIndex="{Binding GrassIndex}"
+                                                          HorizontalAlignment="Stretch" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTemplateColumn Header="Surf" Width="*">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate DataType="vm:HabitatRowViewModel">
+                                                <ComboBox ItemsSource="{Binding HabitatCompletionChoices}"
+                                                          SelectedIndex="{Binding SurfIndex}"
+                                                          HorizontalAlignment="Stretch" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTemplateColumn Header="Fish" Width="*">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate DataType="vm:HabitatRowViewModel">
+                                                <ComboBox ItemsSource="{Binding HabitatCompletionChoices}"
+                                                          SelectedIndex="{Binding FishIndex}"
+                                                          HorizontalAlignment="Stretch" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Border>
+                    </DockPanel>
+                </TabItem>
+            </TabControl>
         </DockPanel>
     </DockPanel>
 </UserControl>
