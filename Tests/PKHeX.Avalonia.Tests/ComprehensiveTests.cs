@@ -488,14 +488,16 @@ public class ComprehensiveTests
             "Species", "Form", "Ability", "Level", "TargetPKM", "Nature", "Gender",
             "EggLocation", "MetLocation", "MetLevel", "OriginalTrainerGender", "Ball",
             "RelearnMove1", "RelearnMove2", "RelearnMove3", "RelearnMove4",
-            "StatHPCurrent", "StatHPMax", "Valid", "Version", "StatNature", "HpType",
+            "StatHPCurrent", "StatHPMax", "Valid", "Version", "StatAlignment", "HpType",
             "IsPokerusInfected", "IsPokerusCured", "AbilityNumber", "Id32", "IsNicknamed",
-            "StatusCondition", "HandlingTrainerName", "HandlingTrainerGender", 
+            "StatusCondition", "HandlingTrainerName", "HandlingTrainerGender",
             "HandlingTrainerFriendship", "CurrentHandler", "OriginalTrainerFriendship",
             "ContestCool", "ContestBeauty", "ContestCute", "ContestSmart", "ContestTough", "ContestSheen",
             "OtMemory", "OtMemoryIntensity", "OtMemoryFeeling", "OtMemoryVariable",
             "HtMemory", "HtMemoryIntensity", "HtMemoryFeeling", "HtMemoryVariable",
-            "Sid"
+            "Sid",
+            // Conditional on IFormArgument + species/form; not present on the PK3 test fixture.
+            "FormArgumentValue", "FormArgumentMax"
         };
 
         foreach (var prop in properties)

@@ -230,6 +230,7 @@ public partial class PokemonEditorViewModel : ViewModelBase
             StatHPCurrent = _pk.Stat_HPCurrent;
             StatHPMax = _pk.Stat_HPMax;
             StatusCondition = _pk.Status_Condition;
+            StatAlignment = (int)_pk.StatAlignment;
 
             // Trust any year in a broad valid range (Gen 3+ era: 2000–2199, with pre-2000 fallback)
             MetDate = _pk.MetDate is { } md && md.Year > 1900 && md.Year < 2200
@@ -247,6 +248,9 @@ public partial class PokemonEditorViewModel : ViewModelBase
             OnPropertyChanged(nameof(Ability));
             OnPropertyChanged(nameof(MetDate));
             OnPropertyChanged(nameof(EggDate));
+            OnPropertyChanged(nameof(ShowStatAlignment));
+            OnPropertyChanged(nameof(Tsv));
+            UpdateFormArgument();
 
             OriginalTrainerFriendship = _pk.OriginalTrainerFriendship;
             HandlingTrainerFriendship = _pk.HandlingTrainerFriendship;
@@ -256,7 +260,6 @@ public partial class PokemonEditorViewModel : ViewModelBase
 
             // Misc
             AbilityNumber = _pk.AbilityNumber;
-            StatNature = (int)_pk.StatAlignment;
             HpType = _pk.HPType;
             IsPokerusInfected = _pk.IsPokerusInfected;
             IsPokerusCured = _pk.IsPokerusCured;
@@ -334,6 +337,7 @@ public partial class PokemonEditorViewModel : ViewModelBase
         if (_isLoading) return;
         RecalculateStats();
         UpdateAbilityList();
+        UpdateFormArgument();
         UpdateSprite();
     }
 
@@ -446,6 +450,7 @@ public partial class PokemonEditorViewModel : ViewModelBase
         _pk.Nickname = Nickname;
         _pk.Stat_Level = (byte)Level;
         _pk.Nature = (Nature)Nature;
+        _pk.StatAlignment = (Nature)StatAlignment;
         _pk.Ability = Ability;
         _pk.HeldItem = HeldItem;
         _pk.Ball = (byte)Ball;
@@ -563,6 +568,9 @@ public partial class PokemonEditorViewModel : ViewModelBase
             mht.HandlingTrainerMemoryVariable = (ushort)HtMemoryVariable;
         }
 
+        if (_pk is IFormArgument && _formArgumentType != FormArgumentType.None)
+            _pk.ChangeFormArgument((uint)FormArgumentValue);
+
         _pk.ResetPartyStats();
         
         return _pk.Clone();
@@ -604,6 +612,7 @@ public partial class PokemonEditorViewModel : ViewModelBase
         RecalculateStats();
         UpdateFormList();
         UpdateAbilityList();
+        UpdateFormArgument();
         UpdateSprite();
         UpdateTitle();
         OnPropertyChanged(nameof(CanOpenTechRecord));
