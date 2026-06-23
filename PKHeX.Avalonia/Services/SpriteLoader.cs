@@ -28,7 +28,7 @@ public sealed class SpriteLoader
     private static StyleResources GetStyleResources(SpriteStyle style) => style switch
     {
         SpriteStyle.Mugshot => new StyleResources("Legends_Arceus_Sprites.", "Legends_Arceus_Shiny_Sprites.", 'c', "c_egg.png"),
-        SpriteStyle.Artwork => new StyleResources("Artwork_Pokemon_Sprites.", null, 'a', "a_egg.png"),
+        SpriteStyle.Artwork => new StyleResources("Artwork_Pokemon_Sprites.", "Artwork_Shiny_Sprites.", 'a', "a_egg.png"),
         _ => new StyleResources("Big_Pokemon_Sprites.", "Big_Shiny_Sprites.", 'b', "b_egg.png"),
     };
 
