@@ -34,6 +34,33 @@
                     </StackPanel>
                 </DockPanel>
 
+                <!-- Generator -->
+                <Expander DockPanel.Dock="Top" Header="Generator" Margin="0,0,0,12" IsExpanded="False">
+                    <StackPanel Spacing="12" Margin="0,8,0,0">
+                        <TextBlock Text="Fill a range of donut slots with random shiny-template donuts using the selected flavor types."
+                                   TextWrapping="Wrap" Opacity="0.7" />
+                        <Grid ColumnDefinitions="Auto,8,Auto,24,Auto,8,Auto">
+                            <TextBlock Grid.Column="0" Text="Start:" VerticalAlignment="Center" />
+                            <NumericUpDown Grid.Column="2" Width="120" Value="{Binding GenerateStart}" Minimum="0" Maximum="999" />
+                            <TextBlock Grid.Column="4" Text="End:" VerticalAlignment="Center" />
+                            <NumericUpDown Grid.Column="6" Width="120" Value="{Binding GenerateEnd}" Minimum="0" Maximum="999" />
+                        </Grid>
+                        <TextBlock Text="Flavor Types" FontWeight="SemiBold" />
+                        <Border Classes="section-card" CornerRadius="4" MaxHeight="220">
+                            <ScrollViewer>
+                                <ItemsControl ItemsSource="{Binding FlavorOptions}" Margin="8">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate DataType="vm:DonutFlavorOptionViewModel">
+                                            <CheckBox IsChecked="{Binding IsSelected}" Content="{Binding Name}" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </Border>
+                        <Button Content="Generate" Command="{Binding GenerateCommand}" HorizontalAlignment="Left" />
+                    </StackPanel>
+                </Expander>
+
                 <Grid ColumnDefinitions="250,16,*">
                     <!-- Donut List -->
                     <ListBox Grid.Column="0"

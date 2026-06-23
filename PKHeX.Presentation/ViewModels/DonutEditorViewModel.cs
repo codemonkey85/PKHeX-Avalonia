@@ -19,6 +19,7 @@ public partial class DonutEditorViewModel : ViewModelBase
         IsSupported = true;
 
         LoadDonuts();
+        LoadFlavorOptions();
     }
 
     public bool IsSupported { get; }
@@ -28,6 +29,41 @@ public partial class DonutEditorViewModel : ViewModelBase
 
     [ObservableProperty]
     private DonutEntryViewModel? _selectedDonut;
+
+    // --- Generator ---
+    [ObservableProperty]
+    private ObservableCollection<DonutFlavorOptionViewModel> _flavorOptions = [];
+
+    [ObservableProperty]
+    private int _generateStart;
+
+    [ObservableProperty]
+    private int _generateEnd = DonutPocket9a.MaxCount;
+
+    /// <summary>
+    /// Builds the selectable flavor list, matching the upstream generator which keeps only flavors whose
+    /// two-digit type index (characters 6-7 of the internal name, e.g. <c>sweet_03</c>) is in the range [3, 21].
+    /// </summary>
+    private void LoadFlavorOptions()
+    {
+        FlavorOptions.Clear();
+        foreach (var (hash, name) in DonutInfo.Flavors)
+        {
+            if (!TryGetFlavorTypeIndex(name, out _))
+                continue;
+            FlavorOptions.Add(new DonutFlavorOptionViewModel(name, hash) { IsSelected = true });
+        }
+    }
+
+    private static bool TryGetFlavorTypeIndex(string name, out int typeIndex)
+    {
+        typeIndex = -1;
+        if (name.Length < 8 || !int.TryParse(name.AsSpan(6, 2), out var value) || value is < 3 or > 21)
+            return false;
+
+        typeIndex = value - 3;
+        return true;
+    }
 
     private void LoadDonuts()
     {
@@ -76,6 +112,38 @@ public partial class DonutEditorViewModel : ViewModelBase
     {
         LoadDonuts();
     }
+
+    [RelayCommand]
+    private void Generate()
+    {
+        var hashes = FlavorOptions.Where(z => z.IsSelected).Select(z => z.Hash).ToArray();
+        if (hashes.Length == 0)
+            return;
+
+        var start = Math.Clamp(GenerateStart, 0, DonutPocket9a.MaxCount);
+        var end = Math.Clamp(GenerateEnd, 0, DonutPocket9a.MaxCount);
+        if (start > end)
+            return;
+
+        _pocket.SetRandomShinyTemplateRange(hashes, start, end);
+        _sav.State.Edited = true;
+        LoadDonuts();
+    }
+}
+
+public partial class DonutFlavorOptionViewModel : ViewModelBase
+{
+    public DonutFlavorOptionViewModel(string name, ulong hash)
+    {
+        Name = name;
+        Hash = hash;
+    }
+
+    public string Name { get; }
+    public ulong Hash { get; }
+
+    [ObservableProperty]
+    private bool _isSelected;
 }
 
 public partial class DonutEntryViewModel : ViewModelBase
