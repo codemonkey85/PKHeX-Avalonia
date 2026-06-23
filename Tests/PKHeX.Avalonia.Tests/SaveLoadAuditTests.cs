@@ -115,7 +115,7 @@ public class SaveLoadAuditTests(ITestOutputHelper output)
     public void ViewModel_InventoryEditor_DoesNotThrow(SaveFile sav, string label)
     {
         output.WriteLine(label);
-        var ex = Record.Exception(() => new InventoryEditorViewModel(sav));
+        var ex = Record.Exception(() => new InventoryEditorViewModel(sav, new Moq.Mock<ISpriteRenderer>().Object));
         Assert.Null(ex);
     }
 
@@ -187,7 +187,7 @@ public class SaveLoadAuditTests(ITestOutputHelper output)
     public void InventoryEditor_GiveAll_SetsNonZeroCountOnEveryPouch(SaveFile sav, string label)
     {
         output.WriteLine(label);
-        var vm = new InventoryEditorViewModel(sav);
+        var vm = new InventoryEditorViewModel(sav, new Moq.Mock<ISpriteRenderer>().Object);
         if (vm.Pouches.Count == 0)
         {
             output.WriteLine($"  skip — no pouches");

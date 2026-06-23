@@ -8,12 +8,14 @@ namespace PKHeX.Presentation.ViewModels;
 public partial class InventoryEditorViewModel : ViewModelBase
 {
     private readonly SaveFile _sav;
+    private readonly ISpriteRenderer _spriteRenderer;
     private readonly PlayerBag? _bag;
     private readonly IReadOnlyList<InventoryPouch> _originalPouches;
 
-    public InventoryEditorViewModel(SaveFile sav)
+    public InventoryEditorViewModel(SaveFile sav, ISpriteRenderer spriteRenderer)
     {
         _sav = sav;
+        _spriteRenderer = spriteRenderer;
 
         // sav.Inventory can throw on blank SCBlock-based saves (LA, SV, ZA) where
         // blocks have Type=None and are not yet populated. Fall back to empty.
@@ -44,7 +46,7 @@ public partial class InventoryEditorViewModel : ViewModelBase
         // Create pouch view models
         foreach (var pouch in _originalPouches)
         {
-            Pouches.Add(new InventoryPouchViewModel(pouch, _itemNames));
+            Pouches.Add(new InventoryPouchViewModel(pouch, _itemNames, _spriteRenderer));
         }
 
         if (Pouches.Count > 0)
@@ -128,11 +130,13 @@ public partial class InventoryPouchViewModel : ViewModelBase
 {
     private readonly InventoryPouch _pouch;
     private readonly string[] _itemNames;
+    private readonly ISpriteRenderer _spriteRenderer;
 
-    public InventoryPouchViewModel(InventoryPouch pouch, string[] itemNames)
+    public InventoryPouchViewModel(InventoryPouch pouch, string[] itemNames, ISpriteRenderer spriteRenderer)
     {
         _pouch = pouch;
         _itemNames = itemNames;
+        _spriteRenderer = spriteRenderer;
         PouchName = pouch.Type.ToString();
         MaxCount = pouch.MaxCount;
 
@@ -177,7 +181,7 @@ public partial class InventoryPouchViewModel : ViewModelBase
         foreach (var item in _pouch.Items)
         {
             var name = item.Index < _itemNames.Length ? _itemNames[item.Index] : $"Item #{item.Index}";
-            Items.Add(new InventoryItemViewModel(item, name, ItemList, MaxCount));
+            Items.Add(new InventoryItemViewModel(item, name, ItemList, MaxCount, _spriteRenderer));
         }
     }
 
@@ -236,8 +240,9 @@ public partial class InventoryPouchViewModel : ViewModelBase
 public partial class InventoryItemViewModel : ViewModelBase
 {
     private readonly InventoryItem _item;
+    private readonly ISpriteRenderer _spriteRenderer;
 
-    public InventoryItemViewModel(InventoryItem item, string name, IReadOnlyList<ComboItem> itemList, int maxCount)
+    public InventoryItemViewModel(InventoryItem item, string name, IReadOnlyList<ComboItem> itemList, int maxCount, ISpriteRenderer spriteRenderer)
     {
         _item = item;
         _itemId = item.Index;
@@ -245,10 +250,13 @@ public partial class InventoryItemViewModel : ViewModelBase
         _itemName = name;
         ItemList = itemList;
         MaxCount = maxCount;
+        _spriteRenderer = spriteRenderer;
     }
 
     [ObservableProperty] private IReadOnlyList<ComboItem> _itemList;
     public int MaxCount { get; }
+
+    public byte[]? Sprite => _spriteRenderer.GetItemSprite(ItemId);
 
     public void RefreshLanguage()
     {
@@ -271,5 +279,6 @@ public partial class InventoryItemViewModel : ViewModelBase
     {
         var item = ItemList.FirstOrDefault(i => i.Value == value);
         ItemName = item?.Text ?? $"Item #{value}";
+        OnPropertyChanged(nameof(Sprite));
     }
 }

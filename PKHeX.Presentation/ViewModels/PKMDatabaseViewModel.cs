@@ -33,6 +33,7 @@ public partial class PKMDatabaseViewModel : ViewModelBase
     [ObservableProperty] private int _nature;
     [ObservableProperty] private int _ability;
     [ObservableProperty] private int _item;
+    [ObservableProperty] private string _nickname = string.Empty;
     [ObservableProperty] private bool? _isShiny;
     [ObservableProperty] private bool? _isLegal;
 
@@ -164,6 +165,7 @@ public partial class PKMDatabaseViewModel : ViewModelBase
         Nature = (Nature)Nature,
         Ability = Ability,
         Item = Item,
+        Nickname = Nickname,
         SearchShiny = IsShiny,
         SearchLegal = IsLegal,
         Context = _sav.Context

@@ -129,7 +129,7 @@ public partial class MainWindowViewModel : ViewModelBase
                 PartyViewer = partyViewer;
 
                 TrainerEditor = new TrainerEditorViewModel(sav);
-                InventoryEditor = new InventoryEditorViewModel(sav);
+                InventoryEditor = new InventoryEditorViewModel(sav, _spriteRenderer);
                 EventFlagsEditor = new EventFlagsEditorViewModel(sav);
                 MysteryGiftEditor = new MysteryGiftEditorViewModel(sav, _dialogService);
                 BatchEditor = new BatchEditorViewModel(sav, _dialogService);

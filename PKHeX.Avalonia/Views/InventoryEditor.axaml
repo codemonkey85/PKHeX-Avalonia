@@ -51,6 +51,18 @@
                                           CanUserSortColumns="False"
                                           MaxHeight="450">
                                     <DataGrid.Columns>
+                                        <!-- Icon Column -->
+                                        <DataGridTemplateColumn Header="" Width="36">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate DataType="vm:InventoryItemViewModel">
+                                                    <Image Width="24" Height="24"
+                                                           Source="{Binding Sprite, Converter={StaticResource PngBytesToBitmap}}"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center" />
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+
                                         <!-- Item Column -->
                                         <DataGridTemplateColumn Header="Item" Width="*">
                                             <DataGridTemplateColumn.CellTemplate>

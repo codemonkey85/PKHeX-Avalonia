@@ -63,6 +63,17 @@
                                     </Grid>
                                 </StackPanel>
                             </Border>
+
+                            <!-- Other Section (R/S/E only) -->
+                            <Border Classes="section-card" Padding="12" IsVisible="{Binding CanForceMirageIsland}">
+                                <StackPanel Spacing="12">
+                                    <TextBlock Text="Other" FontWeight="SemiBold" Opacity="0.6" />
+                                    <Button Content="Mirage Island Appear: Match First Party Member"
+                                            Command="{Binding ForceMirageIslandCommand}"
+                                            IsVisible="{Binding CanForceMirageIsland}"
+                                            HorizontalAlignment="Left" />
+                                </StackPanel>
+                            </Border>
                         </StackPanel>
                     </ScrollViewer>
                 </TabItem>

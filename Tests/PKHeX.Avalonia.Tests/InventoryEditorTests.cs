@@ -19,7 +19,7 @@ public class InventoryEditorTests(ITestOutputHelper output)
     public void InventoryEditor_SaveCommand_PersistsItemCount()
     {
         var sav = new SAV6XY();
-        var vm = new InventoryEditorViewModel(sav);
+        var vm = new InventoryEditorViewModel(sav, new Moq.Mock<ISpriteRenderer>().Object);
 
         Assert.NotEmpty(vm.Pouches);
         var pouch = vm.Pouches.First(p => p.ItemList.Count > 0 && p.Items.Count > 0);
@@ -34,7 +34,7 @@ public class InventoryEditorTests(ITestOutputHelper output)
         vm.SaveCommand.Execute(null);
 
         // Verify by reloading a fresh ViewModel from the same save
-        var vm2 = new InventoryEditorViewModel(sav);
+        var vm2 = new InventoryEditorViewModel(sav, new Moq.Mock<ISpriteRenderer>().Object);
         var pouch2 = vm2.Pouches.First(p => p.PouchName == pouch.PouchName);
         var item2 = pouch2.Items[0];
 
@@ -56,7 +56,7 @@ public class InventoryEditorTests(ITestOutputHelper output)
     public void InventoryEditor_GiveAll_SetsMaxCountAfterSave(GameVersion version, string label)
     {
         var sav = BlankSaveFile.Get(version);
-        var vm = new InventoryEditorViewModel(sav);
+        var vm = new InventoryEditorViewModel(sav, new Moq.Mock<ISpriteRenderer>().Object);
 
         if (vm.Pouches.Count == 0) { output.WriteLine($"{label}: no pouches, skipping"); return; }
 
@@ -81,7 +81,7 @@ public class InventoryEditorTests(ITestOutputHelper output)
     public void InventoryEditor_ClearAll_ZerosAllItems()
     {
         var sav = new SAV6XY();
-        var vm = new InventoryEditorViewModel(sav);
+        var vm = new InventoryEditorViewModel(sav, new Moq.Mock<ISpriteRenderer>().Object);
 
         var pouch = vm.Pouches.FirstOrDefault(p => p.ItemList.Count > 0);
         if (pouch == null) { output.WriteLine("Gen6: no pouch with items, skipping"); return; }
@@ -97,7 +97,7 @@ public class InventoryEditorTests(ITestOutputHelper output)
         vm.SaveCommand.Execute(null);
 
         // Verify via fresh ViewModel reload
-        var vm2 = new InventoryEditorViewModel(sav);
+        var vm2 = new InventoryEditorViewModel(sav, new Moq.Mock<ISpriteRenderer>().Object);
         var pouch2 = vm2.Pouches.First(p => p.PouchName == pouch.PouchName);
         Assert.All(pouch2.Items, item => Assert.Equal(0, item.Count));
         output.WriteLine($"Gen6 '{pouch.PouchName}': all items zeroed after ClearAll ✓");
@@ -111,7 +111,7 @@ public class InventoryEditorTests(ITestOutputHelper output)
     public void InventoryEditor_ResetCommand_DiscardsUncommittedChanges()
     {
         var sav = new SAV6XY();
-        var vm = new InventoryEditorViewModel(sav);
+        var vm = new InventoryEditorViewModel(sav, new Moq.Mock<ISpriteRenderer>().Object);
 
         var pouch = vm.Pouches.FirstOrDefault(p => p.Items.Count > 0);
         if (pouch == null) { output.WriteLine("Gen6: no pouch, skipping"); return; }
@@ -139,7 +139,7 @@ public class InventoryEditorTests(ITestOutputHelper output)
     public void InventoryEditor_ItemCount_RoundTripsExactly()
     {
         var sav = new SAV3E();
-        var vm = new InventoryEditorViewModel(sav);
+        var vm = new InventoryEditorViewModel(sav, new Moq.Mock<ISpriteRenderer>().Object);
 
         var pouch = vm.Pouches.FirstOrDefault(p => p.ItemList.Count > 0 && p.Items.Count > 0);
         if (pouch == null) { output.WriteLine("Gen3 Emerald: no pouch with items, skipping"); return; }
@@ -151,7 +151,7 @@ public class InventoryEditorTests(ITestOutputHelper output)
 
         vm.SaveCommand.Execute(null);
 
-        var vm2 = new InventoryEditorViewModel(sav);
+        var vm2 = new InventoryEditorViewModel(sav, new Moq.Mock<ISpriteRenderer>().Object);
         var pouch2 = vm2.Pouches.First(p => p.PouchName == pouch.PouchName);
         Assert.Equal(targetItemId, pouch2.Items[0].ItemId);
         Assert.Equal(50, pouch2.Items[0].Count);

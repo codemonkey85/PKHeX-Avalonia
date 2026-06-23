@@ -135,7 +135,7 @@ public class RealSaveIntegrationTests(ITestOutputHelper output)
         output.WriteLine(label);
         var ex = Record.Exception(() =>
         {
-            var vm = new InventoryEditorViewModel(sav);
+            var vm = new InventoryEditorViewModel(sav, new Moq.Mock<ISpriteRenderer>().Object);
             output.WriteLine($"  Pouches: {vm.Pouches.Count}");
         });
         Assert.Null(ex);
@@ -377,7 +377,7 @@ public class RealSaveIntegrationTests(ITestOutputHelper output)
     public void Inventory_GiveAll_SetsNonZero(SaveFile sav, string label)
     {
         output.WriteLine(label);
-        var vm = new InventoryEditorViewModel(sav);
+        var vm = new InventoryEditorViewModel(sav, new Moq.Mock<ISpriteRenderer>().Object);
         if (vm.Pouches.Count == 0)
         {
             output.WriteLine($"  skip — no pouches");
@@ -398,7 +398,7 @@ public class RealSaveIntegrationTests(ITestOutputHelper output)
     public void Inventory_ClearAll_SetsZero(SaveFile sav, string label)
     {
         output.WriteLine(label);
-        var vm = new InventoryEditorViewModel(sav);
+        var vm = new InventoryEditorViewModel(sav, new Moq.Mock<ISpriteRenderer>().Object);
         if (vm.Pouches.Count == 0)
         {
             output.WriteLine($"  skip — no pouches");

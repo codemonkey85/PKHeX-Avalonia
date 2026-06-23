@@ -109,7 +109,7 @@ public class LayoutTests
     [AvaloniaFact]
     public void Verify_InventoryEditor_Layout()
     {
-        var vm = new InventoryEditorViewModel(_saveFile);
+        var vm = new InventoryEditorViewModel(_saveFile, new Moq.Mock<ISpriteRenderer>().Object);
         // TODO: Populate inventory with max items if possible, but requires complex mocking
         var view = new InventoryEditor { DataContext = vm };
         ForceLayout(view);
