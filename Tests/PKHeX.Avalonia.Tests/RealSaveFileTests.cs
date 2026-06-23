@@ -209,7 +209,7 @@ public class RealSaveFileTests(ITestOutputHelper output)
 
         var ex = Record.Exception(() =>
         {
-            var vm = new InventoryEditorViewModel(sav);
+            var vm = new InventoryEditorViewModel(sav, new Moq.Mock<ISpriteRenderer>().Object);
             output.WriteLine($"Inventory pouches: {vm.Pouches.Count}");
         });
         Assert.Null(ex);
@@ -370,7 +370,7 @@ public class RealSaveFileTests(ITestOutputHelper output)
 
         var ex = Record.Exception(() =>
         {
-            var vm = new InventoryEditorViewModel(sav);
+            var vm = new InventoryEditorViewModel(sav, new Moq.Mock<ISpriteRenderer>().Object);
             output.WriteLine($"Sun inventory pouches: {vm.Pouches.Count}");
         });
         Assert.Null(ex);

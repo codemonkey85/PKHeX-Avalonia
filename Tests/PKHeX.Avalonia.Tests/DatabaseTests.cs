@@ -78,7 +78,7 @@ public class DatabaseTests : IDisposable
 
         GameInfo.FilteredSources = new FilteredGameDataSource(sav, GameInfo.Sources);
 
-        var vm = new InventoryEditorViewModel(sav);
+        var vm = new InventoryEditorViewModel(sav, new Moq.Mock<ISpriteRenderer>().Object);
         var pouch = vm.Pouches.First(p => p.PouchName == "Items");
 
         var firstItem = pouch.ItemList.First(x => x.Value > 0);

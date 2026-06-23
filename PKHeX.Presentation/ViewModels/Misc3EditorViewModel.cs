@@ -41,6 +41,22 @@ public partial class Misc3EditorViewModel : ViewModelBase
 
     #endregion
 
+    #region Other (R/S/E only)
+
+    public bool CanForceMirageIsland => _sav.SmallBlock is ISaveBlock3SmallHoenn;
+
+    [RelayCommand]
+    private void ForceMirageIsland()
+    {
+        if (_sav.SmallBlock is not ISaveBlock3SmallHoenn) return;
+        var party1 = _sav.LargeBlock.PartyBuffer;
+        if (party1.Length < 2) return;
+        var pidLow = System.Buffers.Binary.BinaryPrimitives.ReadUInt16LittleEndian(party1);
+        _sav.SetWork(0x24, pidLow); // mirage island rand value is work 0x24; matching party slot-0 PID-low triggers the island
+    }
+
+    #endregion
+
     #region Records
 
     [ObservableProperty]

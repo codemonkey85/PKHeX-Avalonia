@@ -11,6 +11,7 @@ public interface ISpriteRenderer
 {
     byte[]? GetSprite(PKM pk, bool isEgg = false);
     byte[]? GetSprite(ushort species, byte form, byte gender, uint formarg, bool shiny, EntityContext context);
+    byte[]? GetItemSprite(int itemId);
     byte[]? GetEmptySlot();
     void Initialize(SaveFile sav);
 }

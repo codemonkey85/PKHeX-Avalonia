@@ -36,6 +36,11 @@
                         </StackPanel>
 
                         <StackPanel Spacing="4">
+                            <TextBlock Text="Nickname" Opacity="0.7" FontSize="12"/>
+                            <TextBox Text="{Binding Nickname}" Watermark="Nickname" HorizontalAlignment="Stretch"/>
+                        </StackPanel>
+
+                        <StackPanel Spacing="4">
                             <TextBlock Text="Shiny" Opacity="0.7" FontSize="12"/>
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <RadioButton Content="Any" IsChecked="{Binding IsShiny, Converter={StaticResource ObjectNullConverter}}"/>
