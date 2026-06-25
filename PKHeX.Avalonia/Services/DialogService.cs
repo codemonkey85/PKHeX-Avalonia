@@ -1,6 +1,7 @@
 using global::Avalonia;
 using global::Avalonia.Controls;
 using global::Avalonia.Controls.ApplicationLifetimes;
+using global::Avalonia.Input.Platform;
 using global::Avalonia.Layout;
 using global::Avalonia.Media;
 using global::Avalonia.Platform.Storage;
@@ -132,7 +133,7 @@ public sealed class DialogService : IDialogService
     {
         var window = GetMainWindow();
         if (window?.Clipboard is { } clipboard)
-            return await clipboard.GetTextAsync();
+            return await clipboard.TryGetTextAsync();
         return null;
     }
 

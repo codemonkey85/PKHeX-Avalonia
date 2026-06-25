@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Input.Platform;
 
 namespace PKHeX.Avalonia.Services;
 
@@ -25,7 +26,7 @@ public class ClipboardService : IClipboardService
     {
         var cb = GetClipboard();
         if (cb is null) return null;
-        return await cb.GetTextAsync();
+        return await cb.TryGetTextAsync();
     }
 
     public async Task SetTextAsync(string text)
