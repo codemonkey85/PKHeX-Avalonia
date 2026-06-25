@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using PKHeX.Avalonia.Services;
 using PKHeX.Presentation.Models;
 using PKHeX.Presentation.ViewModels;
 
@@ -66,10 +67,9 @@ public partial class BoxViewer : UserControl
         if (button.Tag is not SlotData slot || slot.IsEmpty)
             return;
 
-        var data = new DataObject();
-        data.Set("SlotDragData", new SlotDragData(slot.Location));
+        var data = SlotDragTransfer.Create(new SlotDragData(slot.Location));
 
-        await DragDrop.DoDragDrop(e, data, DragDropEffects.Move | DragDropEffects.Copy);
+        await DragDrop.DoDragDropAsync(e, data, DragDropEffects.Move | DragDropEffects.Copy);
     }
 
     private void OnSlotDrop(object? sender, DragEventArgs e)
@@ -77,7 +77,7 @@ public partial class BoxViewer : UserControl
         if (sender is not Button button || button.Tag is not SlotData destSlot || DataContext is not BoxViewerViewModel vm)
             return;
 
-        var data = e.Data.Get("SlotDragData") as SlotDragData;
+        var data = SlotDragTransfer.TryGet(e.DataTransfer);
         if (data == null) return;
 
         bool clone = e.KeyModifiers.HasFlag(KeyModifiers.Control);
