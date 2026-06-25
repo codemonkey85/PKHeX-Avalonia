@@ -65,10 +65,14 @@ dotnet publish PKHeX.Avalonia -c Release -r osx-arm64 --self-contained -p:Publis
 
 ## Versioning
 
-PKHeX Avalonia uses **semantic versioning** (`1.0.0`, `1.1.0`, etc.) for the UI application.
-PKHeX.Core follows the upstream date-based versioning scheme.
+PKHeX Avalonia uses **semantic versioning** (`MAJOR.MINOR.PATCH`) for the UI application via `<UIVersion>` in `Directory.Build.props`. PKHeX.Core keeps the upstream date-based `<Version>`, in sync with kwsch/PKHeX.
 
-To create a release, bump the `<UIVersion>` value in `Directory.Build.props` and push to `main`. The release workflow detects the new version, creates the git tag, builds all 4 platforms, and publishes a GitHub release — no manual tagging required.
+Bump `<UIVersion>` according to the change the PR makes:
+- **MAJOR** — incompatible/breaking changes (e.g. dropped save-format support, removed features)
+- **MINOR** — new backward-compatible functionality (new editors, tools, capabilities)
+- **PATCH** — backward-compatible fixes, refactors, chores, dependency bumps, and routine upstream `PKHeX.Core` syncs
+
+To create a release, bump `<UIVersion>` and push to `main`. The release workflow detects the new version, creates the git tag, builds all 4 platforms, and publishes a GitHub release — no manual tagging required.
 
 ## Screenshots
 *Work in progress — the UI is changing fast.*
