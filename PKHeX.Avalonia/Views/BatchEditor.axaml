@@ -55,6 +55,7 @@
                 <StackPanel Spacing="8">
                     <TextBlock Text="Instruction Builder" FontWeight="SemiBold" />
                     <TextBlock FontSize="11" Opacity="0.6"
+                               TextWrapping="Wrap"
                                Text="Type a property name and click + Filter (condition) or + Modify (change). Each click adds one line. Run executes all lines together." />
                     <Grid ColumnDefinitions="*,Auto,*,Auto,Auto">
                         <AutoCompleteBox Grid.Column="0"
