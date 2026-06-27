@@ -142,6 +142,73 @@ public class BoxViewerTests(ITestOutputHelper output)
     }
 
     // -----------------------------------------------------------------------
+    // In-save seek (EntityFilter-driven)
+    // -----------------------------------------------------------------------
+
+    [Fact]
+    public void BoxViewer_SeekNext_JumpsToMatchInLaterBox()
+    {
+        var sav = new SAV6XY();
+        // Pikachu sits in box 2, slot 5; nothing else matches.
+        sav.SetBoxSlotAtIndex(new PK6 { Species = 25 }, 2, 5);
+
+        var vm = new BoxViewerViewModel(sav, SpriteMock().Object);
+        vm.Filter.Species = 25;
+
+        vm.SeekNextCommand.Execute(null);
+
+        Assert.Equal(2, vm.CurrentBox);
+        Assert.Equal(5, vm.SelectedIndex);
+        output.WriteLine($"SeekNext: jumped to box {vm.CurrentBox}, slot {vm.SelectedIndex} ✓");
+    }
+
+    [Fact]
+    public void BoxViewer_SeekNext_NoMatch_ReportsStatus()
+    {
+        var sav = new SAV6XY();
+        var vm = new BoxViewerViewModel(sav, SpriteMock().Object);
+        vm.Filter.Species = 25; // no Pikachu anywhere
+
+        vm.SeekNextCommand.Execute(null);
+
+        Assert.Equal("No matches.", vm.SeekStatus);
+        output.WriteLine("SeekNext with no match: reports 'No matches.' ✓");
+    }
+
+    [Fact]
+    public void BoxViewer_SeekNext_WrapsAroundToEarlierBox()
+    {
+        var sav = new SAV6XY();
+        sav.SetBoxSlotAtIndex(new PK6 { Species = 25 }, 0, 0); // only match is behind the cursor
+
+        var vm = new BoxViewerViewModel(sav, SpriteMock().Object);
+        vm.Filter.Species = 25;
+        // Move cursor past the only match.
+        vm.NextBoxCommand.Execute(null); // box 1
+        vm.SelectedIndex = 3;
+
+        vm.SeekNextCommand.Execute(null);
+
+        Assert.Equal(0, vm.CurrentBox);
+        Assert.Equal(0, vm.SelectedIndex);
+        output.WriteLine("SeekNext wraps around to box 0 ✓");
+    }
+
+    [Fact]
+    public void BoxViewer_ToggleSeekBar_FlipsVisibility()
+    {
+        var sav = new SAV6XY();
+        var vm = new BoxViewerViewModel(sav, SpriteMock().Object);
+
+        Assert.False(vm.IsSeekBarVisible);
+        vm.ToggleSeekBarCommand.Execute(null);
+        Assert.True(vm.IsSeekBarVisible);
+        vm.ToggleSeekBarCommand.Execute(null);
+        Assert.False(vm.IsSeekBarVisible);
+        output.WriteLine("ToggleSeekBar flips visibility ✓");
+    }
+
+    // -----------------------------------------------------------------------
     // BoxListEditorViewModel
     // -----------------------------------------------------------------------
 

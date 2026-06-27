@@ -19,8 +19,8 @@
                     <StackPanel Spacing="12">
                         <StackPanel Spacing="4">
                             <TextBlock Text="Species" Opacity="0.7" FontSize="12"/>
-                            <ComboBox ItemsSource="{Binding SpeciesList}" 
-                                      SelectedValue="{Binding Species}"
+                            <ComboBox ItemsSource="{Binding Filter.SpeciesList}" 
+                                      SelectedValue="{Binding Filter.Species}"
                                       SelectedValueBinding="{Binding Value}"
                                       DisplayMemberBinding="{Binding Text}"
                                       HorizontalAlignment="Stretch"/>
@@ -28,8 +28,8 @@
 
                         <StackPanel Spacing="4">
                             <TextBlock Text="Nature" Opacity="0.7" FontSize="12"/>
-                            <ComboBox ItemsSource="{Binding NatureList}" 
-                                      SelectedValue="{Binding Nature}"
+                            <ComboBox ItemsSource="{Binding Filter.NatureList}" 
+                                      SelectedValue="{Binding Filter.Nature}"
                                       SelectedValueBinding="{Binding Value}"
                                       DisplayMemberBinding="{Binding Text}"
                                       HorizontalAlignment="Stretch"/>
@@ -37,40 +37,40 @@
 
                         <StackPanel Spacing="4">
                             <TextBlock Text="Nickname" Opacity="0.7" FontSize="12"/>
-                            <TextBox Text="{Binding Nickname}" Watermark="Nickname" HorizontalAlignment="Stretch"/>
+                            <TextBox Text="{Binding Filter.Nickname}" Watermark="Nickname" HorizontalAlignment="Stretch"/>
                         </StackPanel>
 
                         <StackPanel Spacing="4">
                             <TextBlock Text="Shiny" Opacity="0.7" FontSize="12"/>
                             <StackPanel Orientation="Horizontal" Spacing="8">
-                                <RadioButton Content="Any" IsChecked="{Binding IsShiny, Converter={StaticResource ObjectNullConverter}}"/>
-                                <RadioButton Content="Yes" IsChecked="{Binding IsShiny, Converter={StaticResource ObjectTrueConverter}}"/>
-                                <RadioButton Content="No" IsChecked="{Binding IsShiny, Converter={StaticResource ObjectFalseConverter}}"/>
+                                <RadioButton Content="Any" IsChecked="{Binding Filter.IsShiny, Converter={StaticResource ObjectNullConverter}}"/>
+                                <RadioButton Content="Yes" IsChecked="{Binding Filter.IsShiny, Converter={StaticResource ObjectTrueConverter}}"/>
+                                <RadioButton Content="No" IsChecked="{Binding Filter.IsShiny, Converter={StaticResource ObjectFalseConverter}}"/>
                             </StackPanel>
                         </StackPanel>
 
                         <StackPanel Spacing="4">
                             <TextBlock Text="Legality" Opacity="0.7" FontSize="12"/>
                             <StackPanel Orientation="Horizontal" Spacing="8">
-                                <RadioButton Content="Any" IsChecked="{Binding IsLegal, Converter={StaticResource ObjectNullConverter}}"/>
-                                <RadioButton Content="Legal" IsChecked="{Binding IsLegal, Converter={StaticResource ObjectTrueConverter}}"/>
-                                <RadioButton Content="Illegal" IsChecked="{Binding IsLegal, Converter={StaticResource ObjectFalseConverter}}"/>
+                                <RadioButton Content="Any" IsChecked="{Binding Filter.IsLegal, Converter={StaticResource ObjectNullConverter}}"/>
+                                <RadioButton Content="Legal" IsChecked="{Binding Filter.IsLegal, Converter={StaticResource ObjectTrueConverter}}"/>
+                                <RadioButton Content="Illegal" IsChecked="{Binding Filter.IsLegal, Converter={StaticResource ObjectFalseConverter}}"/>
                             </StackPanel>
                         </StackPanel>
 
                         <StackPanel Spacing="4">
                             <TextBlock Text="Egg" Opacity="0.7" FontSize="12"/>
                             <StackPanel Orientation="Horizontal" Spacing="8">
-                                <RadioButton Content="Any" IsChecked="{Binding IsEgg, Converter={StaticResource ObjectNullConverter}}"/>
-                                <RadioButton Content="Yes" IsChecked="{Binding IsEgg, Converter={StaticResource ObjectTrueConverter}}"/>
-                                <RadioButton Content="No" IsChecked="{Binding IsEgg, Converter={StaticResource ObjectFalseConverter}}"/>
+                                <RadioButton Content="Any" IsChecked="{Binding Filter.IsEgg, Converter={StaticResource ObjectNullConverter}}"/>
+                                <RadioButton Content="Yes" IsChecked="{Binding Filter.IsEgg, Converter={StaticResource ObjectTrueConverter}}"/>
+                                <RadioButton Content="No" IsChecked="{Binding Filter.IsEgg, Converter={StaticResource ObjectFalseConverter}}"/>
                             </StackPanel>
                         </StackPanel>
 
                         <StackPanel Spacing="4">
                             <TextBlock Text="Hidden Power" Opacity="0.7" FontSize="12"/>
-                            <ComboBox ItemsSource="{Binding HiddenPowerList}"
-                                      SelectedValue="{Binding HiddenPowerType}"
+                            <ComboBox ItemsSource="{Binding Filter.HiddenPowerList}"
+                                      SelectedValue="{Binding Filter.HiddenPowerType}"
                                       SelectedValueBinding="{Binding Value}"
                                       DisplayMemberBinding="{Binding Text}"
                                       HorizontalAlignment="Stretch"/>
@@ -78,19 +78,19 @@
 
                         <StackPanel Spacing="4">
                             <TextBlock Text="Level" Opacity="0.7" FontSize="12"/>
-                            <ComboBox ItemsSource="{Binding LevelComparisonList}"
-                                      SelectedValue="{Binding LevelComparison}"
+                            <ComboBox ItemsSource="{Binding Filter.LevelComparisonList}"
+                                      SelectedValue="{Binding Filter.LevelComparison}"
                                       SelectedValueBinding="{Binding Value}"
                                       DisplayMemberBinding="{Binding Text}"
                                       HorizontalAlignment="Stretch"/>
-                            <NumericUpDown Value="{Binding Level}" Minimum="1" Maximum="100" Increment="1"
+                            <NumericUpDown Value="{Binding Filter.Level}" Minimum="1" Maximum="100" Increment="1"
                                            FormatString="0" HorizontalAlignment="Stretch"/>
                         </StackPanel>
 
                         <StackPanel Spacing="4">
                             <TextBlock Text="IV Total" Opacity="0.7" FontSize="12"/>
-                            <ComboBox ItemsSource="{Binding IvTypeList}"
-                                      SelectedValue="{Binding IvType}"
+                            <ComboBox ItemsSource="{Binding Filter.IvTypeList}"
+                                      SelectedValue="{Binding Filter.IvType}"
                                       SelectedValueBinding="{Binding Value}"
                                       DisplayMemberBinding="{Binding Text}"
                                       HorizontalAlignment="Stretch"/>
@@ -98,17 +98,17 @@
 
                         <StackPanel Spacing="4">
                             <TextBlock Text="EV Total" Opacity="0.7" FontSize="12"/>
-                            <ComboBox ItemsSource="{Binding EvTypeList}"
-                                      SelectedValue="{Binding EvType}"
+                            <ComboBox ItemsSource="{Binding Filter.EvTypeList}"
+                                      SelectedValue="{Binding Filter.EvType}"
                                       SelectedValueBinding="{Binding Value}"
                                       DisplayMemberBinding="{Binding Text}"
                                       HorizontalAlignment="Stretch"/>
                         </StackPanel>
 
                         <StackPanel Spacing="4">
-                            <CheckBox Content="ESV (requires Egg = Yes)" IsChecked="{Binding EsvEnabled}"/>
-                            <NumericUpDown Value="{Binding Esv}" Minimum="0" Maximum="4095" Increment="1"
-                                           FormatString="0" IsEnabled="{Binding EsvEnabled}"
+                            <CheckBox Content="ESV (requires Egg = Yes)" IsChecked="{Binding Filter.EsvEnabled}"/>
+                            <NumericUpDown Value="{Binding Filter.Esv}" Minimum="0" Maximum="4095" Increment="1"
+                                           FormatString="0" IsEnabled="{Binding Filter.EsvEnabled}"
                                            HorizontalAlignment="Stretch"/>
                         </StackPanel>
                     </StackPanel>
