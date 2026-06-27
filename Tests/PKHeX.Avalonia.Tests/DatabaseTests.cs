@@ -162,7 +162,7 @@ public class DatabaseTests : IDisposable
         var dialogMock = new Mock<IDialogService>();
 
         var vm = new PKMDatabaseViewModel(sav, spriteMock.Object, dialogMock.Object);
-        string initialText = vm.SpeciesList.First(x => x.Value == 1).Text;
+        string initialText = vm.Filter.SpeciesList.First(x => x.Value == 1).Text;
         Assert.Equal("Bulbasaur", initialText);
 
         GameInfo.CurrentLanguage = "de";
@@ -171,7 +171,7 @@ public class DatabaseTests : IDisposable
 
         WeakReferenceMessenger.Default.Send(new LanguageChangedMessage("de"));
 
-        string newText = vm.SpeciesList.First(x => x.Value == 1).Text;
+        string newText = vm.Filter.SpeciesList.First(x => x.Value == 1).Text;
         Assert.Equal("Bisasam", newText);
     }
 
@@ -242,7 +242,7 @@ public class DatabaseTests : IDisposable
     public void Verify_Database_Default_Filters_Map_To_Any()
     {
         var vm = CreateDatabaseVm();
-        var settings = vm.GetSearchSettings();
+        var settings = vm.Filter.GetSearchSettings();
 
         // Existing wildcard expectations.
         Assert.Equal(0, settings.Species);
@@ -268,11 +268,11 @@ public class DatabaseTests : IDisposable
         var vm = CreateDatabaseVm();
 
         // "Any" sentinel is present and selected by default.
-        Assert.Contains(vm.HiddenPowerList, x => x.Value == -1);
-        Assert.Equal(PKHeX.Core.HiddenPower.TypeCount, vm.HiddenPowerList.Count - 1);
+        Assert.Contains(vm.Filter.HiddenPowerList, x => x.Value == -1);
+        Assert.Equal(PKHeX.Core.HiddenPower.TypeCount, vm.Filter.HiddenPowerList.Count - 1);
 
-        vm.HiddenPowerType = 3; // arbitrary HP type index
-        Assert.Equal(3, vm.GetSearchSettings().HiddenPowerType);
+        vm.Filter.HiddenPowerType = 3; // arbitrary HP type index
+        Assert.Equal(3, vm.Filter.GetSearchSettings().HiddenPowerType);
     }
 
     [Fact]
@@ -280,14 +280,14 @@ public class DatabaseTests : IDisposable
     {
         var vm = CreateDatabaseVm();
 
-        vm.IsEgg = true;
-        Assert.True(vm.GetSearchSettings().SearchEgg);
+        vm.Filter.IsEgg = true;
+        Assert.True(vm.Filter.GetSearchSettings().SearchEgg);
 
-        vm.IsEgg = false;
-        Assert.False(vm.GetSearchSettings().SearchEgg);
+        vm.Filter.IsEgg = false;
+        Assert.False(vm.Filter.GetSearchSettings().SearchEgg);
 
-        vm.IsEgg = null;
-        Assert.Null(vm.GetSearchSettings().SearchEgg);
+        vm.Filter.IsEgg = null;
+        Assert.Null(vm.Filter.GetSearchSettings().SearchEgg);
     }
 
     [Fact]
@@ -296,15 +296,15 @@ public class DatabaseTests : IDisposable
         var vm = CreateDatabaseVm();
 
         // With no comparison selected, Level is not applied even if a value is set.
-        vm.Level = 50;
-        vm.LevelComparison = (int)PKHeX.Core.Searching.SearchComparison.None;
-        var none = vm.GetSearchSettings();
+        vm.Filter.Level = 50;
+        vm.Filter.LevelComparison = (int)PKHeX.Core.Searching.SearchComparison.None;
+        var none = vm.Filter.GetSearchSettings();
         Assert.Null(none.Level);
         Assert.Equal(PKHeX.Core.Searching.SearchComparison.None, none.SearchLevel);
 
         // With a comparison selected, Level + SearchLevel flow through.
-        vm.LevelComparison = (int)PKHeX.Core.Searching.SearchComparison.GreaterThanEquals;
-        var ge = vm.GetSearchSettings();
+        vm.Filter.LevelComparison = (int)PKHeX.Core.Searching.SearchComparison.GreaterThanEquals;
+        var ge = vm.Filter.GetSearchSettings();
         Assert.Equal((byte)50, ge.Level);
         Assert.Equal(PKHeX.Core.Searching.SearchComparison.GreaterThanEquals, ge.SearchLevel);
     }
@@ -314,9 +314,9 @@ public class DatabaseTests : IDisposable
     {
         var vm = CreateDatabaseVm();
 
-        vm.IvType = 6; // Flawless (186)
-        vm.EvType = 1; // None (0)
-        var settings = vm.GetSearchSettings();
+        vm.Filter.IvType = 6; // Flawless (186)
+        vm.Filter.EvType = 1; // None (0)
+        var settings = vm.Filter.GetSearchSettings();
         Assert.Equal(6, settings.IVType);
         Assert.Equal(1, settings.EVType);
     }
@@ -327,13 +327,13 @@ public class DatabaseTests : IDisposable
         var vm = CreateDatabaseVm();
 
         // Disabled => null regardless of value.
-        vm.Esv = 1234;
-        vm.EsvEnabled = false;
-        Assert.Null(vm.GetSearchSettings().ESV);
+        vm.Filter.Esv = 1234;
+        vm.Filter.EsvEnabled = false;
+        Assert.Null(vm.Filter.GetSearchSettings().ESV);
 
         // Enabled => value flows through.
-        vm.EsvEnabled = true;
-        Assert.Equal(1234, vm.GetSearchSettings().ESV);
+        vm.Filter.EsvEnabled = true;
+        Assert.Equal(1234, vm.Filter.GetSearchSettings().ESV);
     }
 
     [Fact]
@@ -352,16 +352,16 @@ public class DatabaseTests : IDisposable
         var allPkms = sav.BoxData.Concat(sav.PartyData);
 
         // Level >= 50 should match the level-50 Pikachu.
-        vm.Level = 50;
-        vm.LevelComparison = (int)PKHeX.Core.Searching.SearchComparison.GreaterThanEquals;
-        var hit = vm.GetSearchSettings().Search(allPkms).Where(p => p.Species != 0).ToList();
+        vm.Filter.Level = 50;
+        vm.Filter.LevelComparison = (int)PKHeX.Core.Searching.SearchComparison.GreaterThanEquals;
+        var hit = vm.Filter.GetSearchSettings().Search(allPkms).Where(p => p.Species != 0).ToList();
         Assert.Single(hit);
         Assert.Equal(25, hit[0].Species);
 
         // Level <= 10 should exclude it.
-        vm.LevelComparison = (int)PKHeX.Core.Searching.SearchComparison.LessThanEquals;
-        vm.Level = 10;
-        var miss = vm.GetSearchSettings().Search(allPkms).Where(p => p.Species != 0).ToList();
+        vm.Filter.LevelComparison = (int)PKHeX.Core.Searching.SearchComparison.LessThanEquals;
+        vm.Filter.Level = 10;
+        var miss = vm.Filter.GetSearchSettings().Search(allPkms).Where(p => p.Species != 0).ToList();
         Assert.Empty(miss);
     }
 }
