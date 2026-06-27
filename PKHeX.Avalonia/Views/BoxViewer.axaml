@@ -134,22 +134,28 @@
                                   ToolTip.Tip="EV total" />
                     </WrapPanel>
 
-                    <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                        <TextBlock Text="Shiny" VerticalAlignment="Center" Opacity="0.7" FontSize="12" />
-                        <RadioButton GroupName="SeekShiny" Content="Any" IsChecked="{Binding Filter.IsShiny, Converter={StaticResource ObjectNullConverter}}" />
-                        <RadioButton GroupName="SeekShiny" Content="Yes" IsChecked="{Binding Filter.IsShiny, Converter={StaticResource ObjectTrueConverter}}" />
-                        <RadioButton GroupName="SeekShiny" Content="No" IsChecked="{Binding Filter.IsShiny, Converter={StaticResource ObjectFalseConverter}}" />
+                    <WrapPanel ItemSpacing="16" LineSpacing="8">
+                        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                            <TextBlock Text="Shiny" VerticalAlignment="Center" Opacity="0.7" FontSize="12" />
+                            <RadioButton GroupName="SeekShiny" Content="Any" IsChecked="{Binding Filter.IsShiny, Converter={StaticResource ObjectNullConverter}}" />
+                            <RadioButton GroupName="SeekShiny" Content="Yes" IsChecked="{Binding Filter.IsShiny, Converter={StaticResource ObjectTrueConverter}}" />
+                            <RadioButton GroupName="SeekShiny" Content="No" IsChecked="{Binding Filter.IsShiny, Converter={StaticResource ObjectFalseConverter}}" />
+                        </StackPanel>
 
-                        <TextBlock Text="Egg" VerticalAlignment="Center" Opacity="0.7" FontSize="12" Margin="12,0,0,0" />
-                        <RadioButton GroupName="SeekEgg" Content="Any" IsChecked="{Binding Filter.IsEgg, Converter={StaticResource ObjectNullConverter}}" />
-                        <RadioButton GroupName="SeekEgg" Content="Yes" IsChecked="{Binding Filter.IsEgg, Converter={StaticResource ObjectTrueConverter}}" />
-                        <RadioButton GroupName="SeekEgg" Content="No" IsChecked="{Binding Filter.IsEgg, Converter={StaticResource ObjectFalseConverter}}" />
+                        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                            <TextBlock Text="Egg" VerticalAlignment="Center" Opacity="0.7" FontSize="12" />
+                            <RadioButton GroupName="SeekEgg" Content="Any" IsChecked="{Binding Filter.IsEgg, Converter={StaticResource ObjectNullConverter}}" />
+                            <RadioButton GroupName="SeekEgg" Content="Yes" IsChecked="{Binding Filter.IsEgg, Converter={StaticResource ObjectTrueConverter}}" />
+                            <RadioButton GroupName="SeekEgg" Content="No" IsChecked="{Binding Filter.IsEgg, Converter={StaticResource ObjectFalseConverter}}" />
+                        </StackPanel>
 
-                        <TextBlock Text="Legality" VerticalAlignment="Center" Opacity="0.7" FontSize="12" Margin="12,0,0,0" />
-                        <RadioButton GroupName="SeekLegal" Content="Any" IsChecked="{Binding Filter.IsLegal, Converter={StaticResource ObjectNullConverter}}" />
-                        <RadioButton GroupName="SeekLegal" Content="Legal" IsChecked="{Binding Filter.IsLegal, Converter={StaticResource ObjectTrueConverter}}" />
-                        <RadioButton GroupName="SeekLegal" Content="Illegal" IsChecked="{Binding Filter.IsLegal, Converter={StaticResource ObjectFalseConverter}}" />
-                    </StackPanel>
+                        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                            <TextBlock Text="Legality" VerticalAlignment="Center" Opacity="0.7" FontSize="12" />
+                            <RadioButton GroupName="SeekLegal" Content="Any" IsChecked="{Binding Filter.IsLegal, Converter={StaticResource ObjectNullConverter}}" />
+                            <RadioButton GroupName="SeekLegal" Content="Legal" IsChecked="{Binding Filter.IsLegal, Converter={StaticResource ObjectTrueConverter}}" />
+                            <RadioButton GroupName="SeekLegal" Content="Illegal" IsChecked="{Binding Filter.IsLegal, Converter={StaticResource ObjectFalseConverter}}" />
+                        </StackPanel>
+                    </WrapPanel>
 
                     <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                         <Button Content="◀ Prev" Command="{Binding SeekPreviousCommand}"
