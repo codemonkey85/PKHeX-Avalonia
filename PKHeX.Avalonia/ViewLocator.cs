@@ -64,6 +64,7 @@ public static class ViewLocator
         [typeof(MysteryGiftDatabaseViewModel)] = () => new MysteryGiftDatabaseView(),
         [typeof(OPowerEditorViewModel)] = () => new OPowerEditor(),
         [typeof(PKMDatabaseViewModel)] = () => new PKMDatabaseView(),
+        [typeof(EntitySeekViewModel)] = () => new EntitySeekView(),
         [typeof(Poffin8bEditorViewModel)] = () => new Poffin8bEditor(),
         [typeof(PoffinCaseEditorViewModel)] = () => new PoffinCaseEditorView(),
         [typeof(PokeBlock3CaseEditorViewModel)] = () => new PokeBlock3CaseEditorView(),

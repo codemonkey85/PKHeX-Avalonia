@@ -104,6 +104,9 @@ public partial class MainWindowViewModel : ViewModelBase
 
     private void OnSaveFileChanged(SaveFile? sav)
     {
+        // Dismiss any modeless tool windows (e.g. the box seek tool) bound to the previous save.
+        _windowService.CloseAllTools();
+
         CurrentSave = sav;
         if (sav is not null)
         {
@@ -115,7 +118,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
                 CurrentPokemonEditor = new PokemonEditorViewModel(sav.BlankPKM, sav, _spriteRenderer, _dialogService, _windowService);
 
-                var boxViewer = new BoxViewerViewModel(sav, _spriteRenderer, _slotService);
+                var boxViewer = new BoxViewerViewModel(sav, _spriteRenderer, _slotService, _windowService);
                 boxViewer.SlotActivated += OnBoxSlotActivated;
                 boxViewer.ViewSlotRequested += OnBoxViewSlot;
                 boxViewer.SetSlotRequested += OnBoxSetSlot;

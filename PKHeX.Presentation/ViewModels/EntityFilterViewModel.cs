@@ -31,6 +31,12 @@ public partial class EntityFilterViewModel : ViewModelBase
     [ObservableProperty] private bool _esvEnabled;
     [ObservableProperty] private int _esv;
 
+    /// <summary>
+    /// Batch-editor instruction filter lines (e.g. <c>IVs=31</c>, <c>Move1=33</c>), one per line.
+    /// Parsed by Core into a search predicate via <see cref="SearchSettings.BatchInstructions"/>.
+    /// </summary>
+    [ObservableProperty] private string _batchInstructions = string.Empty;
+
     // Data Sources for View
     [ObservableProperty] private IReadOnlyList<ComboItem> _speciesList = [];
     [ObservableProperty] private IReadOnlyList<ComboItem> _natureList = [];
@@ -128,6 +134,8 @@ public partial class EntityFilterViewModel : ViewModelBase
         EVType = EvType,
         // ESV is only meaningful alongside Egg=Yes (see SearchSettings.FilterResultEgg).
         ESV = EsvEnabled ? Esv : null,
+        // Batch-editor instruction filter lines; Core parses and applies these in the predicate.
+        BatchInstructions = BatchInstructions ?? string.Empty,
         Context = _sav.Context
     };
 
