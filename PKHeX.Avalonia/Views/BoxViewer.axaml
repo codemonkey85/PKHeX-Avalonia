@@ -18,9 +18,9 @@
         <KeyBinding Gesture="End" Command="{Binding SelectLastSlotCommand}" />
         <KeyBinding Gesture="PageUp" Command="{Binding PreviousBoxCommand}" />
         <KeyBinding Gesture="PageDown" Command="{Binding NextBoxCommand}" />
-        <KeyBinding Gesture="Ctrl+F" Command="{Binding ToggleSeekBarCommand}" />
-        <KeyBinding Gesture="F3" Command="{Binding SeekNextCommand}" />
-        <KeyBinding Gesture="Shift+F3" Command="{Binding SeekPreviousCommand}" />
+        <KeyBinding Gesture="Ctrl+F" Command="{Binding OpenSeekToolCommand}" />
+        <KeyBinding Gesture="F3" Command="{Binding Seek.SeekNextCommand}" />
+        <KeyBinding Gesture="Shift+F3" Command="{Binding Seek.SeekPreviousCommand}" />
     </UserControl.KeyBindings>
 
     <Border Padding="16" Classes="view-container">
@@ -63,9 +63,9 @@
 
                     <Button Grid.Column="3"
                             Content="🔍"
-                            Command="{Binding ToggleSeekBarCommand}"
+                            Command="{Binding OpenSeekToolCommand}"
                             ToolTip.Tip="Search this save and seek to matching slots (Ctrl+F)"
-                            AutomationProperties.Name="Toggle Seek Bar"
+                            AutomationProperties.Name="Open Seek Tool"
                             Background="Transparent"
                             BorderThickness="0"
                             HorizontalAlignment="Stretch"
@@ -74,98 +74,6 @@
                             VerticalContentAlignment="Center"
                             FontSize="16" />
                 </Grid>
-            </Border>
-
-            <!-- In-save Seek Bar (collapsible) -->
-            <Border DockPanel.Dock="Top" Classes="card" Padding="12" Margin="0,0,0,12"
-                    IsVisible="{Binding IsSeekBarVisible}">
-                <StackPanel Spacing="8">
-                    <WrapPanel ItemSpacing="8" LineSpacing="8">
-                        <ComboBox ItemsSource="{Binding Filter.SpeciesList}"
-                                  SelectedValue="{Binding Filter.Species}"
-                                  SelectedValueBinding="{Binding Value}"
-                                  DisplayMemberBinding="{Binding Text}"
-                                  MinWidth="160"
-                                  ToolTip.Tip="Species" />
-                        <ComboBox ItemsSource="{Binding Filter.NatureList}"
-                                  SelectedValue="{Binding Filter.Nature}"
-                                  SelectedValueBinding="{Binding Value}"
-                                  DisplayMemberBinding="{Binding Text}"
-                                  MinWidth="120"
-                                  ToolTip.Tip="Nature" />
-                        <ComboBox ItemsSource="{Binding Filter.AbilityList}"
-                                  SelectedValue="{Binding Filter.Ability}"
-                                  SelectedValueBinding="{Binding Value}"
-                                  DisplayMemberBinding="{Binding Text}"
-                                  MinWidth="120"
-                                  ToolTip.Tip="Ability" />
-                        <ComboBox ItemsSource="{Binding Filter.ItemList}"
-                                  SelectedValue="{Binding Filter.Item}"
-                                  SelectedValueBinding="{Binding Value}"
-                                  DisplayMemberBinding="{Binding Text}"
-                                  MinWidth="140"
-                                  ToolTip.Tip="Held Item" />
-                        <TextBox Text="{Binding Filter.Nickname}" Watermark="Nickname" MinWidth="120" />
-                        <ComboBox ItemsSource="{Binding Filter.HiddenPowerList}"
-                                  SelectedValue="{Binding Filter.HiddenPowerType}"
-                                  SelectedValueBinding="{Binding Value}"
-                                  DisplayMemberBinding="{Binding Text}"
-                                  MinWidth="120"
-                                  ToolTip.Tip="Hidden Power" />
-                        <ComboBox ItemsSource="{Binding Filter.LevelComparisonList}"
-                                  SelectedValue="{Binding Filter.LevelComparison}"
-                                  SelectedValueBinding="{Binding Value}"
-                                  DisplayMemberBinding="{Binding Text}"
-                                  MinWidth="110"
-                                  ToolTip.Tip="Level comparison" />
-                        <NumericUpDown Value="{Binding Filter.Level}" Minimum="1" Maximum="100" Increment="1"
-                                       FormatString="0" MinWidth="100" ToolTip.Tip="Level" />
-                        <ComboBox ItemsSource="{Binding Filter.IvTypeList}"
-                                  SelectedValue="{Binding Filter.IvType}"
-                                  SelectedValueBinding="{Binding Value}"
-                                  DisplayMemberBinding="{Binding Text}"
-                                  MinWidth="120"
-                                  ToolTip.Tip="IV total" />
-                        <ComboBox ItemsSource="{Binding Filter.EvTypeList}"
-                                  SelectedValue="{Binding Filter.EvType}"
-                                  SelectedValueBinding="{Binding Value}"
-                                  DisplayMemberBinding="{Binding Text}"
-                                  MinWidth="120"
-                                  ToolTip.Tip="EV total" />
-                    </WrapPanel>
-
-                    <WrapPanel ItemSpacing="16" LineSpacing="8">
-                        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                            <TextBlock Text="Shiny" VerticalAlignment="Center" Opacity="0.7" FontSize="12" />
-                            <RadioButton GroupName="SeekShiny" Content="Any" IsChecked="{Binding Filter.IsShiny, Converter={StaticResource ObjectNullConverter}}" />
-                            <RadioButton GroupName="SeekShiny" Content="Yes" IsChecked="{Binding Filter.IsShiny, Converter={StaticResource ObjectTrueConverter}}" />
-                            <RadioButton GroupName="SeekShiny" Content="No" IsChecked="{Binding Filter.IsShiny, Converter={StaticResource ObjectFalseConverter}}" />
-                        </StackPanel>
-
-                        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                            <TextBlock Text="Egg" VerticalAlignment="Center" Opacity="0.7" FontSize="12" />
-                            <RadioButton GroupName="SeekEgg" Content="Any" IsChecked="{Binding Filter.IsEgg, Converter={StaticResource ObjectNullConverter}}" />
-                            <RadioButton GroupName="SeekEgg" Content="Yes" IsChecked="{Binding Filter.IsEgg, Converter={StaticResource ObjectTrueConverter}}" />
-                            <RadioButton GroupName="SeekEgg" Content="No" IsChecked="{Binding Filter.IsEgg, Converter={StaticResource ObjectFalseConverter}}" />
-                        </StackPanel>
-
-                        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                            <TextBlock Text="Legality" VerticalAlignment="Center" Opacity="0.7" FontSize="12" />
-                            <RadioButton GroupName="SeekLegal" Content="Any" IsChecked="{Binding Filter.IsLegal, Converter={StaticResource ObjectNullConverter}}" />
-                            <RadioButton GroupName="SeekLegal" Content="Legal" IsChecked="{Binding Filter.IsLegal, Converter={StaticResource ObjectTrueConverter}}" />
-                            <RadioButton GroupName="SeekLegal" Content="Illegal" IsChecked="{Binding Filter.IsLegal, Converter={StaticResource ObjectFalseConverter}}" />
-                        </StackPanel>
-                    </WrapPanel>
-
-                    <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                        <Button Content="◀ Prev" Command="{Binding SeekPreviousCommand}"
-                                ToolTip.Tip="Seek previous match (Shift+F3)" />
-                        <Button Content="Next ▶" Command="{Binding SeekNextCommand}"
-                                ToolTip.Tip="Seek next match (F3)" />
-                        <TextBlock Text="{Binding SeekStatus}" VerticalAlignment="Center"
-                                   Foreground="{DynamicResource ThemeTextMutedBrush}" FontSize="12" Margin="8,0,0,0" />
-                    </StackPanel>
-                </StackPanel>
             </Border>
 
             <!-- Footer -->

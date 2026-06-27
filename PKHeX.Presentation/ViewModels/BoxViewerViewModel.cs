@@ -6,11 +6,12 @@ using System.Collections.ObjectModel;
 
 namespace PKHeX.Presentation.ViewModels;
 
-public partial class BoxViewerViewModel : ViewModelBase
+public partial class BoxViewerViewModel : ViewModelBase, IBoxNavigator
 {
     private readonly SaveFile _sav;
     private readonly ISpriteRenderer _spriteRenderer;
     private readonly ISlotService? _slotService;
+    private readonly IWindowService? _windowService;
 
     private const int Columns = 6;
 
@@ -26,29 +27,38 @@ public partial class BoxViewerViewModel : ViewModelBase
     [ObservableProperty]
     private ObservableCollection<SlotData> _slots = [];
 
-    /// <summary>Whether the in-save seek bar is expanded.</summary>
-    [ObservableProperty]
-    private bool _isSeekBarVisible;
-
-    /// <summary>Feedback text for the most recent seek (e.g. "Found in Box 2" / "No matches").</summary>
-    [ObservableProperty]
-    private string _seekStatus = string.Empty;
-
-    /// <summary>Shared filter inputs that build the in-save seek predicate (bound by the view).</summary>
-    public EntityFilterViewModel Filter { get; }
+    /// <summary>
+    /// The detached "search and seek" tool. Operated from a modeless window so it can
+    /// drive this box viewer (jump + highlight) without crowding the box grid.
+    /// </summary>
+    public EntitySeekViewModel Seek { get; }
 
     public int BoxCount => _sav.BoxCount;
     public int SlotsPerBox => _sav.BoxSlotCount;
 
-    public BoxViewerViewModel(SaveFile sav, ISpriteRenderer spriteRenderer, ISlotService? slotService = null)
+    // IBoxNavigator
+    int IBoxNavigator.CurrentSlot => SelectedIndex;
+    void IBoxNavigator.NavigateTo(int box, int slot)
+    {
+        if (box != CurrentBox)
+            LoadBox(box);
+        SelectedIndex = slot;
+    }
+
+    public BoxViewerViewModel(SaveFile sav, ISpriteRenderer spriteRenderer, ISlotService? slotService = null, IWindowService? windowService = null)
     {
         _sav = sav;
         _spriteRenderer = spriteRenderer;
         _slotService = slotService;
-        Filter = new EntityFilterViewModel(sav);
+        _windowService = windowService;
+        Seek = new EntitySeekViewModel(sav, this);
 
         LoadBox(0);
     }
+
+    /// <summary>Opens (or focuses) the modeless seek tool window.</summary>
+    [RelayCommand]
+    private void OpenSeekTool() => _windowService?.ShowTool(Seek, "Search & Seek");
 
     partial void OnSelectedIndexChanged(int value)
     {
@@ -126,62 +136,6 @@ public partial class BoxViewerViewModel : ViewModelBase
         if (newBox >= BoxCount)
             newBox = 0;
         LoadBox(newBox);
-    }
-
-    [RelayCommand]
-    private void ToggleSeekBar()
-    {
-        IsSeekBarVisible = !IsSeekBarVisible;
-        if (!IsSeekBarVisible)
-            SeekStatus = string.Empty;
-    }
-
-    [RelayCommand]
-    private void SeekNext() => Seek(reverse: false);
-
-    [RelayCommand]
-    private void SeekPrevious() => Seek(reverse: true);
-
-    /// <summary>
-    /// Jumps to and highlights the next/previous box slot matching the current filter,
-    /// wrapping across boxes (party slots are excluded — they live in a separate viewer).
-    /// Mirrors upstream's EntitySearchControl in-place seek behaviour.
-    /// </summary>
-    private void Seek(bool reverse)
-    {
-        var predicate = Filter.CreateSearchPredicate();
-        int boxCount = _sav.BoxCount;
-        int perBox = _sav.BoxSlotCount;
-        int totalBoxSlots = boxCount * perBox;
-        if (totalBoxSlots == 0)
-        {
-            SeekStatus = "No box slots.";
-            return;
-        }
-
-        int step = reverse ? -1 : 1;
-        int current = (CurrentBox * perBox) + SelectedIndex;
-
-        for (int i = 1; i <= totalBoxSlots; i++)
-        {
-            int index = ((current + (i * step)) % totalBoxSlots + totalBoxSlots) % totalBoxSlots;
-            int box = index / perBox;
-            int slot = index % perBox;
-
-            var pk = _sav.GetBoxSlotAtIndex(box, slot);
-            if (pk.Species == 0)
-                continue;
-            if (!predicate(pk))
-                continue;
-
-            if (box != CurrentBox)
-                LoadBox(box);
-            SelectedIndex = slot;
-            SeekStatus = $"Found in {BoxName} (slot {slot + 1}).";
-            return;
-        }
-
-        SeekStatus = "No matches.";
     }
 
     [RelayCommand]

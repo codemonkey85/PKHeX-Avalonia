@@ -1,0 +1,164 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:PKHeX.Presentation.ViewModels;assembly=PKHeX.Presentation"
+             x:Class="PKHeX.Avalonia.Views.EntitySeekView"
+             x:DataType="vm:EntitySeekViewModel"
+             MinWidth="360" Width="420">
+
+    <UserControl.KeyBindings>
+        <KeyBinding Gesture="F3" Command="{Binding SeekNextCommand}" />
+        <KeyBinding Gesture="Shift+F3" Command="{Binding SeekPreviousCommand}" />
+        <KeyBinding Gesture="Enter" Command="{Binding SeekNextCommand}" />
+    </UserControl.KeyBindings>
+
+    <Border Padding="16" Classes="view-container">
+        <DockPanel>
+            <!-- Seek actions (pinned to bottom so they're always reachable) -->
+            <Border DockPanel.Dock="Bottom" Classes="card" Padding="12" Margin="0,12,0,0">
+                <StackPanel Spacing="8">
+                    <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
+                        <Button Content="◀ Prev" Command="{Binding SeekPreviousCommand}"
+                                ToolTip.Tip="Seek previous match (Shift+F3)" />
+                        <Button Content="Next ▶" Classes="accent" Command="{Binding SeekNextCommand}"
+                                ToolTip.Tip="Seek next match (F3 / Enter)" />
+                    </StackPanel>
+                    <TextBlock Text="{Binding SeekStatus}" HorizontalAlignment="Center"
+                               Foreground="{DynamicResource ThemeTextMutedBrush}" FontSize="12"
+                               TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+
+            <!-- Filters -->
+            <ScrollViewer>
+                <StackPanel Spacing="12">
+                    <TextBlock Text="Search &amp; Seek" Classes="header-accent" FontSize="16" FontWeight="SemiBold" />
+                    <TextBlock Text="Jumps the box view to the next/previous matching Pokémon, across all boxes."
+                               Foreground="{DynamicResource ThemeTextMutedBrush}" FontSize="12" TextWrapping="Wrap" />
+
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Species" Opacity="0.7" FontSize="12"/>
+                        <ComboBox ItemsSource="{Binding Filter.SpeciesList}"
+                                  SelectedValue="{Binding Filter.Species}"
+                                  SelectedValueBinding="{Binding Value}"
+                                  DisplayMemberBinding="{Binding Text}"
+                                  HorizontalAlignment="Stretch"/>
+                    </StackPanel>
+
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Nature" Opacity="0.7" FontSize="12"/>
+                        <ComboBox ItemsSource="{Binding Filter.NatureList}"
+                                  SelectedValue="{Binding Filter.Nature}"
+                                  SelectedValueBinding="{Binding Value}"
+                                  DisplayMemberBinding="{Binding Text}"
+                                  HorizontalAlignment="Stretch"/>
+                    </StackPanel>
+
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Ability" Opacity="0.7" FontSize="12"/>
+                        <ComboBox ItemsSource="{Binding Filter.AbilityList}"
+                                  SelectedValue="{Binding Filter.Ability}"
+                                  SelectedValueBinding="{Binding Value}"
+                                  DisplayMemberBinding="{Binding Text}"
+                                  HorizontalAlignment="Stretch"/>
+                    </StackPanel>
+
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Held Item" Opacity="0.7" FontSize="12"/>
+                        <ComboBox ItemsSource="{Binding Filter.ItemList}"
+                                  SelectedValue="{Binding Filter.Item}"
+                                  SelectedValueBinding="{Binding Value}"
+                                  DisplayMemberBinding="{Binding Text}"
+                                  HorizontalAlignment="Stretch"/>
+                    </StackPanel>
+
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Nickname" Opacity="0.7" FontSize="12"/>
+                        <TextBox Text="{Binding Filter.Nickname}" Watermark="Nickname" HorizontalAlignment="Stretch"/>
+                    </StackPanel>
+
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Shiny" Opacity="0.7" FontSize="12"/>
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <RadioButton GroupName="SeekShiny" Content="Any" IsChecked="{Binding Filter.IsShiny, Converter={StaticResource ObjectNullConverter}}"/>
+                            <RadioButton GroupName="SeekShiny" Content="Yes" IsChecked="{Binding Filter.IsShiny, Converter={StaticResource ObjectTrueConverter}}"/>
+                            <RadioButton GroupName="SeekShiny" Content="No" IsChecked="{Binding Filter.IsShiny, Converter={StaticResource ObjectFalseConverter}}"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Egg" Opacity="0.7" FontSize="12"/>
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <RadioButton GroupName="SeekEgg" Content="Any" IsChecked="{Binding Filter.IsEgg, Converter={StaticResource ObjectNullConverter}}"/>
+                            <RadioButton GroupName="SeekEgg" Content="Yes" IsChecked="{Binding Filter.IsEgg, Converter={StaticResource ObjectTrueConverter}}"/>
+                            <RadioButton GroupName="SeekEgg" Content="No" IsChecked="{Binding Filter.IsEgg, Converter={StaticResource ObjectFalseConverter}}"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Legality" Opacity="0.7" FontSize="12"/>
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <RadioButton GroupName="SeekLegal" Content="Any" IsChecked="{Binding Filter.IsLegal, Converter={StaticResource ObjectNullConverter}}"/>
+                            <RadioButton GroupName="SeekLegal" Content="Legal" IsChecked="{Binding Filter.IsLegal, Converter={StaticResource ObjectTrueConverter}}"/>
+                            <RadioButton GroupName="SeekLegal" Content="Illegal" IsChecked="{Binding Filter.IsLegal, Converter={StaticResource ObjectFalseConverter}}"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Hidden Power" Opacity="0.7" FontSize="12"/>
+                        <ComboBox ItemsSource="{Binding Filter.HiddenPowerList}"
+                                  SelectedValue="{Binding Filter.HiddenPowerType}"
+                                  SelectedValueBinding="{Binding Value}"
+                                  DisplayMemberBinding="{Binding Text}"
+                                  HorizontalAlignment="Stretch"/>
+                    </StackPanel>
+
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Level" Opacity="0.7" FontSize="12"/>
+                        <ComboBox ItemsSource="{Binding Filter.LevelComparisonList}"
+                                  SelectedValue="{Binding Filter.LevelComparison}"
+                                  SelectedValueBinding="{Binding Value}"
+                                  DisplayMemberBinding="{Binding Text}"
+                                  HorizontalAlignment="Stretch"/>
+                        <NumericUpDown Value="{Binding Filter.Level}" Minimum="1" Maximum="100" Increment="1"
+                                       FormatString="0" HorizontalAlignment="Stretch"/>
+                    </StackPanel>
+
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="IV Total" Opacity="0.7" FontSize="12"/>
+                        <ComboBox ItemsSource="{Binding Filter.IvTypeList}"
+                                  SelectedValue="{Binding Filter.IvType}"
+                                  SelectedValueBinding="{Binding Value}"
+                                  DisplayMemberBinding="{Binding Text}"
+                                  HorizontalAlignment="Stretch"/>
+                    </StackPanel>
+
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="EV Total" Opacity="0.7" FontSize="12"/>
+                        <ComboBox ItemsSource="{Binding Filter.EvTypeList}"
+                                  SelectedValue="{Binding Filter.EvType}"
+                                  SelectedValueBinding="{Binding Value}"
+                                  DisplayMemberBinding="{Binding Text}"
+                                  HorizontalAlignment="Stretch"/>
+                    </StackPanel>
+
+                    <StackPanel Spacing="4">
+                        <CheckBox Content="ESV (requires Egg = Yes)" IsChecked="{Binding Filter.EsvEnabled}"/>
+                        <NumericUpDown Value="{Binding Filter.Esv}" Minimum="0" Maximum="4095" Increment="1"
+                                       FormatString="0" IsEnabled="{Binding Filter.EsvEnabled}"
+                                       HorizontalAlignment="Stretch"/>
+                    </StackPanel>
+
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Batch instructions" Opacity="0.7" FontSize="12"/>
+                        <TextBox Text="{Binding Filter.BatchInstructions}"
+                                 Watermark="One per line, e.g. IVs=31&#x0a;Move1=33"
+                                 AcceptsReturn="True" TextWrapping="Wrap" MinHeight="64"
+                                 HorizontalAlignment="Stretch"/>
+                        <TextBlock Text="Batch-editor filter syntax (Property=Value). Combined with the filters above."
+                                   Foreground="{DynamicResource ThemeTextMutedBrush}" FontSize="11" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </DockPanel>
+    </Border>
+</UserControl>
