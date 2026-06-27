@@ -4,13 +4,12 @@
 ![CI](https://github.com/realgarit/PKHeX-Avalonia/actions/workflows/ci.yml/badge.svg)
 ![Release](https://img.shields.io/github/v/release/realgarit/PKHeX-Avalonia?label=Latest%20Release)
 
-PKHeX Avalonia is the cross-platform [PKHeX](https://github.com/kwsch/PKHeX) port built with the Avalonia UI framework, bringing the classic Pokémon save editor to **Windows**, **macOS**, and **Linux** with a native look and feel.
+PKHeX Avalonia is a cross-platform port of [PKHeX](https://github.com/kwsch/PKHeX). It's the classic Pokémon save editor, built with Avalonia so it runs on **Windows**, **macOS**, and **Linux**.
 
----
 
 ## Download
 
-Grab the latest release for your platform from the [Releases](https://github.com/realgarit/PKHeX-Avalonia/releases/latest) page:
+Get the latest build for your platform from the [Releases](https://github.com/realgarit/PKHeX-Avalonia/releases/latest) page:
 
 | Platform | File |
 |----------|------|
@@ -19,24 +18,38 @@ Grab the latest release for your platform from the [Releases](https://github.com
 | macOS Apple Silicon | `PKHeX-Avalonia-osx-arm64.zip` |
 | macOS Intel | `PKHeX-Avalonia-osx-x64.zip` |
 
-All releases are self-contained — no .NET runtime installation required.
+Every build is self-contained, so you don't need to install .NET.
 
-**macOS Note:** The app is ad-hoc signed but not notarized, so on first launch macOS will warn "unidentified developer". To open it:
-1. Right-click the app → select **Open** → click **Open** in the dialog
-2. Or in Terminal: `xattr -d com.apple.quarantine ~/Downloads/PKHeX.Avalonia.app`
+**macOS note:** the app is ad-hoc signed but not notarized. So on first launch macOS warns about an "unidentified developer". To open it:
+1. Right-click the app, pick **Open**, then click **Open** in the dialog.
+2. Or run `xattr -d com.apple.quarantine ~/Downloads/PKHeX.Avalonia.app` in Terminal.
 
----
 
 ## Project Structure
-* **PKHeX.Avalonia**: The main application (cross-platform).
-* **Legacy/PKHeX.WinForms**: The original Windows Forms application, kept as a reference archive.
-* **PKHeX.Core**: Shared logic library (synced from [upstream PKHeX](https://github.com/kwsch/PKHeX)).
+
+The code is split into layers so the UI stays separate from the PKHeX logic:
+
+| Project | What it does | Uses |
+|---------|--------------|------|
+| **PKHeX.Core** | Save, entity, and legality logic. Kept 1:1 with [upstream PKHeX](https://github.com/kwsch/PKHeX). We don't change it directly. | None |
+| **PKHeX.Application** | Use-cases and service interfaces on top of Core. | Core |
+| **PKHeX.Infrastructure** | File access and other OS bits. | Application, Core |
+| **PKHeX.Presentation** | View-models. No UI framework here. | Application, Core |
+| **PKHeX.Avalonia** | The Avalonia UI: views, styles, and the desktop app. | all of the above |
+
+Tests live under `Tests/`: `PKHeX.Core.Tests`, `PKHeX.Avalonia.Tests`, and `PKHeX.Architecture.Tests` (which checks the layers above stay separate).
 
 ## Features
-* **Save Editing:** Core series save files (.sav, .dsv, .dat, .gci, .bin).
-* **Entity Files:** Import and export .pk*, .ck3, .xk3, .pb7, and more.
-* **Mystery Gifts:** Support for .pgt, .pcd, .pgf, and .wc* files.
-* **Transferring:** Move Pokémon between generations while converting formats automatically.
+
+* Edit saves from Gen 1 to Gen 9, plus Let's Go, Legends: Arceus, BDSP, and Legends: Z-A.
+* Edit any Pokémon: stats, moves, ribbons, memories, and more.
+* Checks legality as you go and can fix illegal Pokémon for you.
+* Import and export Pokémon files and Showdown sets.
+* Move Pokémon between generations. It converts the format for you.
+* Search your boxes with the PKM, Mystery Gift, and Encounter databases.
+* Edit many Pokémon at once with the batch editor.
+* Game specific editors under Tools, like Pokédex, Hall of Fame, and Secret Base.
+
 
 ## Building from Source
 
@@ -63,29 +76,21 @@ dotnet test PKHeX.sln
 dotnet publish PKHeX.Avalonia -c Release -r osx-arm64 --self-contained -p:PublishSingleFile=true
 ```
 
-## Versioning
-
-PKHeX Avalonia uses **semantic versioning** (`MAJOR.MINOR.PATCH`) for the UI application via `<UIVersion>` in `Directory.Build.props`. PKHeX.Core keeps the upstream date-based `<Version>`, in sync with kwsch/PKHeX.
-
-Bump `<UIVersion>` according to the change the PR makes:
-- **MAJOR** — incompatible/breaking changes (e.g. dropped save-format support, removed features)
-- **MINOR** — new backward-compatible functionality (new editors, tools, capabilities)
-- **PATCH** — backward-compatible fixes, refactors, chores, dependency bumps, and routine upstream `PKHeX.Core` syncs
-
-To create a release, bump `<UIVersion>` and push to `main`. The release workflow detects the new version, creates the git tag, builds all 4 platforms, and publishes a GitHub release — no manual tagging required.
-
 ## Screenshots
-*Work in progress — the UI is changing fast.*
-<img width="1212" height="790" alt="Screenshot 2026-01-21 at 20 46 16" src="https://github.com/user-attachments/assets/430b2ca2-a011-4d8d-aaa6-f07287e30d6c" />
-<img width="1212" height="790" alt="Screenshot 2026-01-21 at 20 46 36" src="https://github.com/user-attachments/assets/1d2d3950-ac98-46bd-853b-c51c1e2e74c3" />
-<img width="1212" height="790" alt="Screenshot 2026-01-21 at 20 46 48" src="https://github.com/user-attachments/assets/40d58fc3-86c7-4d3b-bccd-b6c82fecd14a" />
-<img width="1212" height="790" alt="Screenshot 2026-01-21 at 20 47 06" src="https://github.com/user-attachments/assets/8d0a1b76-ded5-4119-a079-33a2b08ebf7c" />
-<img width="1100" height="677" alt="Screenshot 2026-01-21 at 20 47 32" src="https://github.com/user-attachments/assets/0b9a811c-5fb5-44cc-9f06-5a4dadf6e043" />
+
+Pokémon editor and box view. The full editor next to the sprite box grid.
+![Pokémon editor and box view](docs/screenshots/pokemon-editor.png)
+Inventory editor. Edit items by pouch (Medicine, Balls, Berries, Mega Stones, and so on).
+![Inventory editor](docs/screenshots/inventory-editor.png)
+PKM Database. Search your boxes with a filter rail you can resize or hide.
+![PKM Database](docs/screenshots/pkm-database.png)
+Save editors. Gen 1 to 9 plus game specific tools under Tools, then Save Editors.
+![Save editors menu](docs/screenshots/save-editors-menu.png)
 
 ## Credits
-This fork is built on the incredible work of the [PKHeX team](https://github.com/kwsch/PKHeX).
+This fork is built on the work of the [PKHeX team](https://github.com/kwsch/PKHeX).
 
 * **Logic & Research:** [PKHeX](https://github.com/kwsch/PKHeX)
 * **QR Codes:** [QRCoder](https://github.com/codebude/QRCoder) (MIT)
 * **Sprites:** [pokesprite](https://github.com/msikma/pokesprite) (MIT)
-* **Arceus Sprites:** National Pokédex - Icon Dex project and contributors.
+* **Arceus Sprites:** National Pokédex Icon Dex project and contributors.
