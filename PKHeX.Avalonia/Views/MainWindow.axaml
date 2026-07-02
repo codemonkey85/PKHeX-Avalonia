@@ -58,6 +58,7 @@
                         <MenuItem Header="Misc (GS Ball)" Command="{Binding OpenMisc2Command}" />
                     </MenuItem>
                     <MenuItem Header="Gen 3">
+                        <MenuItem Header="Misc" Command="{Binding OpenMisc3Command}" />
                         <MenuItem Header="Roamer" Command="{Binding OpenRoamer3Command}" />
                         <MenuItem Header="Secret Base" Command="{Binding OpenSecretBaseCommand}" />
                         <MenuItem Header="RTC (Clock)" Command="{Binding OpenRTC3Command}" />
@@ -65,6 +66,7 @@
                         <MenuItem Header="Hall of Fame" Command="{Binding OpenHallOfFame3Command}" />
                     </MenuItem>
                     <MenuItem Header="Gen 4">
+                    <MenuItem Header="Misc" Command="{Binding OpenMisc4Command}" />
                     <MenuItem Header="Poffins (DPPt)" Command="{Binding OpenPoffinCaseCommand}" />
                     <MenuItem Header="Pokétch (DPPt)" Command="{Binding OpenPoketchCommand}" />
                     <MenuItem Header="Block Layout" Command="{Binding OpenBoxLayoutCommand}" />
@@ -78,6 +80,7 @@
                     <MenuItem Header="Pokédex" Command="{Binding OpenPokedexCommand}" />
                 </MenuItem>
                 <MenuItem Header="Gen 5">
+                    <MenuItem Header="Misc" Command="{Binding OpenMisc5Command}" />
                     <MenuItem Header="Pokédex" Command="{Binding OpenPokedexCommand}" />
                     <MenuItem Header="Chatter" Command="{Binding OpenChatterCommand}" />
                     <MenuItem Header="Medal Rally (B2W2)" Command="{Binding OpenMedalCommand}" />
@@ -96,6 +99,7 @@
                     <MenuItem Header="Secret Base Editor" Command="{Binding OpenSecretBase6Command}" />
                 </MenuItem>
                 <MenuItem Header="Gen 7">
+                    <MenuItem Header="Misc" Command="{Binding OpenMisc7Command}" />
                     <MenuItem Header="Pokédex" Command="{Binding OpenPokedexCommand}" />
                     <MenuItem Header="Poké Beans" Command="{Binding OpenPokebeanCommand}" />
                     <MenuItem Header="Festival Plaza" Command="{Binding OpenFestivalPlazaCommand}" />
@@ -116,6 +120,7 @@
                     <MenuItem Header="Poffins (BDSP)" Command="{Binding OpenPoffin8bCommand}" />
                 </MenuItem>
                 <MenuItem Header="Gen 9">
+                    <MenuItem Header="Misc" Command="{Binding OpenMisc9Command}" />
                     <MenuItem Header="Pokédex" Command="{Binding OpenPokedexCommand}" />
                     <MenuItem Header="Tera Raids (SV)" Command="{Binding OpenRaid9Command}" />
                         <MenuItem Header="7-Star Raids (SV)" Command="{Binding OpenRaidSevenStar9Command}" />
