@@ -81,6 +81,32 @@ public partial class MainWindowViewModel
         await _windowService.ShowDialogAsync(vm, "PKM Database");
     }
 
+    // Cached so re-invoking the menu item focuses the existing tool window instead of
+    // opening a duplicate (ShowTool keys off the ViewModel instance). Reset on save change.
+    private BoxReportViewModel? _boxReport;
+
+    [RelayCommand(CanExecute = nameof(HasSave))]
+    private void OpenBoxReport()
+    {
+        if (CurrentSave is null) return;
+
+        if (_boxReport is null)
+        {
+            _boxReport = new BoxReportViewModel(CurrentSave, _dialogService);
+            _boxReport.RowActivated += row =>
+            {
+                ((IBoxNavigator?)BoxViewer)?.NavigateTo(row.Box, row.Slot);
+                CurrentPokemonEditor?.LoadPKM(row.Entity);
+            };
+        }
+        else
+        {
+            _boxReport.Refresh();
+        }
+
+        _windowService.ShowTool(_boxReport, "Box Data Report");
+    }
+
     [RelayCommand(CanExecute = nameof(HasSave))]
     private async Task OpenMysteryGiftDatabaseAsync()
     {
