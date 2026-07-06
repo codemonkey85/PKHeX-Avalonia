@@ -131,6 +131,58 @@ public partial class MainWindowViewModel
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
+    private async Task ImportShowdownTeamAsync()
+    {
+        if (CurrentSave is null || BoxViewer is null) return;
+
+        var text = await _clipboardService.GetTextAsync();
+        var result = new ImportShowdownTeamUseCase().Execute(CurrentSave, text, BoxViewer.CurrentBox);
+        if (!result.Success)
+        {
+            var detail = result.SetErrors.Count > 0
+                ? $"{result.FatalError}\n\n{string.Join("\n", result.SetErrors)}"
+                : result.FatalError!;
+            await _dialogService.ShowErrorAsync("Import Team Failed", detail);
+            return;
+        }
+
+        BoxViewer.RefreshCurrentBox();
+
+        var message = $"Imported {result.Imported} Pokémon into the current box.";
+        if (result.SetErrors.Count > 0)
+            message += $"\n\nSkipped sets:\n{string.Join("\n", result.SetErrors)}";
+        await _dialogService.ShowInformationAsync("Import Team", message);
+    }
+
+    [RelayCommand(CanExecute = nameof(HasSave))]
+    private async Task ExportShowdownBoxAsync()
+    {
+        if (CurrentSave is null || BoxViewer is null) return;
+
+        var text = new ExportShowdownBoxUseCase().Execute(CurrentSave, BoxViewer.CurrentBox);
+        if (text.Length == 0)
+        {
+            await _dialogService.ShowInformationAsync("Export Box", "The current box is empty.");
+            return;
+        }
+        await _clipboardService.SetTextAsync(text);
+    }
+
+    [RelayCommand(CanExecute = nameof(HasSave))]
+    private async Task ExportShowdownAllBoxesAsync()
+    {
+        if (CurrentSave is null) return;
+
+        var text = new ExportShowdownBoxUseCase().ExecuteAll(CurrentSave);
+        if (text.Length == 0)
+        {
+            await _dialogService.ShowInformationAsync("Export All Boxes", "All boxes are empty.");
+            return;
+        }
+        await _clipboardService.SetTextAsync(text);
+    }
+
+    [RelayCommand(CanExecute = nameof(HasSave))]
     private async Task OpenPKMDatabaseAsync()
     {
         if (CurrentSave is null) return;
