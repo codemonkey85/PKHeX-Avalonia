@@ -37,6 +37,7 @@
 
     <!-- DI -->
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.9" />
+    <PackageReference Include="QRCoder" Version="1.6.0" />
 
     <!-- Rendering (for sprites) -->
     <PackageReference Include="SkiaSharp" Version="3.119.4" />
@@ -47,6 +48,7 @@
 
     <!-- Diagnostics (dev only) -->
     <PackageReference Include="Avalonia.Diagnostics" Version="11.3.18" Condition="'$(Configuration)' == 'Debug'" />
+    <PackageReference Include="ZXing.Net" Version="0.16.10" />
   </ItemGroup>
 
   <ItemGroup>

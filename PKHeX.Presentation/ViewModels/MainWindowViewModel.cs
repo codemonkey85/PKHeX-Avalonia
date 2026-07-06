@@ -13,6 +13,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private readonly ISpriteRenderer _spriteRenderer;
     private readonly ISlotService _slotService;
     private readonly IClipboardService _clipboardService;
+    private readonly IQrCodeService _qrCodeService;
     private readonly AppSettings _settings;
     private readonly UndoRedoService _undoRedo;
     private readonly LanguageService _languageService;
@@ -57,6 +58,7 @@ public partial class MainWindowViewModel : ViewModelBase
         ISpriteRenderer spriteRenderer,
         ISlotService slotService,
         IClipboardService clipboardService,
+        IQrCodeService qrCodeService,
         AppSettings settings,
         UndoRedoService undoRedo,
         LanguageService languageService)
@@ -67,6 +69,7 @@ public partial class MainWindowViewModel : ViewModelBase
         _spriteRenderer = spriteRenderer;
         _slotService = slotService;
         _clipboardService = clipboardService;
+        _qrCodeService = qrCodeService;
         _settings = settings;
         _undoRedo = undoRedo;
         _languageService = languageService;

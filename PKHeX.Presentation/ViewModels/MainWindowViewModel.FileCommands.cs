@@ -71,6 +71,66 @@ public partial class MainWindowViewModel
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
+    private async Task ShowQrCodeAsync()
+    {
+        if (CurrentSave is null || CurrentPokemonEditor is null) return;
+
+        var pk = CurrentPokemonEditor.PreparePKM();
+        if (pk.Species == 0)
+        {
+            await _dialogService.ShowErrorAsync("QR Code", "Load a Pokémon into the editor first.");
+            return;
+        }
+
+        var message = QRMessageUtil.GetMessage(pk);
+        var png = _qrCodeService.GeneratePng(message);
+        var species = GameInfo.Strings.Species[pk.Species];
+        var caption = pk.Format == 7
+            ? $"{species} — scannable by the Gen 7 in-game QR Scanner."
+            : $"{species} — raw data QR (import via PKHeX's QR import).";
+
+        await _windowService.ShowDialogAsync(
+            new QrCodeViewModel(png, caption, $"{species}_qr.png", _dialogService),
+            "QR Code");
+    }
+
+    [RelayCommand(CanExecute = nameof(HasSave))]
+    private async Task ImportQrCodeAsync()
+    {
+        if (CurrentSave is null || CurrentPokemonEditor is null) return;
+
+        var path = await _dialogService.OpenFileAsync("Open QR Code Image", ["*.png", "*.jpg", "*.jpeg", "*.bmp"]);
+        if (string.IsNullOrEmpty(path)) return;
+
+        string? message;
+        try
+        {
+            message = _qrCodeService.DecodePng(File.ReadAllBytes(path));
+        }
+        catch (Exception ex)
+        {
+            await _dialogService.ShowErrorAsync("QR Import Failed", $"Could not read the image.\n\n{ex.Message}");
+            return;
+        }
+
+        if (message is null)
+        {
+            await _dialogService.ShowErrorAsync("QR Import Failed", "No QR code was found in the image.");
+            return;
+        }
+
+        var pk = QRMessageUtil.GetPKM(message, CurrentSave.Context);
+        if (pk is null)
+        {
+            await _dialogService.ShowErrorAsync("QR Import Failed",
+                "The QR code was read, but it does not contain Pokémon data compatible with this save.");
+            return;
+        }
+
+        CurrentPokemonEditor.LoadPKM(pk);
+    }
+
+    [RelayCommand(CanExecute = nameof(HasSave))]
     private async Task OpenPKMDatabaseAsync()
     {
         if (CurrentSave is null) return;
