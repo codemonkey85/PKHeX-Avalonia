@@ -16,7 +16,12 @@ public partial class DonutEditorViewModel : ViewModelBase
     {
         _sav = (SAV9ZA)sav;
         _pocket = _sav.Donuts;
-        IsSupported = true;
+
+        // The donut block only exists once the feature is unlocked in-game; on saves without it
+        // the accessor substitutes an empty dummy block, and reading any slot would throw.
+        IsSupported = _pocket.Data.Length >= DonutPocket9a.MaxCount * Donut9a.Size;
+        if (!IsSupported)
+            return;
 
         LoadDonuts();
         LoadFlavorOptions();
