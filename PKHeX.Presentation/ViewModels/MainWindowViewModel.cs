@@ -26,6 +26,7 @@ public partial class MainWindowViewModel : ViewModelBase
     [NotifyCanExecuteChangedFor(nameof(ImportShowdownCommand))]
     [NotifyCanExecuteChangedFor(nameof(ExportShowdownCommand))]
     [NotifyCanExecuteChangedFor(nameof(OpenPKMDatabaseCommand))]
+    [NotifyCanExecuteChangedFor(nameof(OpenBoxReportCommand))]
     [NotifyCanExecuteChangedFor(nameof(UndoCommand))]
     [NotifyCanExecuteChangedFor(nameof(RedoCommand))]
     private SaveFile? _currentSave;
@@ -106,6 +107,7 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         // Dismiss any modeless tool windows (e.g. the box seek tool) bound to the previous save.
         _windowService.CloseAllTools();
+        _boxReport = null;
 
         CurrentSave = sav;
         if (sav is not null)

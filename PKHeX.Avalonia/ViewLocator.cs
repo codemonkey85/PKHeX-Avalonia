@@ -23,6 +23,7 @@ public static class ViewLocator
         [typeof(BlockEditorViewModel)] = () => new BlockEditor(),
         [typeof(BoxLayoutEditorViewModel)] = () => new BoxLayoutEditor(),
         [typeof(BoxManipViewModel)] = () => new BoxManipView(),
+        [typeof(BoxReportViewModel)] = () => new BoxReportView(),
         [typeof(Capture7GGEditorViewModel)] = () => new Capture7GGEditor(),
         [typeof(ChatterEditorViewModel)] = () => new ChatterEditor(),
         [typeof(DLC5EditorViewModel)] = () => new DLC5Editor(),
