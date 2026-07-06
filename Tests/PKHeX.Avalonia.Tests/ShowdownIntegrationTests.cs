@@ -38,6 +38,7 @@ public class ShowdownIntegrationTests : IDisposable
             _spriteRendererMock.Object,
             _slotServiceMock.Object,
             _clipboardServiceMock.Object,
+            new Mock<IQrCodeService>().Object,
             new AppSettings(),
             new UndoRedoService(),
             new LanguageService()

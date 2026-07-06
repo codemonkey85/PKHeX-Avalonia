@@ -36,6 +36,10 @@
                     <MenuItem Header="Export Box to Clipboard" Command="{Binding ExportShowdownBoxCommand}" />
                     <MenuItem Header="Export All Boxes to Clipboard" Command="{Binding ExportShowdownAllBoxesCommand}" />
                 </MenuItem>
+                <MenuItem Header="QR Code">
+                    <MenuItem Header="Show Current Pokémon…" Command="{Binding ShowQrCodeCommand}" />
+                    <MenuItem Header="Import from Image…" Command="{Binding ImportQrCodeCommand}" />
+                </MenuItem>
                 <MenuItem Header="Data">
                     <MenuItem Header="Load Boxes" Command="{Binding LoadBoxesCommand}" />
                     <MenuItem Header="Dump Boxes" Command="{Binding DumpBoxesCommand}" />
