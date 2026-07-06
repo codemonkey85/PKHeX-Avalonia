@@ -14,7 +14,7 @@
                            FontSize="18"
                            HorizontalAlignment="Center"
                            Opacity="0.7" />
-                <TextBlock Text="This save type does not support Donut Editor (PLZA only)."
+                <TextBlock Text="Donut data is not present in this save. Donuts appear after the feature is unlocked in-game (PLZA only)."
                            HorizontalAlignment="Center"
                            Opacity="0.5"
                            Margin="0,8,0,0" />
