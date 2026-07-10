@@ -50,6 +50,7 @@ public static class ViewLocator
         [typeof(JoinAvenueEditorViewModel)] = () => new JoinAvenueEditor(),
         [typeof(LegalityAuditViewModel)] = () => new LegalityAuditView(),
         [typeof(LegalityViewModel)] = () => new LegalityView(),
+        [typeof(LiveHeXViewModel)] = () => new LiveHeXView(),
         [typeof(Link6EditorViewModel)] = () => new Link6Editor(),
         [typeof(MailBoxEditorViewModel)] = () => new MailBoxEditor(),
         [typeof(MedalEditorViewModel)] = () => new MedalEditorView(),

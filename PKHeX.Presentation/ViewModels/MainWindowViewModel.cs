@@ -3,6 +3,7 @@ using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using PKHeX.Application.Abstractions.LiveHex;
 using PKHeX.Core;
 
 namespace PKHeX.Presentation.ViewModels;
@@ -22,6 +23,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private readonly UndoRedoService _undoRedo;
     private readonly LanguageService _languageService;
     private readonly IAutoLegalityService _autoLegalityService;
+    private readonly ILiveHexService _liveHexService;
     private readonly string _currentVersion;
 
     [ObservableProperty] private UpdateNotificationViewModel? _updateNotification;
@@ -37,6 +39,7 @@ public partial class MainWindowViewModel : ViewModelBase
     [NotifyCanExecuteChangedFor(nameof(OpenPKMDatabaseCommand))]
     [NotifyCanExecuteChangedFor(nameof(OpenBoxReportCommand))]
     [NotifyCanExecuteChangedFor(nameof(OpenAutoLegalityModCommand))]
+    [NotifyCanExecuteChangedFor(nameof(OpenLiveHeXCommand))]
     [NotifyCanExecuteChangedFor(nameof(UndoCommand))]
     [NotifyCanExecuteChangedFor(nameof(RedoCommand))]
     private SaveFile? _currentSave;
@@ -73,7 +76,8 @@ public partial class MainWindowViewModel : ViewModelBase
         ISettingsStore settingsStore,
         UndoRedoService undoRedo,
         LanguageService languageService,
-        IAutoLegalityService autoLegalityService)
+        IAutoLegalityService autoLegalityService,
+        ILiveHexService liveHexService)
     {
         _saveFileService = saveFileService;
         _dialogService = dialogService;
@@ -88,6 +92,7 @@ public partial class MainWindowViewModel : ViewModelBase
         _undoRedo = undoRedo;
         _languageService = languageService;
         _autoLegalityService = autoLegalityService;
+        _liveHexService = liveHexService;
         _currentVersion = GetCurrentVersion();
 
         _saveFileService.SaveFileChanged += OnSaveFileChanged;
@@ -129,6 +134,7 @@ public partial class MainWindowViewModel : ViewModelBase
         _boxReport = null;
         _legalityAudit = null;
         _autoLegalityMod = null;
+        DisposeLiveHeX();
 
         CurrentSave = sav;
         if (sav is not null)

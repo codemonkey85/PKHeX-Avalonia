@@ -44,7 +44,8 @@ public class ShowdownIntegrationTests : IDisposable
             new FakeSettingsStore(),
             new UndoRedoService(),
             new LanguageService(),
-            new Mock<IAutoLegalityService>().Object
+            new Mock<IAutoLegalityService>().Object,
+            new Mock<PKHeX.Application.Abstractions.LiveHex.ILiveHexService>().Object
         );
         
         // Simulate loading a save

@@ -171,7 +171,8 @@ public class MainWindowUpdateCheckTests
             new FakeSettingsStore(),
             new UndoRedoService(),
             new LanguageService(),
-            new Mock<IAutoLegalityService>().Object);
+            new Mock<IAutoLegalityService>().Object,
+            new Mock<PKHeX.Application.Abstractions.LiveHex.ILiveHexService>().Object);
     }
 
     [Fact]
