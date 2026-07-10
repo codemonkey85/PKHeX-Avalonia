@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using PKHeX.Application.Services;
 using PKHeX.Core;
 
 namespace PKHeX.Presentation.ViewModels;
@@ -11,15 +12,20 @@ public partial class SettingsViewModel : ViewModelBase, ICloseableDialog
     private readonly AppSettings _settings;
     private readonly ISettingsStore _settingsStore;
     private readonly IThemeService _themeService;
+    private readonly LanguageService _languageService;
     private bool _isLoading;
 
     public Action? CloseRequested { get; set; }
 
-    public SettingsViewModel(AppSettings settings, ISettingsStore settingsStore, IThemeService themeService)
+    /// <summary>Exposed so the settings screen can host a UI-language selector that switches live.</summary>
+    public LanguageService LanguageService => _languageService;
+
+    public SettingsViewModel(AppSettings settings, ISettingsStore settingsStore, IThemeService themeService, LanguageService languageService)
     {
         _settings = settings;
         _settingsStore = settingsStore;
         _themeService = themeService;
+        _languageService = languageService;
         Load();
     }
 

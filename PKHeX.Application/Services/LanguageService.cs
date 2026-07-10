@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Globalization;
 using PKHeX.Core;
 
 namespace PKHeX.Application.Services;
@@ -61,7 +62,30 @@ public sealed class LanguageService : INotifyPropertyChanged
         OnPropertyChanged(nameof(CurrentLanguageOption));
         GameInfo.CurrentLanguage = languageCode;
         GameInfo.Strings = GameInfo.GetStrings(languageCode);
+        ApplyCulture(languageCode);
         LanguageChanged?.Invoke();
+    }
+
+    /// <summary>
+    /// Aligns the thread/process culture with the selected language so date and number formatting in
+    /// the UI follows the same locale (issue #132 acceptance criterion). The nine supported codes are
+    /// all valid .NET culture names (including <c>zh-Hans</c>/<c>zh-Hant</c>); unknown codes are
+    /// ignored rather than throwing.
+    /// </summary>
+    private static void ApplyCulture(string languageCode)
+    {
+        try
+        {
+            var culture = CultureInfo.GetCultureInfo(languageCode);
+            CultureInfo.DefaultThreadCurrentCulture = culture;
+            CultureInfo.DefaultThreadCurrentUICulture = culture;
+            CultureInfo.CurrentCulture = culture;
+            CultureInfo.CurrentUICulture = culture;
+        }
+        catch (CultureNotFoundException)
+        {
+            // Leave the existing culture in place if the platform lacks this locale.
+        }
     }
 }
 

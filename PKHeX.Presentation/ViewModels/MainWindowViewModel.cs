@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using PKHeX.Application.Abstractions.LiveHex;
 using PKHeX.Core;
+using PKHeX.Presentation.Localization;
 
 namespace PKHeX.Presentation.ViewModels;
 
@@ -34,6 +35,7 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasSave))]
     [NotifyPropertyChangedFor(nameof(WindowTitle))]
+    [NotifyPropertyChangedFor(nameof(StatusText))]
     [NotifyCanExecuteChangedFor(nameof(SaveFileCommand))]
     [NotifyCanExecuteChangedFor(nameof(SaveFileAsCommand))]
     [NotifyCanExecuteChangedFor(nameof(CloseFileCommand))]
@@ -66,6 +68,11 @@ public partial class MainWindowViewModel : ViewModelBase
     public string WindowTitle => CurrentSave is not null
         ? $"PKHeX Avalonia - {CurrentSave.Version}"
         : "PKHeX Avalonia";
+
+    /// <summary>Localized status-bar text: the loaded game version, or a "no save loaded" hint.</summary>
+    public string StatusText => CurrentSave is not null
+        ? LocalizedStrings.Instance.Format("Status_GameFormat", CurrentSave.Version)
+        : LocalizedStrings.Instance["Status_NoSaveLoaded"];
 
     public LanguageService LanguageService => _languageService;
 
@@ -122,10 +129,22 @@ public partial class MainWindowViewModel : ViewModelBase
         _undoRedo.RedoPerformed += OnUndoRedoPerformed;
 
         _languageService.LanguageChanged += OnLanguageChanged;
+
+        // Bring the UI-chrome string table to the language the LanguageService was initialized with
+        // (from persisted settings at startup) before the window renders.
+        LocalizedStrings.Instance.SetLanguage(_languageService.CurrentLanguage);
     }
 
     private void OnLanguageChanged()
     {
+        // Swap the shell's UI-chrome strings, then persist the choice so it survives a restart.
+        LocalizedStrings.Instance.SetLanguage(_languageService.CurrentLanguage);
+        if (!string.Equals(_settings.DisplayLanguage, _languageService.CurrentLanguage, StringComparison.Ordinal))
+        {
+            _settings.DisplayLanguage = _languageService.CurrentLanguage;
+            _settingsStore.Save(_settings);
+        }
+
         if (CurrentSave is not null)
             GameInfo.FilteredSources = new FilteredGameDataSource(CurrentSave, GameInfo.Sources);
 
@@ -189,8 +208,9 @@ public partial class MainWindowViewModel : ViewModelBase
             catch (Exception ex)
             {
                 _saveFileService.CloseSave();
-                _ = _dialogService.ShowErrorAsync("Failed to open save file",
-                    $"This save file loaded successfully but the editor could not display it.\n\n{ex.GetType().Name}: {ex.Message}");
+                _ = _dialogService.ShowErrorAsync(
+                    LocalizedStrings.Instance["Msg_FailedToOpenSave"],
+                    LocalizedStrings.Instance.Format("Msg_FailedToOpenSave_Body", ex.GetType().Name, ex.Message));
             }
         }
         else
@@ -261,7 +281,7 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             var upgradeNotes = UpdateAvailabilityEvaluator.GetReleasesNewerThan(releases, previousVersion);
             if (upgradeNotes.Count > 0)
-                await _windowService.ShowDialogAsync(new UpdateChangelogViewModel(upgradeNotes), "What's New");
+                await _windowService.ShowDialogAsync(new UpdateChangelogViewModel(upgradeNotes), LocalizedStrings.Instance["Update_WhatsNew"]);
         }
 
         var latest = UpdateAvailabilityEvaluator.GetLatestRelease(releases);
