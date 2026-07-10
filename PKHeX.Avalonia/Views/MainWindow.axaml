@@ -45,6 +45,7 @@
                     <MenuItem Header="Dump Boxes" Command="{Binding DumpBoxesCommand}" />
                     <MenuItem Header="PKM Database" Command="{Binding OpenPKMDatabaseCommand}" />
                     <MenuItem Header="Box Data Report" Command="{Binding OpenBoxReportCommand}" />
+                    <MenuItem Header="Legality Audit" Command="{Binding OpenLegalityAuditCommand}" />
                     <MenuItem Header="Mystery Gift Database" Command="{Binding OpenMysteryGiftDatabaseCommand}" />
                     <MenuItem Header="Block Editor" Command="{Binding OpenBlockEditorCommand}" />
                     <MenuItem Header="Encounter Database" Command="{Binding OpenEncounterDatabaseCommand}" />

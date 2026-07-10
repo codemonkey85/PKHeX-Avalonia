@@ -123,6 +123,7 @@ public partial class MainWindowViewModel : ViewModelBase
         // Dismiss any modeless tool windows (e.g. the box seek tool) bound to the previous save.
         _windowService.CloseAllTools();
         _boxReport = null;
+        _legalityAudit = null;
 
         CurrentSave = sav;
         if (sav is not null)

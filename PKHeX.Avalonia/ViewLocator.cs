@@ -47,6 +47,7 @@ public static class ViewLocator
         [typeof(HallOfFameEditorViewModel)] = () => new HallOfFameEditor(),
         [typeof(HoneyTreeEditorViewModel)] = () => new HoneyTreeEditor(),
         [typeof(JoinAvenueEditorViewModel)] = () => new JoinAvenueEditor(),
+        [typeof(LegalityAuditViewModel)] = () => new LegalityAuditView(),
         [typeof(LegalityViewModel)] = () => new LegalityView(),
         [typeof(Link6EditorViewModel)] = () => new Link6Editor(),
         [typeof(MailBoxEditorViewModel)] = () => new MailBoxEditor(),
