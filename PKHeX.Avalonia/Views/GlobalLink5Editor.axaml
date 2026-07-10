@@ -114,7 +114,8 @@
                                                   SelectedValue="{Binding ItemId}"
                                                   SelectedValueBinding="{Binding Value}"
                                                   DisplayMemberBinding="{Binding Text}"
-                                                  HorizontalAlignment="Stretch" />
+                                                  HorizontalAlignment="Stretch"
+                                                  AutomationProperties.Name="Item" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
@@ -124,7 +125,8 @@
                                         <NumericUpDown Value="{Binding Quantity}"
                                                        Minimum="0" Maximum="255" FormatString="0"
                                                        Classes="compact"
-                                                       HorizontalAlignment="Stretch" />
+                                                       HorizontalAlignment="Stretch"
+                                                       AutomationProperties.Name="Quantity" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
@@ -151,7 +153,8 @@
                                         <NumericUpDown Value="{Binding Value}"
                                                        Minimum="0" Maximum="65535" FormatString="0"
                                                        Classes="compact"
-                                                       HorizontalAlignment="Stretch" />
+                                                       HorizontalAlignment="Stretch"
+                                                       AutomationProperties.Name="Furniture Value" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>

@@ -43,9 +43,9 @@
                             <TextBlock Grid.Row="0" Grid.Column="2" Text="Minutes" Opacity="0.8" FontSize="12"/>
                             <TextBlock Grid.Row="0" Grid.Column="4" Text="Seconds" Opacity="0.8" FontSize="12"/>
                             
-                            <NumericUpDown Grid.Row="2" Grid.Column="0" Value="{Binding PlayedHours}" Minimum="0" Maximum="999" HorizontalAlignment="Stretch" ShowButtonSpinner="False"/>
-                            <NumericUpDown Grid.Row="2" Grid.Column="2" Value="{Binding PlayedMinutes}" Minimum="0" Maximum="59" HorizontalAlignment="Stretch" ShowButtonSpinner="False"/>
-                            <NumericUpDown Grid.Row="2" Grid.Column="4" Value="{Binding PlayedSeconds}" Minimum="0" Maximum="59" HorizontalAlignment="Stretch" ShowButtonSpinner="False"/>
+                            <NumericUpDown Grid.Row="2" Grid.Column="0" Value="{Binding PlayedHours}" Minimum="0" Maximum="999" HorizontalAlignment="Stretch" ShowButtonSpinner="False" AutomationProperties.Name="Played Hours"/>
+                            <NumericUpDown Grid.Row="2" Grid.Column="2" Value="{Binding PlayedMinutes}" Minimum="0" Maximum="59" HorizontalAlignment="Stretch" ShowButtonSpinner="False" AutomationProperties.Name="Played Minutes"/>
+                            <NumericUpDown Grid.Row="2" Grid.Column="4" Value="{Binding PlayedSeconds}" Minimum="0" Maximum="59" HorizontalAlignment="Stretch" ShowButtonSpinner="False" AutomationProperties.Name="Played Seconds"/>
                         </Grid>
                     </StackPanel>
                 </Border>

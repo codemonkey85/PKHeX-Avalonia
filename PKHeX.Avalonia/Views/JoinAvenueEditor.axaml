@@ -52,20 +52,20 @@
                         <NumericUpDown Grid.Row="4" Grid.Column="1" Value="{Binding Version}" Minimum="0" Maximum="255" FormatString="0" Classes="compact" Margin="0,0,0,4" />
                         <TextBlock Grid.Row="4" Grid.Column="3" Text="Country / Subregion" VerticalAlignment="Center" Margin="0,0,8,4" />
                         <StackPanel Grid.Row="4" Grid.Column="4" Orientation="Horizontal" Spacing="6" Margin="0,0,0,4">
-                            <NumericUpDown Value="{Binding Country}" Minimum="0" Maximum="255" FormatString="0" Classes="compact" Width="76" />
-                            <NumericUpDown Value="{Binding Subregion}" Minimum="0" Maximum="255" FormatString="0" Classes="compact" Width="76" />
+                            <NumericUpDown Value="{Binding Country}" Minimum="0" Maximum="255" FormatString="0" Classes="compact" Width="76" AutomationProperties.Name="Country" />
+                            <NumericUpDown Value="{Binding Subregion}" Minimum="0" Maximum="255" FormatString="0" Classes="compact" Width="76" AutomationProperties.Name="Subregion" />
                         </StackPanel>
 
                         <TextBlock Grid.Row="5" Grid.Column="0" Text="Played (h / m)" VerticalAlignment="Center" Margin="0,0,8,4" />
                         <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal" Spacing="6" Margin="0,0,0,4">
-                            <NumericUpDown Value="{Binding PlayedHours}" Minimum="0" Maximum="1023" FormatString="0" Classes="compact" Width="76" />
-                            <NumericUpDown Value="{Binding PlayedMinutes}" Minimum="0" Maximum="59" FormatString="0" Classes="compact" Width="76" />
+                            <NumericUpDown Value="{Binding PlayedHours}" Minimum="0" Maximum="1023" FormatString="0" Classes="compact" Width="76" AutomationProperties.Name="Played Hours" />
+                            <NumericUpDown Value="{Binding PlayedMinutes}" Minimum="0" Maximum="59" FormatString="0" Classes="compact" Width="76" AutomationProperties.Name="Played Minutes" />
                         </StackPanel>
                         <TextBlock Grid.Row="5" Grid.Column="3" Text="Met (Y / M / D)" VerticalAlignment="Center" Margin="0,0,8,4" />
                         <StackPanel Grid.Row="5" Grid.Column="4" Orientation="Horizontal" Spacing="6" Margin="0,0,0,4">
-                            <NumericUpDown Value="{Binding MetYear}" Minimum="0" Maximum="255" FormatString="0" Classes="compact" Width="64" />
-                            <NumericUpDown Value="{Binding MetMonth}" Minimum="0" Maximum="12" FormatString="0" Classes="compact" Width="56" />
-                            <NumericUpDown Value="{Binding MetDay}" Minimum="0" Maximum="31" FormatString="0" Classes="compact" Width="56" />
+                            <NumericUpDown Value="{Binding MetYear}" Minimum="0" Maximum="255" FormatString="0" Classes="compact" Width="64" AutomationProperties.Name="Met Year" />
+                            <NumericUpDown Value="{Binding MetMonth}" Minimum="0" Maximum="12" FormatString="0" Classes="compact" Width="56" AutomationProperties.Name="Met Month" />
+                            <NumericUpDown Value="{Binding MetDay}" Minimum="0" Maximum="31" FormatString="0" Classes="compact" Width="56" AutomationProperties.Name="Met Day" />
                         </StackPanel>
 
                         <TextBlock Grid.Row="6" Grid.Column="0" Text="Seed" VerticalAlignment="Center" Margin="0,0,8,0" />
@@ -108,9 +108,9 @@
 
                             <TextBlock Grid.Row="4" Grid.Column="0" Text="Medal Rank / Hint / Count" VerticalAlignment="Center" Margin="0,0,8,0" />
                             <StackPanel Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="4" Orientation="Horizontal" Spacing="6">
-                                <NumericUpDown Value="{Binding MedalRank}" Minimum="0" Maximum="255" FormatString="0" Classes="compact" Width="90" />
-                                <NumericUpDown Value="{Binding MedalHint}" Minimum="0" Maximum="255" FormatString="0" Classes="compact" Width="90" />
-                                <NumericUpDown Value="{Binding MedalCount}" Minimum="0" Maximum="255" FormatString="0" Classes="compact" Width="90" />
+                                <NumericUpDown Value="{Binding MedalRank}" Minimum="0" Maximum="255" FormatString="0" Classes="compact" Width="90" AutomationProperties.Name="Medal Rank" />
+                                <NumericUpDown Value="{Binding MedalHint}" Minimum="0" Maximum="255" FormatString="0" Classes="compact" Width="90" AutomationProperties.Name="Medal Hint" />
+                                <NumericUpDown Value="{Binding MedalCount}" Minimum="0" Maximum="255" FormatString="0" Classes="compact" Width="90" AutomationProperties.Name="Medal Count" />
                             </StackPanel>
                         </Grid>
                         <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
@@ -158,9 +158,9 @@
                     <StackPanel Spacing="8">
                         <TextBlock Text="Assistant Positions" FontWeight="SemiBold" />
                         <StackPanel Orientation="Horizontal" Spacing="6">
-                            <NumericUpDown Value="{Binding Position0}" Minimum="0" Maximum="255" FormatString="0" Classes="compact" Width="100" />
-                            <NumericUpDown Value="{Binding Position1}" Minimum="0" Maximum="255" FormatString="0" Classes="compact" Width="100" />
-                            <NumericUpDown Value="{Binding Position2}" Minimum="0" Maximum="255" FormatString="0" Classes="compact" Width="100" />
+                            <NumericUpDown Value="{Binding Position0}" Minimum="0" Maximum="255" FormatString="0" Classes="compact" Width="100" AutomationProperties.Name="Position 0" />
+                            <NumericUpDown Value="{Binding Position1}" Minimum="0" Maximum="255" FormatString="0" Classes="compact" Width="100" AutomationProperties.Name="Position 1" />
+                            <NumericUpDown Value="{Binding Position2}" Minimum="0" Maximum="255" FormatString="0" Classes="compact" Width="100" AutomationProperties.Name="Position 2" />
                         </StackPanel>
                     </StackPanel>
                 </Border>
@@ -241,7 +241,7 @@
                                             <DataGridTemplateColumn Header="Trainer ID (32-bit)" Width="*">
                                                 <DataGridTemplateColumn.CellTemplate>
                                                     <DataTemplate DataType="vm:JoinAvenueVisitingPlayerViewModel">
-                                                        <NumericUpDown Value="{Binding Value}" Minimum="0" Maximum="4294967295" FormatString="0" Classes="compact" HorizontalAlignment="Stretch" />
+                                                        <NumericUpDown Value="{Binding Value}" Minimum="0" Maximum="4294967295" FormatString="0" Classes="compact" HorizontalAlignment="Stretch" AutomationProperties.Name="Trainer ID" />
                                                     </DataTemplate>
                                                 </DataGridTemplateColumn.CellTemplate>
                                             </DataGridTemplateColumn>

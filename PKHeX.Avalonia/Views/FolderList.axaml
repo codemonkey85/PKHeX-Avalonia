@@ -11,7 +11,8 @@
         <!-- Header / Filter -->
         <DockPanel Grid.Row="0" Margin="10">
             <TextBlock Text="Save File Browser" FontSize="20" FontWeight="SemiBold" VerticalAlignment="Center"/>
-            <TextBox Text="{Binding FilterText}" Watermark="Filter files..." Width="200" HorizontalAlignment="Right" Margin="20,0,0,0"/>
+            <TextBox Text="{Binding FilterText}" Watermark="Filter files..." Width="200" HorizontalAlignment="Right" Margin="20,0,0,0"
+                     AutomationProperties.Name="Filter files"/>
         </DockPanel>
 
         <!-- Main Content -->

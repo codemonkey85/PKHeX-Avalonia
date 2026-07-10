@@ -119,20 +119,20 @@
                                         <TextBlock Grid.Row="0" Grid.Column="2" Text="Record" FontWeight="SemiBold" Opacity="0.7" HorizontalAlignment="Center" />
 
                                         <TextBlock Grid.Row="1" Grid.Column="0" Text="Single" VerticalAlignment="Center" Width="100" />
-                                        <NumericUpDown Grid.Row="1" Grid.Column="1" Value="{Binding SinglePast}" Minimum="0" Maximum="9999" ShowButtonSpinner="False" Margin="0,0,8,0" />
-                                        <NumericUpDown Grid.Row="1" Grid.Column="2" Value="{Binding SingleRecord}" Minimum="0" Maximum="9999" ShowButtonSpinner="False" />
+                                        <NumericUpDown Grid.Row="1" Grid.Column="1" Value="{Binding SinglePast}" Minimum="0" Maximum="9999" ShowButtonSpinner="False" Margin="0,0,8,0" AutomationProperties.Name="Single Past" />
+                                        <NumericUpDown Grid.Row="1" Grid.Column="2" Value="{Binding SingleRecord}" Minimum="0" Maximum="9999" ShowButtonSpinner="False" AutomationProperties.Name="Single Record" />
 
                                         <TextBlock Grid.Row="3" Grid.Column="0" Text="Double" VerticalAlignment="Center" />
-                                        <NumericUpDown Grid.Row="3" Grid.Column="1" Value="{Binding DoublePast}" Minimum="0" Maximum="9999" ShowButtonSpinner="False" Margin="0,0,8,0" />
-                                        <NumericUpDown Grid.Row="3" Grid.Column="2" Value="{Binding DoubleRecord}" Minimum="0" Maximum="9999" ShowButtonSpinner="False" />
+                                        <NumericUpDown Grid.Row="3" Grid.Column="1" Value="{Binding DoublePast}" Minimum="0" Maximum="9999" ShowButtonSpinner="False" Margin="0,0,8,0" AutomationProperties.Name="Double Past" />
+                                        <NumericUpDown Grid.Row="3" Grid.Column="2" Value="{Binding DoubleRecord}" Minimum="0" Maximum="9999" ShowButtonSpinner="False" AutomationProperties.Name="Double Record" />
 
                                         <TextBlock Grid.Row="5" Grid.Column="0" Text="Multi (NPC)" VerticalAlignment="Center" />
-                                        <NumericUpDown Grid.Row="5" Grid.Column="1" Value="{Binding MultiNpcPast}" Minimum="0" Maximum="9999" ShowButtonSpinner="False" Margin="0,0,8,0" />
-                                        <NumericUpDown Grid.Row="5" Grid.Column="2" Value="{Binding MultiNpcRecord}" Minimum="0" Maximum="9999" ShowButtonSpinner="False" />
+                                        <NumericUpDown Grid.Row="5" Grid.Column="1" Value="{Binding MultiNpcPast}" Minimum="0" Maximum="9999" ShowButtonSpinner="False" Margin="0,0,8,0" AutomationProperties.Name="Multi (NPC) Past" />
+                                        <NumericUpDown Grid.Row="5" Grid.Column="2" Value="{Binding MultiNpcRecord}" Minimum="0" Maximum="9999" ShowButtonSpinner="False" AutomationProperties.Name="Multi (NPC) Record" />
 
                                         <TextBlock Grid.Row="7" Grid.Column="0" Text="Multi (Friend)" VerticalAlignment="Center" />
-                                        <NumericUpDown Grid.Row="7" Grid.Column="1" Value="{Binding MultiFriendsPast}" Minimum="0" Maximum="9999" ShowButtonSpinner="False" Margin="0,0,8,0" />
-                                        <NumericUpDown Grid.Row="7" Grid.Column="2" Value="{Binding MultiFriendsRecord}" Minimum="0" Maximum="9999" ShowButtonSpinner="False" />
+                                        <NumericUpDown Grid.Row="7" Grid.Column="1" Value="{Binding MultiFriendsPast}" Minimum="0" Maximum="9999" ShowButtonSpinner="False" Margin="0,0,8,0" AutomationProperties.Name="Multi (Friend) Past" />
+                                        <NumericUpDown Grid.Row="7" Grid.Column="2" Value="{Binding MultiFriendsRecord}" Minimum="0" Maximum="9999" ShowButtonSpinner="False" AutomationProperties.Name="Multi (Friend) Record" />
                                     </Grid>
                                 </StackPanel>
                             </Border>
@@ -146,20 +146,20 @@
                                         <TextBlock Grid.Row="0" Grid.Column="2" Text="Record" FontWeight="SemiBold" Opacity="0.7" HorizontalAlignment="Center" />
 
                                         <TextBlock Grid.Row="1" Grid.Column="0" Text="Single" VerticalAlignment="Center" Width="100" />
-                                        <NumericUpDown Grid.Row="1" Grid.Column="1" Value="{Binding SuperSinglePast}" Minimum="0" Maximum="9999" ShowButtonSpinner="False" Margin="0,0,8,0" />
-                                        <NumericUpDown Grid.Row="1" Grid.Column="2" Value="{Binding SuperSingleRecord}" Minimum="0" Maximum="9999" ShowButtonSpinner="False" />
+                                        <NumericUpDown Grid.Row="1" Grid.Column="1" Value="{Binding SuperSinglePast}" Minimum="0" Maximum="9999" ShowButtonSpinner="False" Margin="0,0,8,0" AutomationProperties.Name="Super Single Past" />
+                                        <NumericUpDown Grid.Row="1" Grid.Column="2" Value="{Binding SuperSingleRecord}" Minimum="0" Maximum="9999" ShowButtonSpinner="False" AutomationProperties.Name="Super Single Record" />
 
                                         <TextBlock Grid.Row="3" Grid.Column="0" Text="Double" VerticalAlignment="Center" />
-                                        <NumericUpDown Grid.Row="3" Grid.Column="1" Value="{Binding SuperDoublePast}" Minimum="0" Maximum="9999" ShowButtonSpinner="False" Margin="0,0,8,0" />
-                                        <NumericUpDown Grid.Row="3" Grid.Column="2" Value="{Binding SuperDoubleRecord}" Minimum="0" Maximum="9999" ShowButtonSpinner="False" />
+                                        <NumericUpDown Grid.Row="3" Grid.Column="1" Value="{Binding SuperDoublePast}" Minimum="0" Maximum="9999" ShowButtonSpinner="False" Margin="0,0,8,0" AutomationProperties.Name="Super Double Past" />
+                                        <NumericUpDown Grid.Row="3" Grid.Column="2" Value="{Binding SuperDoubleRecord}" Minimum="0" Maximum="9999" ShowButtonSpinner="False" AutomationProperties.Name="Super Double Record" />
 
                                         <TextBlock Grid.Row="5" Grid.Column="0" Text="Multi (NPC)" VerticalAlignment="Center" />
-                                        <NumericUpDown Grid.Row="5" Grid.Column="1" Value="{Binding SuperMultiNpcPast}" Minimum="0" Maximum="9999" ShowButtonSpinner="False" Margin="0,0,8,0" />
-                                        <NumericUpDown Grid.Row="5" Grid.Column="2" Value="{Binding SuperMultiNpcRecord}" Minimum="0" Maximum="9999" ShowButtonSpinner="False" />
+                                        <NumericUpDown Grid.Row="5" Grid.Column="1" Value="{Binding SuperMultiNpcPast}" Minimum="0" Maximum="9999" ShowButtonSpinner="False" Margin="0,0,8,0" AutomationProperties.Name="Super Multi (NPC) Past" />
+                                        <NumericUpDown Grid.Row="5" Grid.Column="2" Value="{Binding SuperMultiNpcRecord}" Minimum="0" Maximum="9999" ShowButtonSpinner="False" AutomationProperties.Name="Super Multi (NPC) Record" />
 
                                         <TextBlock Grid.Row="7" Grid.Column="0" Text="Multi (Friend)" VerticalAlignment="Center" />
-                                        <NumericUpDown Grid.Row="7" Grid.Column="1" Value="{Binding SuperMultiFriendsPast}" Minimum="0" Maximum="9999" ShowButtonSpinner="False" Margin="0,0,8,0" />
-                                        <NumericUpDown Grid.Row="7" Grid.Column="2" Value="{Binding SuperMultiFriendsRecord}" Minimum="0" Maximum="9999" ShowButtonSpinner="False" />
+                                        <NumericUpDown Grid.Row="7" Grid.Column="1" Value="{Binding SuperMultiFriendsPast}" Minimum="0" Maximum="9999" ShowButtonSpinner="False" Margin="0,0,8,0" AutomationProperties.Name="Super Multi (Friend) Past" />
+                                        <NumericUpDown Grid.Row="7" Grid.Column="2" Value="{Binding SuperMultiFriendsRecord}" Minimum="0" Maximum="9999" ShowButtonSpinner="False" AutomationProperties.Name="Super Multi (Friend) Record" />
                                     </Grid>
                                 </StackPanel>
                             </Border>

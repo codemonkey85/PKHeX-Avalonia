@@ -16,7 +16,7 @@
         <DockPanel IsVisible="{Binding HasRecords}">
             <!-- Search Bar -->
             <Border DockPanel.Dock="Top" Classes="section-card" CornerRadius="4" Padding="8" Margin="0,0,0,12">
-                <TextBox Text="{Binding SearchText}" Watermark="Search records..." />
+                <TextBox Text="{Binding SearchText}" Watermark="Search records..." AutomationProperties.Name="Search records" />
             </Border>
 
             <!-- Records List -->
@@ -32,7 +32,7 @@
                     <DataGridTemplateColumn Header="Value" Width="120">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate DataType="vm:RecordItemViewModel">
-                                <NumericUpDown Value="{Binding Value}" Minimum="0" Maximum="999999999" />
+                                <NumericUpDown Value="{Binding Value}" Minimum="0" Maximum="999999999" AutomationProperties.Name="Value" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>

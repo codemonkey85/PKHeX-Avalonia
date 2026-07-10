@@ -71,7 +71,8 @@
                                                               SelectedValue="{Binding ItemId}"
                                                               SelectedValueBinding="{Binding Value}"
                                                               DisplayMemberBinding="{Binding Text}"
-                                                              HorizontalAlignment="Stretch" />
+                                                              HorizontalAlignment="Stretch"
+                                                              AutomationProperties.Name="Item" />
                                                 </DataTemplate>
                                             </DataGridTemplateColumn.CellTemplate>
                                         </DataGridTemplateColumn>
@@ -85,7 +86,8 @@
                                                                    Maximum="{Binding MaxCount}"
                                                                    FormatString="0"
                                                                    Classes="compact"
-                                                                   HorizontalAlignment="Stretch" />
+                                                                   HorizontalAlignment="Stretch"
+                                                                   AutomationProperties.Name="Count" />
                                                 </DataTemplate>
                                             </DataGridTemplateColumn.CellTemplate>
                                         </DataGridTemplateColumn>

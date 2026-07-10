@@ -11,7 +11,7 @@
         <Grid RowDefinitions="Auto,*,Auto">
             <!-- Controls -->
             <StackPanel Grid.Row="0" Spacing="12" Margin="0,0,0,16">
-                <TextBox Text="{Binding SearchText}" Watermark="Search Species..." />
+                <TextBox Text="{Binding SearchText}" Watermark="Search Species..." AutomationProperties.Name="Search Species" />
                 <WrapPanel Orientation="Horizontal">
                     <Button Content="Seen All" Command="{Binding SeenAllCommand}" Margin="0,0,8,8" />
                     <Button Content="Seen None" Command="{Binding SeenNoneCommand}" Margin="0,0,8,8" />

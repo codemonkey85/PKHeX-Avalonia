@@ -35,7 +35,7 @@
                     <DataGridTemplateColumn Header="Berry ID" Width="90">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate DataType="vm:BerryPlotViewModel">
-                                <NumericUpDown Value="{Binding Berry}" Minimum="0" Maximum="65534" />
+                                <NumericUpDown Value="{Binding Berry}" AutomationProperties.Name="Berry ID" Minimum="0" Maximum="65534" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
@@ -43,14 +43,14 @@
                     <DataGridTemplateColumn Header="Stage" Width="80">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate DataType="vm:BerryPlotViewModel">
-                                <NumericUpDown Value="{Binding GrowthStage}" Minimum="0" Maximum="5" />
+                                <NumericUpDown Value="{Binding GrowthStage}" AutomationProperties.Name="Growth Stage" Minimum="0" Maximum="5" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <DataGridTemplateColumn Header="Count" Width="80">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate DataType="vm:BerryPlotViewModel">
-                                <NumericUpDown Value="{Binding Count}" Minimum="0" Maximum="99" />
+                                <NumericUpDown Value="{Binding Count}" AutomationProperties.Name="Count" Minimum="0" Maximum="99" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>

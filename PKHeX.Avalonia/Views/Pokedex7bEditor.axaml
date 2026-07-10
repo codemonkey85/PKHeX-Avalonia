@@ -11,7 +11,7 @@
     <Grid ColumnDefinitions="280, *" Margin="10">
         <!-- Entry List -->
         <Grid Grid.Column="0" RowDefinitions="Auto, *">
-            <TextBox Text="{Binding SearchText}" Watermark="Search Species/Form..." Margin="0,0,0,10"/>
+            <TextBox Text="{Binding SearchText}" Watermark="Search Species/Form..." Margin="0,0,0,10" AutomationProperties.Name="Search Species/Form"/>
             <ListBox Grid.Row="1" ItemsSource="{Binding Entries}" SelectedItem="{Binding SelectedEntry}">
                 <ListBox.ItemTemplate>
                     <DataTemplate x:DataType="core:ComboItem">

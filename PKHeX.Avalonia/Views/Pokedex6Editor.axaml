@@ -11,7 +11,7 @@
         <Grid ColumnDefinitions="250, 16, *" RowDefinitions="*,Auto">
             <!-- Species List -->
             <Grid Grid.Column="0" RowDefinitions="Auto, 8, *">
-                <TextBox Text="{Binding SearchText}" Watermark="Search Species..." />
+                <TextBox Text="{Binding SearchText}" Watermark="Search Species..." AutomationProperties.Name="Search Species" />
                 <Border Grid.Row="2" Classes="section-card" Padding="0">
                     <ListBox ItemsSource="{Binding FilteredSpecies}" SelectedItem="{Binding SelectedSpecies}" Background="Transparent">
                         <ListBox.ItemTemplate>

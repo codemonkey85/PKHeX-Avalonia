@@ -22,16 +22,18 @@
                                 <StackPanel Spacing="12">
                                     <TextBlock Text="Records" FontWeight="SemiBold" Opacity="0.6" />
                                     <Grid ColumnDefinitions="*,16,120">
-                                        <ComboBox Grid.Column="0" 
-                                                  ItemsSource="{Binding RecordList}" 
+                                        <ComboBox Grid.Column="0"
+                                                  ItemsSource="{Binding RecordList}"
                                                   SelectedItem="{Binding SelectedRecord}"
                                                   DisplayMemberBinding="{Binding Text}"
-                                                  HorizontalAlignment="Stretch" />
-                                        
-                                        <NumericUpDown Grid.Column="2" 
-                                                       Value="{Binding RecordValue}" 
-                                                       Minimum="0" Maximum="4294967295" 
-                                                       ShowButtonSpinner="False" />
+                                                  HorizontalAlignment="Stretch"
+                                                  AutomationProperties.Name="Record" />
+
+                                        <NumericUpDown Grid.Column="2"
+                                                       Value="{Binding RecordValue}"
+                                                       Minimum="0" Maximum="4294967295"
+                                                       ShowButtonSpinner="False"
+                                                       AutomationProperties.Name="Record Value" />
                                     </Grid>
                                 </StackPanel>
                             </Border>

@@ -43,6 +43,7 @@
                                     x:CompileBindings="False"
                                     Command="{Binding #Root.DataContext.SelectEncounterCommand}"
                                     CommandParameter="{Binding}"
+                                    AutomationProperties.Name="{Binding AccessibleName}"
                                     Background="Transparent" BorderThickness="0">
                                 <Border Classes="section-card" 
                                         CornerRadius="6" Padding="8" Width="240" Height="70"

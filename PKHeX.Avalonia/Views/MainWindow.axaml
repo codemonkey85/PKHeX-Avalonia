@@ -182,7 +182,8 @@
                         <Button Content="What's New" Command="{Binding ShowChangelogCommand}" Padding="8,2" FontSize="11" />
                         <Button Content="Download" Command="{Binding DownloadCommand}" Padding="8,2" FontSize="11" />
                         <Button Content="Skip" Command="{Binding SkipCommand}" Padding="8,2" FontSize="11" />
-                        <Button Content="✕" Command="{Binding DismissCommand}" Padding="6,2" FontSize="11" />
+                        <Button Content="✕" Command="{Binding DismissCommand}" Padding="6,2" FontSize="11"
+                                AutomationProperties.Name="Dismiss update notification" />
                     </StackPanel>
                 </Border>
             </Grid>

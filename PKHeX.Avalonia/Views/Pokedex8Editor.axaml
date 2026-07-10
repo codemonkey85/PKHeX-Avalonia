@@ -12,7 +12,7 @@
         <Grid ColumnDefinitions="250, 16, *" RowDefinitions="*,Auto">
             <!-- Species List -->
             <Grid Grid.Column="0" RowDefinitions="Auto, 8, *">
-                <TextBox Grid.Row="0" Text="{Binding SearchText}" Watermark="Search Species..." />
+                <TextBox Grid.Row="0" Text="{Binding SearchText}" Watermark="Search Species..." AutomationProperties.Name="Search Species" />
                 <Border Grid.Row="2" Classes="section-card" Padding="0">
                     <ListBox ItemsSource="{Binding FilteredSpecies}" SelectedItem="{Binding SelectedSpecies}" Background="Transparent">
                         <ListBox.ItemTemplate>
@@ -106,10 +106,10 @@
                                     <DataTemplate x:DataType="vm:Pokedex8FormViewModel">
                                         <Grid ColumnDefinitions="*,60,60,60,60" Margin="0,4">
                                             <TextBlock Grid.Column="0" Text="{Binding Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
-                                            <CheckBox Grid.Column="1" IsChecked="{Binding SeenMale}" HorizontalAlignment="Center"/>
-                                            <CheckBox Grid.Column="2" IsChecked="{Binding SeenFemale}" HorizontalAlignment="Center"/>
-                                            <CheckBox Grid.Column="3" IsChecked="{Binding SeenShinyMale}" HorizontalAlignment="Center"/>
-                                            <CheckBox Grid.Column="4" IsChecked="{Binding SeenShinyFemale}" HorizontalAlignment="Center"/>
+                                            <CheckBox Grid.Column="1" IsChecked="{Binding SeenMale}" HorizontalAlignment="Center" AutomationProperties.Name="{Binding Name, StringFormat='{}{0} Seen Male'}"/>
+                                            <CheckBox Grid.Column="2" IsChecked="{Binding SeenFemale}" HorizontalAlignment="Center" AutomationProperties.Name="{Binding Name, StringFormat='{}{0} Seen Female'}"/>
+                                            <CheckBox Grid.Column="3" IsChecked="{Binding SeenShinyMale}" HorizontalAlignment="Center" AutomationProperties.Name="{Binding Name, StringFormat='{}{0} Seen Shiny Male'}"/>
+                                            <CheckBox Grid.Column="4" IsChecked="{Binding SeenShinyFemale}" HorizontalAlignment="Center" AutomationProperties.Name="{Binding Name, StringFormat='{}{0} Seen Shiny Female'}"/>
                                         </Grid>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>

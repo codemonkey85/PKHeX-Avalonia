@@ -89,7 +89,8 @@
                                       DisplayMemberBinding="{Binding Text}"
                                       HorizontalAlignment="Stretch"/>
                             <NumericUpDown Value="{Binding Filter.Level}" Minimum="1" Maximum="100" Increment="1"
-                                           FormatString="0" HorizontalAlignment="Stretch"/>
+                                           FormatString="0" HorizontalAlignment="Stretch"
+                                           AutomationProperties.Name="Level"/>
                         </StackPanel>
 
                         <StackPanel Spacing="4">
@@ -114,7 +115,8 @@
                             <CheckBox Content="ESV (requires Egg = Yes)" IsChecked="{Binding Filter.EsvEnabled}"/>
                             <NumericUpDown Value="{Binding Filter.Esv}" Minimum="0" Maximum="4095" Increment="1"
                                            FormatString="0" IsEnabled="{Binding Filter.EsvEnabled}"
-                                           HorizontalAlignment="Stretch"/>
+                                           HorizontalAlignment="Stretch"
+                                           AutomationProperties.Name="ESV"/>
                         </StackPanel>
                     </StackPanel>
                 </ScrollViewer>

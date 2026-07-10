@@ -41,12 +41,12 @@
                                 <TextBlock Grid.Row="0" Grid.Column="2" Text="Streak" FontWeight="SemiBold" Opacity="0.7" HorizontalAlignment="Center" />
 
                                 <TextBlock Grid.Row="2" Grid.Column="0" Text="Singles" VerticalAlignment="Center" Width="80" />
-                                <NumericUpDown Grid.Row="2" Grid.Column="1" Value="{Binding SinglesWins}" Minimum="0" Maximum="9999999" ShowButtonSpinner="False" Margin="0,0,8,0" />
-                                <NumericUpDown Grid.Row="2" Grid.Column="2" Value="{Binding SinglesStreak}" Minimum="0" Maximum="300" ShowButtonSpinner="False" />
+                                <NumericUpDown Grid.Row="2" Grid.Column="1" Value="{Binding SinglesWins}" Minimum="0" Maximum="9999999" ShowButtonSpinner="False" Margin="0,0,8,0" AutomationProperties.Name="Singles Wins" />
+                                <NumericUpDown Grid.Row="2" Grid.Column="2" Value="{Binding SinglesStreak}" Minimum="0" Maximum="300" ShowButtonSpinner="False" AutomationProperties.Name="Singles Streak" />
 
                                 <TextBlock Grid.Row="4" Grid.Column="0" Text="Doubles" VerticalAlignment="Center" />
-                                <NumericUpDown Grid.Row="4" Grid.Column="1" Value="{Binding DoublesWins}" Minimum="0" Maximum="9999999" ShowButtonSpinner="False" Margin="0,0,8,0" />
-                                <NumericUpDown Grid.Row="4" Grid.Column="2" Value="{Binding DoublesStreak}" Minimum="0" Maximum="300" ShowButtonSpinner="False" />
+                                <NumericUpDown Grid.Row="4" Grid.Column="1" Value="{Binding DoublesWins}" Minimum="0" Maximum="9999999" ShowButtonSpinner="False" Margin="0,0,8,0" AutomationProperties.Name="Doubles Wins" />
+                                <NumericUpDown Grid.Row="4" Grid.Column="2" Value="{Binding DoublesStreak}" Minimum="0" Maximum="300" ShowButtonSpinner="False" AutomationProperties.Name="Doubles Streak" />
                             </Grid>
                         </StackPanel>
                     </Border>

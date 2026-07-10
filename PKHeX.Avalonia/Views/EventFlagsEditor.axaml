@@ -61,6 +61,7 @@
                     <Button Content="Set All" Command="{Binding SetAllCommand}" Padding="8,4" />
                     <Button Content="Clear All" Command="{Binding ClearAllCommand}" Padding="8,4" />
                     <TextBox Text="{Binding SearchText}"
+                             AutomationProperties.Name="Search"
                              Watermark="Search by index..."
                              Width="200" />
                 </StackPanel>

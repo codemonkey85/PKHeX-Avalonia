@@ -85,13 +85,13 @@
                                 <StackPanel>
                                     <TextBlock Text="Play Time" FontWeight="SemiBold" Margin="0,0,0,4" FontSize="12"/>
                                     <Grid ColumnDefinitions="*,8,*,8,*">
-                                        <NumericUpDown Grid.Column="0" Value="{Binding PlayedHours}" Minimum="0" Maximum="9999" FormatString="0" ShowButtonSpinner="False" ToolTip.Tip="Hours"/>
+                                        <NumericUpDown Grid.Column="0" Value="{Binding PlayedHours}" Minimum="0" Maximum="9999" FormatString="0" ShowButtonSpinner="False" ToolTip.Tip="Hours" AutomationProperties.Name="Hours"/>
                                         <TextBlock Grid.Column="0" Text="h" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,8,0" Opacity="0.5" IsHitTestVisible="False"/>
-                                        
-                                        <NumericUpDown Grid.Column="2" Value="{Binding PlayedMinutes}" Minimum="0" Maximum="59" FormatString="00" ShowButtonSpinner="False" ToolTip.Tip="Minutes"/>
+
+                                        <NumericUpDown Grid.Column="2" Value="{Binding PlayedMinutes}" Minimum="0" Maximum="59" FormatString="00" ShowButtonSpinner="False" ToolTip.Tip="Minutes" AutomationProperties.Name="Minutes"/>
                                         <TextBlock Grid.Column="2" Text="m" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,8,0" Opacity="0.5" IsHitTestVisible="False"/>
 
-                                        <NumericUpDown Grid.Column="4" Value="{Binding PlayedSeconds}" Minimum="0" Maximum="59" FormatString="00" ShowButtonSpinner="False" ToolTip.Tip="Seconds"/>
+                                        <NumericUpDown Grid.Column="4" Value="{Binding PlayedSeconds}" Minimum="0" Maximum="59" FormatString="00" ShowButtonSpinner="False" ToolTip.Tip="Seconds" AutomationProperties.Name="Seconds"/>
                                         <TextBlock Grid.Column="4" Text="s" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,8,0" Opacity="0.5" IsHitTestVisible="False"/>
                                     </Grid>
                                 </StackPanel>
@@ -192,10 +192,11 @@
                                       SelectedValue="{Binding ChateauRank}"
                                       SelectedValueBinding="{Binding Value}"
                                       DisplayMemberBinding="{Binding Text}"
-                                      HorizontalAlignment="Stretch" />
+                                      HorizontalAlignment="Stretch"
+                                      AutomationProperties.Name="Rank" />
 
                             <TextBlock Grid.Row="0" Grid.Column="2" Text="Points" FontSize="11" FontWeight="SemiBold" Opacity="0.7" />
-                            <NumericUpDown Grid.Row="2" Grid.Column="2" Value="{Binding ChateauPoints}" Minimum="0" Maximum="4095" FormatString="0" ShowButtonSpinner="False" />
+                            <NumericUpDown Grid.Row="2" Grid.Column="2" Value="{Binding ChateauPoints}" Minimum="0" Maximum="4095" FormatString="0" ShowButtonSpinner="False" AutomationProperties.Name="Points" />
 
                             <Button Grid.Row="2" Grid.Column="4"
                                     Content="Set points for rank"
@@ -213,10 +214,10 @@
                             <TextBlock Text="Adventure Info" FontWeight="SemiBold" Opacity="0.6" />
                             <Grid ColumnDefinitions="*,12,*" RowDefinitions="Auto,4,Auto">
                                 <TextBlock Grid.Row="0" Grid.Column="0" Text="Start Timestamp" FontSize="11" Opacity="0.7" />
-                                <NumericUpDown Grid.Row="2" Grid.Column="0" Value="{Binding SecondsToStart}" Minimum="0" FormatString="0" ShowButtonSpinner="False" />
+                                <NumericUpDown Grid.Row="2" Grid.Column="0" Value="{Binding SecondsToStart}" Minimum="0" FormatString="0" ShowButtonSpinner="False" AutomationProperties.Name="Start Timestamp" />
 
                                 <TextBlock Grid.Row="0" Grid.Column="2" Text="Fame Timestamp" FontSize="11" Opacity="0.7" />
-                                <NumericUpDown Grid.Row="2" Grid.Column="2" Value="{Binding SecondsToFame}" Minimum="0" FormatString="0" ShowButtonSpinner="False" />
+                                <NumericUpDown Grid.Row="2" Grid.Column="2" Value="{Binding SecondsToFame}" Minimum="0" FormatString="0" ShowButtonSpinner="False" AutomationProperties.Name="Fame Timestamp" />
                             </Grid>
                         </StackPanel>
                     </Border>
@@ -226,13 +227,13 @@
                             <TextBlock Text="Map Coordinates" FontWeight="SemiBold" Opacity="0.6" />
                             <Grid ColumnDefinitions="*,8,*,8,*" RowDefinitions="Auto,4,Auto">
                                 <TextBlock Grid.Row="0" Grid.Column="0" Text="X" FontSize="11" Opacity="0.7" />
-                                <NumericUpDown Grid.Row="2" Grid.Column="0" Value="{Binding X}" FormatString="0.0" ShowButtonSpinner="False" />
+                                <NumericUpDown Grid.Row="2" Grid.Column="0" Value="{Binding X}" FormatString="0.0" ShowButtonSpinner="False" AutomationProperties.Name="X Coordinate" />
 
                                 <TextBlock Grid.Row="0" Grid.Column="2" Text="Y" FontSize="11" Opacity="0.7" />
-                                <NumericUpDown Grid.Row="2" Grid.Column="2" Value="{Binding Y}" FormatString="0.0" ShowButtonSpinner="False" />
+                                <NumericUpDown Grid.Row="2" Grid.Column="2" Value="{Binding Y}" FormatString="0.0" ShowButtonSpinner="False" AutomationProperties.Name="Y Coordinate" />
 
                                 <TextBlock Grid.Row="0" Grid.Column="4" Text="Z" FontSize="11" Opacity="0.7" />
-                                <NumericUpDown Grid.Row="2" Grid.Column="4" Value="{Binding Z}" FormatString="0.0" ShowButtonSpinner="False" />
+                                <NumericUpDown Grid.Row="2" Grid.Column="4" Value="{Binding Z}" FormatString="0.0" ShowButtonSpinner="False" AutomationProperties.Name="Z Coordinate" />
                             </Grid>
                         </StackPanel>
                     </Border>

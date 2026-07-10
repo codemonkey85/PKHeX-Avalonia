@@ -77,7 +77,8 @@
                                             <DataTemplate DataType="vm:MedalItemViewModel">
                                                 <ComboBox ItemsSource="{Binding StateChoices}"
                                                           SelectedIndex="{Binding StateIndex}"
-                                                          HorizontalAlignment="Stretch" />
+                                                          HorizontalAlignment="Stretch"
+                                                          AutomationProperties.Name="State" />
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
@@ -85,7 +86,8 @@
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate DataType="vm:MedalItemViewModel">
                                                 <CheckBox IsChecked="{Binding IsUnread}"
-                                                          HorizontalAlignment="Center" />
+                                                          HorizontalAlignment="Center"
+                                                          AutomationProperties.Name="Unread" />
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
@@ -95,7 +97,8 @@
                                                 <TextBox Text="{Binding Date}"
                                                          IsEnabled="{Binding CanHaveDate}"
                                                          Watermark="—"
-                                                         HorizontalAlignment="Stretch" />
+                                                         HorizontalAlignment="Stretch"
+                                                         AutomationProperties.Name="Date" />
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
@@ -139,7 +142,7 @@
                                     <DataGridTemplateColumn Header="Complete" Width="80">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate DataType="vm:HabitatRowViewModel">
-                                                <CheckBox IsChecked="{Binding IsComplete}" HorizontalAlignment="Center" />
+                                                <CheckBox IsChecked="{Binding IsComplete}" HorizontalAlignment="Center" AutomationProperties.Name="Complete" />
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
@@ -148,7 +151,8 @@
                                             <DataTemplate DataType="vm:HabitatRowViewModel">
                                                 <ComboBox ItemsSource="{Binding HabitatCompletionChoices}"
                                                           SelectedIndex="{Binding GrassIndex}"
-                                                          HorizontalAlignment="Stretch" />
+                                                          HorizontalAlignment="Stretch"
+                                                          AutomationProperties.Name="Grass" />
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
@@ -157,7 +161,8 @@
                                             <DataTemplate DataType="vm:HabitatRowViewModel">
                                                 <ComboBox ItemsSource="{Binding HabitatCompletionChoices}"
                                                           SelectedIndex="{Binding SurfIndex}"
-                                                          HorizontalAlignment="Stretch" />
+                                                          HorizontalAlignment="Stretch"
+                                                          AutomationProperties.Name="Surf" />
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
@@ -166,7 +171,8 @@
                                             <DataTemplate DataType="vm:HabitatRowViewModel">
                                                 <ComboBox ItemsSource="{Binding HabitatCompletionChoices}"
                                                           SelectedIndex="{Binding FishIndex}"
-                                                          HorizontalAlignment="Stretch" />
+                                                          HorizontalAlignment="Stretch"
+                                                          AutomationProperties.Name="Fish" />
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>

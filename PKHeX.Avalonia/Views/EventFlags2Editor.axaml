@@ -20,6 +20,7 @@
                     <!-- Search -->
                     <TextBox Grid.Row="0"
                              Text="{Binding SearchText}"
+                             AutomationProperties.Name="Search"
                              Watermark="Search flags..."
                              Margin="0,0,0,10"/>
 
@@ -80,6 +81,7 @@
                                                       ItemsSource="{Binding PredefinedValues}"
                                                       SelectedIndex="{Binding SelectedPredefinedIndex}"
                                                       IsVisible="{Binding HasPredefinedValues}"
+                                                      AutomationProperties.Name="Predefined Value"
                                                       MinWidth="150"
                                                       Margin="10,0">
                                                 <ComboBox.ItemTemplate>
@@ -92,6 +94,7 @@
                                                            Value="{Binding Value}"
                                                            Minimum="0"
                                                            Maximum="255"
+                                                           AutomationProperties.Name="Value"
                                                            Width="100"/>
                                         </Grid>
                                     </Border>

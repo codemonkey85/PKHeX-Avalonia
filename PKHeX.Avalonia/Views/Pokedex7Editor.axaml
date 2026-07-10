@@ -12,7 +12,7 @@
         <Grid ColumnDefinitions="280, 16, *" RowDefinitions="*,Auto">
             <!-- Entry List -->
             <Grid Grid.Column="0" RowDefinitions="Auto, 8, *">
-                <TextBox Text="{Binding SearchText}" Watermark="Search Species/Form..." />
+                <TextBox Text="{Binding SearchText}" Watermark="Search Species/Form..." AutomationProperties.Name="Search Species/Form" />
                 <Border Grid.Row="2" Classes="section-card" Padding="0">
                     <ListBox ItemsSource="{Binding Entries}" SelectedItem="{Binding SelectedEntry}" Background="Transparent">
                         <ListBox.ItemTemplate>

@@ -11,6 +11,10 @@
         <KeyBinding Gesture="Down" Command="{Binding MoveSelectionCommand}" CommandParameter="Down" />
         <KeyBinding Gesture="Enter" Command="{Binding ActivateSlotCommand}" />
         <KeyBinding Gesture="Space" Command="{Binding ActivateSlotCommand}" />
+        <!-- Keyboard-only slot operations, mirroring the mouse modifier-clicks below -->
+        <KeyBinding Gesture="Ctrl+C" Command="{Binding ViewSlotCommand}" CommandParameter="{Binding SelectedSlot}" />
+        <KeyBinding Gesture="Ctrl+V" Command="{Binding SetSlotCommand}" CommandParameter="{Binding SelectedSlot}" />
+        <KeyBinding Gesture="Delete" Command="{Binding DeleteSlotCommand}" CommandParameter="{Binding SelectedSlot}" />
     </UserControl.KeyBindings>
 
     <Border Padding="16" Classes="view-container">
@@ -19,8 +23,8 @@
             <TextBlock DockPanel.Dock="Top" Text="Party" FontWeight="SemiBold" FontSize="18" Margin="0,0,0,12" />
             
             <!-- Footer -->
-            <TextBlock DockPanel.Dock="Bottom" 
-                       Text="↑↓ Navigate | Enter: Edit | Drag to reorder"
+            <TextBlock DockPanel.Dock="Bottom"
+                       Text="↑↓ Navigate | Enter: Edit | Drag to reorder | Ctrl+C: View | Ctrl+V: Set | Delete: Clear"
                        Opacity="0.5" FontSize="11" HorizontalAlignment="Center" Margin="0,12,0,0" />
             
             <!-- Party Grid - 2 columns, 3 rows -->
@@ -38,8 +42,8 @@
                                     DragDrop.AllowDrop="True"
                                     DragDrop.Drop="OnSlotDrop"
                                     ToolTip.Tip="{Binding ToolTipSummary}"
-                                    AutomationProperties.Name="{Binding ToolTipSummary}"
-                                    Click="OnSlotClicked" 
+                                    AutomationProperties.Name="{Binding AccessibleName}"
+                                    Click="OnSlotClicked"
                                     DoubleTapped="OnSlotDoubleTapped"
                                     Tag="{Binding}"
                                     Padding="8"

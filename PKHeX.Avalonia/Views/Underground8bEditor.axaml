@@ -21,7 +21,7 @@
                 <DataGridTemplateColumn Header="Count" Width="80">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <NumericUpDown Value="{Binding Count}" Minimum="0" Maximum="{Binding MaxValue}" HorizontalAlignment="Center" />
+                            <NumericUpDown Value="{Binding Count}" Minimum="0" Maximum="{Binding MaxValue}" HorizontalAlignment="Center" AutomationProperties.Name="Count" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
