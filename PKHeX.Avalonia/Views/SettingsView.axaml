@@ -7,6 +7,7 @@
 
     <UserControl.Resources>
         <conv:SpritePreferenceLabelConverter x:Key="SpritePrefLabel"/>
+        <conv:AppThemeLabelConverter x:Key="AppThemeLabel"/>
     </UserControl.Resources>
 
     <ScrollViewer>
@@ -120,6 +121,33 @@
                                        FontSize="12" Opacity="0.6" TextWrapping="Wrap"/>
                         </StackPanel>
                         <ToggleSwitch Grid.Column="1" IsChecked="{Binding ShowChangelog}" OnContent="On" OffContent="Off"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Appearance Settings Card -->
+            <Border Classes="section-card" Padding="20" CornerRadius="8">
+                <StackPanel Spacing="16">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <TextBlock Text="🖥️" FontSize="20" VerticalAlignment="Center"/>
+                        <TextBlock Text="Appearance" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <Grid ColumnDefinitions="*,Auto">
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Theme" FontWeight="Medium"/>
+                            <TextBlock Text="Switches immediately, no restart required. 'Follow System' tracks the OS light/dark preference live."
+                                       FontSize="12" Opacity="0.6" TextWrapping="Wrap"/>
+                        </StackPanel>
+                        <ComboBox Grid.Column="1" MinWidth="170" VerticalAlignment="Center"
+                                  ItemsSource="{Binding Themes}"
+                                  SelectedItem="{Binding SelectedTheme}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate x:CompileBindings="False">
+                                    <TextBlock Text="{Binding Converter={StaticResource AppThemeLabel}}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
                     </Grid>
                 </StackPanel>
             </Border>

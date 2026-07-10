@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using PKHeX.Application.Abstractions;
 using PKHeX.Core;
 
 namespace PKHeX.Application.Services;
@@ -24,6 +25,7 @@ public sealed class AppSettings : IProgramSettings
     public EntityConverterSettings Converter { get; set; } = new();
     public LocalResourceSettings LocalResources { get; set; } = new();
     public SpriteSettings Sprite { get; set; } = new();
+    public ThemeSettings Theme { get; set; } = new();
 
     public string DisplayLanguage { get; set; } = "en";
 
@@ -70,5 +72,13 @@ public sealed class AppSettings : IProgramSettings
     public class SpriteSettings
     {
         public SpritePreference SpritePreference { get; set; } = SpritePreference.UseSuggested;
+    }
+
+    /// <summary>
+    /// UI theme/appearance preference. Defined locally since Core does not expose one.
+    /// </summary>
+    public class ThemeSettings
+    {
+        public AppTheme Selected { get; set; } = AppTheme.Dark;
     }
 }

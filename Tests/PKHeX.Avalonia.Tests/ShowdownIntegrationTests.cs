@@ -42,6 +42,7 @@ public class ShowdownIntegrationTests : IDisposable
             new Mock<IUpdateCheckService>().Object,
             new AppSettings(),
             new FakeSettingsStore(),
+            new Mock<IThemeService>().Object,
             new UndoRedoService(),
             new LanguageService(),
             new Mock<IAutoLegalityService>().Object,

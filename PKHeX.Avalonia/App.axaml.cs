@@ -3,6 +3,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
 using PKHeX.Application;
+using PKHeX.Application.Abstractions;
 using PKHeX.Infrastructure;
 using PKHeX.Infrastructure.Configuration;
 using PKHeX.Avalonia.Services;
@@ -29,6 +30,8 @@ public partial class App : global::Avalonia.Application
         // Initialize PKHeX Core
         // GameInfo is initialized via AppSettings in ConfigureServices
 
+        // Apply the persisted theme preference before any window is created.
+        Services.GetRequiredService<ThemeService>().Initialize();
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
@@ -68,6 +71,8 @@ public partial class App : global::Avalonia.Application
         services.AddSingleton<ISpriteRenderer, AvaloniaSpriteRenderer>();
         services.AddSingleton<IClipboardService, ClipboardService>();
         services.AddSingleton<IQrCodeService, QrCodeService>();
+        services.AddSingleton<ThemeService>();
+        services.AddSingleton<IThemeService>(sp => sp.GetRequiredService<ThemeService>());
 
         // Root ViewModel (transient). Child/editor ViewModels are created by their parent presenter
         // with the current save, so they are not registered in the container.
