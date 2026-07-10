@@ -19,6 +19,7 @@ public static class DependencyInjection
         services.AddSingleton<IAutoLegalityService, AutoLegalityService>();
         services.AddSingleton<IConsoleConnectionFactory, SysBotConnectionFactory>();
         services.AddSingleton<ILiveHexService, LiveHexService>();
+        services.AddSingleton<ILivingDexService, LivingDexService>();
         return services;
     }
 }
