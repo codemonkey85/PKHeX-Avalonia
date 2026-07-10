@@ -61,6 +61,22 @@ Tests live under `Tests/`: `PKHeX.Core.Tests`, `PKHeX.Avalonia.Tests`, and `PKHe
 * Search your boxes with the PKM, Mystery Gift, and Encounter databases.
 * Edit many Pokémon at once with the batch editor.
 * Game specific editors under Tools, like Pokédex, Hall of Fame, and Secret Base.
+* Drag and drop with the OS: drag a box/party slot out to Finder/Explorer to get an entity file, drop entity files onto a slot (or several onto a box to fill it), and drop a save file anywhere on the window to open it.
+
+### OS drag-and-drop notes
+
+* **Drag out (box/party slot → desktop)** writes a decrypted entity file (e.g. `.pk9`) to a temp
+  location and hands the OS a real file reference via Avalonia's `IStorageProvider`. This is a
+  desktop-backed capability: it works on Windows, macOS, and Linux (X11 and Wayland) when running
+  as a normal desktop app. If a future Avalonia backend can't resolve a real file path for the
+  temp file (e.g. a sandboxed or browser-hosted build), drag-out degrades gracefully to in-app-only
+  dragging (box ↔ party still works) instead of failing.
+* **Drag in** accepts `.pk1`–`.pk9`, `.pb7`/`.pb8`, `.pa8`, encrypted `.ek*`, and Mystery Gift files,
+  reusing the same detection/conversion/legality pipeline as the existing folder import feature.
+  Incompatible or unreadable files are rejected with a message dialog rather than crashing or
+  silently corrupting a slot.
+* **Drag a save file** onto any part of the main window (a slot, the editor panel, or elsewhere)
+  to open it, the same as File > Open.
 
 
 ## Building from Source

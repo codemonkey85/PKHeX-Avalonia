@@ -4,7 +4,9 @@
              x:Class="PKHeX.Avalonia.Views.PokemonEditor"
              x:DataType="vm:PokemonEditorViewModel"
              Focusable="False"
-             KeyboardNavigation.IsTabStop="False">
+             KeyboardNavigation.IsTabStop="False"
+             DragDrop.AllowDrop="True"
+             DragDrop.Drop="OnEditorDrop">
 
     <UserControl.Resources>
         <SolidColorBrush x:Key="SystemControlFocusVisualPrimaryBrush" Color="Transparent" />

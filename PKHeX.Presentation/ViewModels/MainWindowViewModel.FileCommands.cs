@@ -15,9 +15,63 @@ public partial class MainWindowViewModel
         if (string.IsNullOrEmpty(path))
             return;
 
+        await OpenSaveFilePathAsync(path);
+    }
+
+    private async Task OpenSaveFilePathAsync(string path)
+    {
         var success = await _saveFileService.LoadSaveFileAsync(path);
         if (!success)
             await _dialogService.ShowErrorAsync("Error", $"Could not load the save file at:\n{path}");
+    }
+
+    // Fired by BoxViewer/PartyViewer when an OS file dropped onto a slot turns out to be a save
+    // file rather than a Pokémon entity; routed through the same "open save" path as File > Open.
+    private void OnSaveFileDropRequested(string path) => _ = OpenSaveFilePathAsync(path);
+
+    /// <summary>
+    /// Handles one or more OS files dropped anywhere on the main window. A save file is opened
+    /// (same path as File &gt; Open); Pokémon entity files are loaded into the current editor
+    /// without writing to a slot (drops onto a specific box/party slot are handled separately by
+    /// <see cref="BoxViewerViewModel.HandleFileDropAsync"/>/<see cref="PartyViewerViewModel.HandleFileDropAsync"/>).
+    /// </summary>
+    public async Task HandleWindowFileDropAsync(IReadOnlyList<string> paths)
+    {
+        if (paths.Count == 0)
+            return;
+
+        // A dropped save file always wins, regardless of how many other files came with it.
+        foreach (var path in paths)
+        {
+            var obj = TryGetSupportedFile(path);
+            if (obj is SaveFile)
+            {
+                await OpenSaveFilePathAsync(path);
+                return;
+            }
+        }
+
+        if (CurrentSave is null || CurrentPokemonEditor is null)
+            return;
+
+        // Load the first recognizable entity into the editor; extras are ignored (the editor holds one Pokémon).
+        foreach (var path in paths)
+        {
+            var result = new ImportEntityFileUseCase().Execute(CurrentSave, path);
+            if (result.Kind == EntityFileDropKind.Entity)
+            {
+                CurrentPokemonEditor.LoadPKM(result.Entity!);
+                return;
+            }
+        }
+
+        await _dialogService.ShowErrorAsync("Import Failed", "No supported Pokémon or save file was found in the dropped file(s).");
+    }
+
+    private object? TryGetSupportedFile(string path)
+    {
+        try { return FileUtil.GetSupportedFile(path, CurrentSave); }
+        catch { return null; }
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]

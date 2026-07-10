@@ -2,7 +2,9 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PKHeX.Presentation.Models;
 using PKHeX.Core;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace PKHeX.Presentation.ViewModels;
 
@@ -12,6 +14,7 @@ public partial class BoxViewerViewModel : ViewModelBase, IBoxNavigator
     private readonly ISpriteRenderer _spriteRenderer;
     private readonly ISlotService? _slotService;
     private readonly IWindowService? _windowService;
+    private readonly IDialogService? _dialogService;
 
     private const int Columns = 6;
 
@@ -45,12 +48,13 @@ public partial class BoxViewerViewModel : ViewModelBase, IBoxNavigator
         SelectedIndex = slot;
     }
 
-    public BoxViewerViewModel(SaveFile sav, ISpriteRenderer spriteRenderer, ISlotService? slotService = null, IWindowService? windowService = null)
+    public BoxViewerViewModel(SaveFile sav, ISpriteRenderer spriteRenderer, ISlotService? slotService = null, IWindowService? windowService = null, IDialogService? dialogService = null)
     {
         _sav = sav;
         _spriteRenderer = spriteRenderer;
         _slotService = slotService;
         _windowService = windowService;
+        _dialogService = dialogService;
         Seek = new EntitySeekViewModel(sav, this);
 
         LoadBox(0);
@@ -252,5 +256,48 @@ public partial class BoxViewerViewModel : ViewModelBase, IBoxNavigator
     private void RequestMove((SlotDragData data, SlotData dest, bool clone) param)
     {
         _slotService?.RequestMove(param.data.Source, param.dest.Location, param.clone);
+    }
+
+    /// <summary>Raised when a dropped OS file turns out to be a save file, so the host can open it.</summary>
+    public event Action<string>? SaveFileDropRequested;
+
+    /// <summary>
+    /// Handles one or more OS files dropped onto a box slot. A single file replaces the target
+    /// slot (subject to format compatibility); multiple files are placed into the box's next
+    /// empty slots in order. Reuses the same detection/conversion pipeline as folder import.
+    /// </summary>
+    public async Task HandleFileDropAsync(IReadOnlyList<string> paths, int targetSlot)
+    {
+        if (paths.Count == 0)
+            return;
+
+        if (paths.Count == 1)
+        {
+            var result = new ImportEntityFileUseCase().Execute(_sav, paths[0]);
+            switch (result.Kind)
+            {
+                case EntityFileDropKind.SaveFile:
+                    SaveFileDropRequested?.Invoke(paths[0]);
+                    return;
+                case EntityFileDropKind.Entity:
+                    SetSlotPKM(targetSlot, result.Entity!);
+                    return;
+                default:
+                    if (_dialogService is not null)
+                        await _dialogService.ShowErrorAsync("Import Failed", result.Message ?? "The file could not be imported.");
+                    return;
+            }
+        }
+
+        var batch = new BatchImportEntityFilesUseCase().Execute(_sav, CurrentBox, paths);
+        RefreshCurrentBox();
+
+        if (_dialogService is not null)
+        {
+            var message = $"Placed {batch.Placed} of {paths.Count} Pokémon into Box {CurrentBox + 1}.";
+            if (batch.Skipped > 0)
+                message += $"\n{batch.Skipped} file(s) were skipped (unsupported, incompatible, or the box is full).";
+            await _dialogService.ShowInformationAsync("Import Files", message);
+        }
     }
 }

@@ -7,7 +7,9 @@
         Title="{Binding WindowTitle}"
         Icon="/Assets/Icons/icon.ico"
         Width="1100" Height="650"
-        MinWidth="900" MinHeight="500">
+        MinWidth="900" MinHeight="500"
+        DragDrop.AllowDrop="True"
+        DragDrop.Drop="OnWindowDrop">
 
     <Window.KeyBindings>
         <KeyBinding Gesture="Ctrl+O" Command="{Binding OpenFileCommand}" />
