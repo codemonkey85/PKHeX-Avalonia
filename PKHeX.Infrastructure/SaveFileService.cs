@@ -1,16 +1,27 @@
 using PKHeX.Application.Abstractions;
+using PKHeX.Application.Services;
 using PKHeX.Core;
 
 namespace PKHeX.Infrastructure;
 
 public sealed class SaveFileService : ISaveFileGateway
 {
+    private readonly ISaveBackupService _backupService;
+    private readonly AppSettings _settings;
+
     public SaveFile? CurrentSave { get; private set; }
     public bool HasSave => CurrentSave is not null;
+    public string? CurrentPath => _currentPath;
 
     private string? _currentPath;
 
     public event Action<SaveFile?>? SaveFileChanged;
+
+    public SaveFileService(ISaveBackupService backupService, AppSettings settings)
+    {
+        _backupService = backupService;
+        _settings = settings;
+    }
 
     public async Task<bool> LoadSaveFileAsync(string path)
     {
@@ -56,6 +67,23 @@ public sealed class SaveFileService : ISaveFileGateway
                 var savePath = path ?? _currentPath;
                 if (string.IsNullOrEmpty(savePath))
                     return false;
+
+                // Automatic backup (issue #135): snapshot whatever is currently on disk *before*
+                // it gets overwritten, so a bad edit is always recoverable. Never blocks the save
+                // itself — a failed backup is swallowed by SaveBackupService.
+                if (_settings.Backup.BAKEnabled && File.Exists(savePath))
+                {
+                    try
+                    {
+                        var existing = File.ReadAllBytes(savePath);
+                        var identity = SaveIdentity.Compute(savePath);
+                        _backupService.CreateBackup(identity, existing, _settings.SaveBackup.MaxBackupsPerSave);
+                    }
+                    catch
+                    {
+                        // Backing up must never prevent the user from saving.
+                    }
+                }
 
                 var data = CurrentSave.Write().ToArray();
                 File.WriteAllBytes(savePath, data);

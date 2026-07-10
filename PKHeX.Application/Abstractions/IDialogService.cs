@@ -17,6 +17,10 @@ public interface IDialogService
     /// explicitly confirms. Used to gate destructive actions such as writing to a live console.
     /// </summary>
     Task<bool> ShowConfirmationAsync(string title, string message, string confirmText = "Yes", string cancelText = "Cancel");
+
+    /// <summary>Opens the OS file manager (Explorer/Finder/xdg-open) and highlights the given file, if possible.</summary>
+    void RevealInFileManager(string path);
+
     Task<string?> GetClipboardTextAsync();
     Task SetClipboardTextAsync(string text);
 }

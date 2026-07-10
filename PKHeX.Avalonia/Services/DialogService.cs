@@ -133,6 +133,31 @@ public sealed class DialogService : IDialogService
         return result;
     }
 
+    public void RevealInFileManager(string path)
+    {
+        try
+        {
+            if (OperatingSystem.IsWindows())
+            {
+                System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{path}\"");
+            }
+            else if (OperatingSystem.IsMacOS())
+            {
+                System.Diagnostics.Process.Start("open", ["-R", path]);
+            }
+            else
+            {
+                // Linux/other: no universal "reveal and select" — open the containing folder instead.
+                var folder = File.Exists(path) ? Path.GetDirectoryName(path) ?? path : path;
+                System.Diagnostics.Process.Start("xdg-open", [folder]);
+            }
+        }
+        catch
+        {
+            // Best effort — if the OS doesn't have the expected file manager binary, do nothing.
+        }
+    }
+
     private async Task ShowMessageBoxAsync(string title, string message)
     {
         var window = GetMainWindow();

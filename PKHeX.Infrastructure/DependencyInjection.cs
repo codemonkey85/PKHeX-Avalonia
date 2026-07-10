@@ -20,6 +20,7 @@ public static class DependencyInjection
         services.AddSingleton<IConsoleConnectionFactory, SysBotConnectionFactory>();
         services.AddSingleton<ILiveHexService, LiveHexService>();
         services.AddSingleton<ILivingDexService, LivingDexService>();
+        services.AddSingleton<ISaveBackupService, SaveBackupService>();
         return services;
     }
 }

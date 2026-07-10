@@ -18,6 +18,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private readonly IClipboardService _clipboardService;
     private readonly IQrCodeService _qrCodeService;
     private readonly IUpdateCheckService _updateCheckService;
+    private readonly ISaveBackupService _saveBackupService;
     private readonly AppSettings _settings;
     private readonly ISettingsStore _settingsStore;
     private readonly IThemeService _themeService;
@@ -43,6 +44,8 @@ public partial class MainWindowViewModel : ViewModelBase
     [NotifyCanExecuteChangedFor(nameof(OpenAutoLegalityModCommand))]
     [NotifyCanExecuteChangedFor(nameof(OpenLiveHeXCommand))]
     [NotifyCanExecuteChangedFor(nameof(OpenLivingDexGeneratorCommand))]
+    [NotifyCanExecuteChangedFor(nameof(OpenBackupManagerCommand))]
+    [NotifyCanExecuteChangedFor(nameof(OpenSaveDiffCommand))]
     [NotifyCanExecuteChangedFor(nameof(UndoCommand))]
     [NotifyCanExecuteChangedFor(nameof(RedoCommand))]
     private SaveFile? _currentSave;
@@ -75,6 +78,7 @@ public partial class MainWindowViewModel : ViewModelBase
         IClipboardService clipboardService,
         IQrCodeService qrCodeService,
         IUpdateCheckService updateCheckService,
+        ISaveBackupService saveBackupService,
         AppSettings settings,
         ISettingsStore settingsStore,
         IThemeService themeService,
@@ -92,6 +96,7 @@ public partial class MainWindowViewModel : ViewModelBase
         _clipboardService = clipboardService;
         _qrCodeService = qrCodeService;
         _updateCheckService = updateCheckService;
+        _saveBackupService = saveBackupService;
         _settings = settings;
         _settingsStore = settingsStore;
         _themeService = themeService;
@@ -143,6 +148,8 @@ public partial class MainWindowViewModel : ViewModelBase
         _autoLegalityMod = null;
         DisposeLiveHeX();
         _livingDexGenerator = null;
+        _backupManager = null;
+        _saveDiff = null;
 
         CurrentSave = sav;
         if (sav is not null)

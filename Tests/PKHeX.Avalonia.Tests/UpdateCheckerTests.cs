@@ -167,6 +167,7 @@ public class MainWindowUpdateCheckTests
             new Mock<IClipboardService>().Object,
             new Mock<IQrCodeService>().Object,
             updateCheckServiceMock.Object,
+            new Mock<ISaveBackupService>().Object,
             settings,
             new FakeSettingsStore(),
             new Mock<IThemeService>().Object,
