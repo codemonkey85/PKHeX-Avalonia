@@ -131,6 +131,34 @@ public partial class PokemonEditorViewModel : ViewModelBase
         LoadFromPKM();
     }
 
+    /// <summary>Raised when a dropped OS file turns out to be a save file, so the host can open it.</summary>
+    public event Action<string>? SaveFileDropRequested;
+
+    /// <summary>
+    /// Handles OS file(s) dropped directly onto the editor panel. A Pokémon entity file loads
+    /// into the editor (without writing to any box/party slot); a save file is routed through the
+    /// host's "open save" path. Reuses the same detection/conversion pipeline as folder import.
+    /// </summary>
+    public async Task HandleFileDropAsync(IReadOnlyList<string> paths)
+    {
+        foreach (var path in paths)
+        {
+            var result = new ImportEntityFileUseCase().Execute(_sav, path);
+            switch (result.Kind)
+            {
+                case EntityFileDropKind.SaveFile:
+                    SaveFileDropRequested?.Invoke(path);
+                    return;
+                case EntityFileDropKind.Entity:
+                    LoadPKM(result.Entity!);
+                    return;
+            }
+        }
+
+        if (paths.Count > 0)
+            await _dialogService.ShowErrorAsync("Import Failed", "No supported Pokémon or save file was found in the dropped file(s).");
+    }
+
     public void RefreshLanguage()
     {
         var filtered = GameInfo.FilteredSources;

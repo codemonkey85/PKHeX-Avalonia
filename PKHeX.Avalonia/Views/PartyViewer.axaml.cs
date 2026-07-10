@@ -1,7 +1,9 @@
+using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Platform.Storage;
 using PKHeX.Avalonia.Services;
 using PKHeX.Presentation.Models;
 using PKHeX.Presentation.ViewModels;
@@ -13,12 +15,13 @@ public partial class PartyViewer : UserControl
     public PartyViewer()
     {
         InitializeComponent();
-        
+
         // Focus the control when it becomes visible for keyboard navigation
         AttachedToVisualTree += (_, _) => Focus();
     }
 
     private Point _dragStartPoint;
+    private bool _isDragging;
 
     private void OnSlotPointerPressed(object? sender, PointerPressedEventArgs e)
     {
@@ -64,26 +67,49 @@ public partial class PartyViewer : UserControl
         if (Math.Abs(delta.X) < 5 && Math.Abs(delta.Y) < 5)
             return;
 
-        if (button.Tag is not PartySlotData slot || slot.IsEmpty)
+        if (_isDragging || button.Tag is not PartySlotData slot || slot.IsEmpty || DataContext is not PartyViewerViewModel vm)
             return;
 
-        var data = SlotDragTransfer.Create(new SlotDragData(slot.Location));
+        _isDragging = true;
+        try
+        {
+            var pk = vm.GetSlotPKM(slot.Slot);
+            var storageProvider = TopLevel.GetTopLevel(this)?.StorageProvider;
+            var data = await SlotDragTransfer.CreateWithFileAsync(new SlotDragData(slot.Location), pk, storageProvider);
 
-        await DragDrop.DoDragDropAsync(e, data, DragDropEffects.Move | DragDropEffects.Copy);
+            await DragDrop.DoDragDropAsync(e, data, DragDropEffects.Move | DragDropEffects.Copy);
+        }
+        finally
+        {
+            _isDragging = false;
+        }
     }
 
-    private void OnSlotDrop(object? sender, DragEventArgs e)
+    private async void OnSlotDrop(object? sender, DragEventArgs e)
     {
         if (sender is not Button button || button.Tag is not PartySlotData destSlot || DataContext is not PartyViewerViewModel vm)
             return;
 
+        // In-app move/clone between box/party slots (existing behavior).
         var data = SlotDragTransfer.TryGet(e.DataTransfer);
-        if (data == null) return;
+        if (data != null)
+        {
+            vm.RequestMoveCommand.Execute((data, destSlot, e.KeyModifiers.HasFlag(KeyModifiers.Control)));
+            e.Handled = true;
+            return;
+        }
 
-        bool clone = e.KeyModifiers.HasFlag(KeyModifiers.Control);
-        
-        // Use a service or ViewModel method to request the move
-        vm.RequestMoveCommand.Execute((data, destSlot, e.KeyModifiers.HasFlag(global::Avalonia.Input.KeyModifiers.Control)));
+        // OS file(s) dropped from Finder/Explorer/desktop.
+        var files = e.DataTransfer.TryGetFiles();
+        if (files is not { Length: > 0 })
+            return;
+
+        e.Handled = true;
+        var paths = files.Select(f => f.TryGetLocalPath()).OfType<string>().ToList();
+        if (paths.Count == 0)
+            return;
+
+        await vm.HandleFileDropAsync(paths, destSlot.Slot);
     }
 
     private void OnSlotClicked(object? sender, RoutedEventArgs e)

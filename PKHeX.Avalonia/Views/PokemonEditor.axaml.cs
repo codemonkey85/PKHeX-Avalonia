@@ -1,5 +1,7 @@
+using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Platform.Storage;
 using PKHeX.Presentation.ViewModels;
 
 namespace PKHeX.Avalonia.Views;
@@ -9,6 +11,25 @@ public partial class PokemonEditor : UserControl
     public PokemonEditor()
     {
         InitializeComponent();
+    }
+
+    // Dropping an entity file directly onto the editor loads it without writing to a box/party
+    // slot; dropping a save file routes through the host's "open save" path.
+    private async void OnEditorDrop(object? sender, DragEventArgs e)
+    {
+        if (DataContext is not PokemonEditorViewModel vm)
+            return;
+
+        var files = e.DataTransfer.TryGetFiles();
+        if (files is not { Length: > 0 })
+            return;
+
+        e.Handled = true;
+        var paths = files.Select(f => f.TryGetLocalPath()).OfType<string>().ToList();
+        if (paths.Count == 0)
+            return;
+
+        await vm.HandleFileDropAsync(paths);
     }
 
     private void ExpBar_PointerPressed(object? sender, PointerPressedEventArgs e)

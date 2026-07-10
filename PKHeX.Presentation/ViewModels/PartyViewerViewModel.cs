@@ -2,7 +2,10 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PKHeX.Presentation.Models;
 using PKHeX.Core;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace PKHeX.Presentation.ViewModels;
 
@@ -11,6 +14,7 @@ public partial class PartyViewerViewModel : ViewModelBase
     private readonly SaveFile _sav;
     private readonly ISpriteRenderer _spriteRenderer;
     private readonly ISlotService? _slotService;
+    private readonly IDialogService? _dialogService;
 
     [ObservableProperty]
     private int _selectedIndex;
@@ -23,11 +27,12 @@ public partial class PartyViewerViewModel : ViewModelBase
     public event Action<int>? SetSlotRequested;
     public event Action<int>? DeleteSlotRequested;
 
-    public PartyViewerViewModel(SaveFile sav, ISpriteRenderer spriteRenderer, ISlotService? slotService = null)
+    public PartyViewerViewModel(SaveFile sav, ISpriteRenderer spriteRenderer, ISlotService? slotService = null, IDialogService? dialogService = null)
     {
         _sav = sav;
         _spriteRenderer = spriteRenderer;
         _slotService = slotService;
+        _dialogService = dialogService;
         LoadParty();
     }
 
@@ -156,9 +161,81 @@ public partial class PartyViewerViewModel : ViewModelBase
     /// </summary>
     public PKM GetSlotPKM(int slot) => _sav.GetPartySlotAtIndex(slot);
 
+    /// <summary>
+    /// Sets the PKM at the specified party slot and refreshes the display.
+    /// </summary>
+    public void SetSlotPKM(int slot, PKM pk)
+    {
+        _sav.SetPartySlotAtIndex(pk, slot);
+        RefreshParty();
+    }
+
     [RelayCommand]
     private void RequestMove((SlotDragData data, PartySlotData dest, bool clone) param)
     {
         _slotService?.RequestMove(param.data.Source, param.dest.Location, param.clone);
+    }
+
+    /// <summary>Raised when a dropped OS file turns out to be a save file, so the host can open it.</summary>
+    public event Action<string>? SaveFileDropRequested;
+
+    /// <summary>
+    /// Handles one or more OS files dropped onto a party slot. A single file replaces the target
+    /// slot (subject to format compatibility); multiple files are placed into the party's next
+    /// empty slots in order. Reuses the same detection/conversion pipeline as folder import.
+    /// </summary>
+    public async Task HandleFileDropAsync(IReadOnlyList<string> paths, int targetSlot)
+    {
+        if (paths.Count == 0)
+            return;
+
+        if (paths.Count == 1)
+        {
+            var result = new ImportEntityFileUseCase().Execute(_sav, paths[0]);
+            switch (result.Kind)
+            {
+                case EntityFileDropKind.SaveFile:
+                    SaveFileDropRequested?.Invoke(paths[0]);
+                    return;
+                case EntityFileDropKind.Entity:
+                    SetSlotPKM(targetSlot, result.Entity!);
+                    return;
+                default:
+                    if (_dialogService is not null)
+                        await _dialogService.ShowErrorAsync("Import Failed", result.Message ?? "The file could not be imported.");
+                    return;
+            }
+        }
+
+        var candidates = new List<PKM>();
+        foreach (var path in paths)
+        {
+            var result = new ImportEntityFileUseCase().Execute(_sav, path);
+            if (result.Kind == EntityFileDropKind.Entity)
+                candidates.Add(result.Entity!);
+        }
+
+        var placed = 0;
+        var slot = 0;
+        foreach (var pk in candidates)
+        {
+            while (slot < Slots.Count && !Slots[slot].IsEmpty)
+                slot++;
+            if (slot >= Slots.Count)
+                break;
+
+            SetSlotPKM(slot, pk);
+            placed++;
+            slot++;
+        }
+
+        if (_dialogService is not null)
+        {
+            var message = $"Placed {placed} of {paths.Count} Pokémon into the party.";
+            var skipped = paths.Count - placed;
+            if (skipped > 0)
+                message += $"\n{skipped} file(s) were skipped (unsupported, incompatible, or the party is full).";
+            await _dialogService.ShowInformationAsync("Import Files", message);
+        }
     }
 }

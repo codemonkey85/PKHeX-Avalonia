@@ -1,5 +1,11 @@
+using System;
+using System.IO;
+using System.Threading.Tasks;
 using Avalonia.Input;
+using Avalonia.Platform.Storage;
 using PKHeX.Application.Abstractions;
+using PKHeX.Application.UseCases;
+using PKHeX.Core;
 using PKHeX.Presentation.Models;
 
 namespace PKHeX.Avalonia.Services;
@@ -20,6 +26,42 @@ internal static class SlotDragTransfer
     {
         var transfer = new DataTransfer();
         transfer.Add(DataTransferItem.Create(Format, Serialize(data.Source)));
+        return transfer;
+    }
+
+    /// <summary>
+    /// Creates the drag payload for the given slot, additionally attaching a decrypted entity
+    /// file (e.g. ".pk9") so the OS receives a real file when the slot is dragged out to the
+    /// desktop/Finder/Explorer. If <paramref name="storageProvider"/> is unavailable or the
+    /// platform can't materialize a real file reference (e.g. some browser/mobile backends),
+    /// this degrades gracefully to an in-app-only drag (no exception, no OS file).
+    /// </summary>
+    public static async Task<DataTransfer> CreateWithFileAsync(SlotDragData data, PKM? pk, IStorageProvider? storageProvider)
+    {
+        var transfer = Create(data);
+
+        if (pk is null || storageProvider is null)
+            return transfer;
+
+        var exported = new ExportEntityToFileUseCase().Execute(pk);
+        if (exported is not { } file)
+            return transfer;
+
+        try
+        {
+            var tempPath = Path.Combine(Path.GetTempPath(), file.FileName);
+            await File.WriteAllBytesAsync(tempPath, file.Data);
+
+            var storageFile = await storageProvider.TryGetFileFromPathAsync(new Uri(tempPath));
+            if (storageFile is not null)
+                transfer.Add(DataTransferItem.CreateFile(storageFile));
+        }
+        catch
+        {
+            // OS file drag-out isn't supported on this platform/backend; the in-app drag payload
+            // added above still allows box <-> party moves to work.
+        }
+
         return transfer;
     }
 

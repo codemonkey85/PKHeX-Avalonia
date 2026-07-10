@@ -153,19 +153,23 @@ public partial class MainWindowViewModel : ViewModelBase
                 _undoRedo.Initialize(sav);
                 GameInfo.FilteredSources = new FilteredGameDataSource(sav, GameInfo.Sources);
 
-                CurrentPokemonEditor = new PokemonEditorViewModel(sav.BlankPKM, sav, _spriteRenderer, _dialogService, _windowService);
+                var pokemonEditor = new PokemonEditorViewModel(sav.BlankPKM, sav, _spriteRenderer, _dialogService, _windowService);
+                pokemonEditor.SaveFileDropRequested += OnSaveFileDropRequested;
+                CurrentPokemonEditor = pokemonEditor;
 
-                var boxViewer = new BoxViewerViewModel(sav, _spriteRenderer, _slotService, _windowService);
+                var boxViewer = new BoxViewerViewModel(sav, _spriteRenderer, _slotService, _windowService, _dialogService);
                 boxViewer.SlotActivated += OnBoxSlotActivated;
                 boxViewer.ViewSlotRequested += OnBoxViewSlot;
                 boxViewer.SetSlotRequested += OnBoxSetSlot;
                 boxViewer.DeleteSlotRequested += OnBoxDeleteSlot;
+                boxViewer.SaveFileDropRequested += OnSaveFileDropRequested;
                 BoxViewer = boxViewer;
 
-                var partyViewer = new PartyViewerViewModel(sav, _spriteRenderer, _slotService);
+                var partyViewer = new PartyViewerViewModel(sav, _spriteRenderer, _slotService, _dialogService);
                 partyViewer.SlotActivated += OnPartySlotActivated;
                 partyViewer.ViewSlotRequested += OnPartyViewSlot;
                 partyViewer.SetSlotRequested += OnPartySetSlot;
+                partyViewer.SaveFileDropRequested += OnSaveFileDropRequested;
                 PartyViewer = partyViewer;
 
                 TrainerEditor = new TrainerEditorViewModel(sav);
@@ -192,6 +196,7 @@ public partial class MainWindowViewModel : ViewModelBase
                 BoxViewer.ViewSlotRequested -= OnBoxViewSlot;
                 BoxViewer.SetSlotRequested -= OnBoxSetSlot;
                 BoxViewer.DeleteSlotRequested -= OnBoxDeleteSlot;
+                BoxViewer.SaveFileDropRequested -= OnSaveFileDropRequested;
             }
             BoxViewer = null;
 
@@ -200,6 +205,7 @@ public partial class MainWindowViewModel : ViewModelBase
                 PartyViewer.SlotActivated -= OnPartySlotActivated;
                 PartyViewer.ViewSlotRequested -= OnPartyViewSlot;
                 PartyViewer.SetSlotRequested -= OnPartySetSlot;
+                PartyViewer.SaveFileDropRequested -= OnSaveFileDropRequested;
             }
             PartyViewer = null;
 
