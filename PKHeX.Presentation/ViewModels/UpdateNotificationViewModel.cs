@@ -1,0 +1,63 @@
+using System.Collections.Generic;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using PKHeX.Application.Abstractions;
+using PKHeX.Application.Services;
+
+namespace PKHeX.Presentation.ViewModels;
+
+/// <summary>
+/// Backs the non-intrusive "update available" status-bar item. Created only when
+/// <see cref="UpdateAvailabilityEvaluator.ShouldNotify"/> says a newer, non-skipped release exists;
+/// null/absent otherwise, so the status bar shows nothing on a normal launch.
+/// </summary>
+public partial class UpdateNotificationViewModel : ViewModelBase
+{
+    private readonly IReadOnlyList<ReleaseInfo> _releasesNewestFirst;
+    private readonly IWindowService _windowService;
+    private readonly AppSettings _settings;
+    private readonly ISettingsStore _settingsStore;
+
+    public string LatestVersion { get; }
+    public string Message => $"Update available: v{LatestVersion}";
+
+    /// <summary>Raised when the notification should be removed from the status bar (dismissed or skipped).</summary>
+    public event Action? Dismissed;
+
+    public UpdateNotificationViewModel(
+        IReadOnlyList<ReleaseInfo> releasesNewestFirst, IWindowService windowService, AppSettings settings, ISettingsStore settingsStore)
+    {
+        _releasesNewestFirst = releasesNewestFirst;
+        _windowService = windowService;
+        _settings = settings;
+        _settingsStore = settingsStore;
+        LatestVersion = releasesNewestFirst.Count > 0 ? releasesNewestFirst[0].TagName.TrimStart('v', 'V') : string.Empty;
+    }
+
+    [RelayCommand]
+    private async Task ShowChangelog()
+    {
+        var changelog = new UpdateChangelogViewModel(_releasesNewestFirst);
+        await _windowService.ShowDialogAsync(changelog, "What's New");
+    }
+
+    [RelayCommand]
+    private void Download()
+    {
+        UpdateChangelogViewModel.DownloadLatestRelease(_releasesNewestFirst);
+    }
+
+    [RelayCommand]
+    private void Skip()
+    {
+        _settings.Startup.SkippedUpdateVersion = LatestVersion;
+        _settingsStore.Save(_settings);
+        Dismissed?.Invoke();
+    }
+
+    [RelayCommand]
+    private void Dismiss()
+    {
+        Dismissed?.Invoke();
+    }
+}
