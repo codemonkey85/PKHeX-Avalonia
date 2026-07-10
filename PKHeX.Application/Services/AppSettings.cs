@@ -18,6 +18,7 @@ public sealed class AppSettings : IProgramSettings
     // Settings groups (Core-defined types; locally-defined where Core only ships an interface).
     public StartupSettings Startup { get; set; } = new();
     public BackupSettings Backup { get; set; } = new();
+    public SaveBackupSettings SaveBackup { get; set; } = new();
     public SaveLanguageSettings SaveLanguage { get; set; } = new();
     public SlotWriteSettings SlotWrite { get; set; } = new();
     public SetImportSettings Import { get; set; } = new();
@@ -80,5 +81,15 @@ public sealed class AppSettings : IProgramSettings
     public class ThemeSettings
     {
         public AppTheme Selected { get; set; } = AppTheme.Dark;
+    }
+
+    /// <summary>
+    /// Retention policy for the automatic save-file backups (issue #135). Distinct from Core's
+    /// <see cref="BackupSettings"/> (which only toggles whether backups run at all): this controls how
+    /// many timestamped snapshots are kept per save before the oldest are pruned.
+    /// </summary>
+    public class SaveBackupSettings
+    {
+        public int MaxBackupsPerSave { get; set; } = 10;
     }
 }

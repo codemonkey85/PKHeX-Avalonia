@@ -55,6 +55,8 @@
                     <MenuItem Header="Block Editor" Command="{Binding OpenBlockEditorCommand}" />
                     <MenuItem Header="Encounter Database" Command="{Binding OpenEncounterDatabaseCommand}" />
                 </MenuItem>
+                <MenuItem Header="Backup Manager…" Command="{Binding OpenBackupManagerCommand}" />
+                <MenuItem Header="Compare Saves…" Command="{Binding OpenSaveDiffCommand}" />
                 <MenuItem Header="Batch Editor" Command="{Binding OpenBatchEditorCommand}" />
                 <MenuItem Header="Box Manipulation" Command="{Binding OpenBoxManipCommand}" />
                 <MenuItem Header="Save Editors">

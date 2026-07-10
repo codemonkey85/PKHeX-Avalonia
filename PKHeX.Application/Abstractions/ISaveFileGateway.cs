@@ -7,6 +7,9 @@ public interface ISaveFileGateway
     SaveFile? CurrentSave { get; }
     bool HasSave { get; }
 
+    /// <summary>Path the current save was loaded from / last written to, or <see langword="null"/> if unknown (e.g. not yet saved).</summary>
+    string? CurrentPath { get; }
+
     Task<bool> LoadSaveFileAsync(string path);
 
     /// <summary>

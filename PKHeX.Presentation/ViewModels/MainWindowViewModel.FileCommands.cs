@@ -298,6 +298,44 @@ public partial class MainWindowViewModel
         _windowService.ShowTool(_legalityAudit, "Legality Audit");
     }
 
+    // Cached so re-invoking the menu item focuses the existing tool window instead of
+    // opening a duplicate (ShowTool keys off the ViewModel instance). Reset on save change.
+    private BackupManagerViewModel? _backupManager;
+
+    [RelayCommand(CanExecute = nameof(HasSave))]
+    private void OpenBackupManager()
+    {
+        if (CurrentSave is null) return;
+
+        if (_backupManager is null)
+        {
+            // Restoring reloads the save via ISaveFileGateway, which already re-fires
+            // SaveFileChanged (see the subscription in the constructor) — no separate hook needed here.
+            _backupManager = new BackupManagerViewModel(_saveBackupService, _saveFileService, _dialogService, _settings);
+        }
+        else
+        {
+            _backupManager.Refresh();
+        }
+
+        _windowService.ShowTool(_backupManager, "Backup Manager");
+    }
+
+    private SaveDiffViewModel? _saveDiff;
+
+    [RelayCommand(CanExecute = nameof(HasSave))]
+    private void OpenSaveDiff()
+    {
+        if (CurrentSave is null) return;
+
+        if (_saveDiff is null)
+            _saveDiff = new SaveDiffViewModel(CurrentSave, _saveFileService.CurrentPath, _saveBackupService, _dialogService);
+        else
+            _saveDiff.RefreshBackups();
+
+        _windowService.ShowTool(_saveDiff, "Compare Saves");
+    }
+
     [RelayCommand(CanExecute = nameof(HasSave))]
     private async Task OpenMysteryGiftDatabaseAsync()
     {

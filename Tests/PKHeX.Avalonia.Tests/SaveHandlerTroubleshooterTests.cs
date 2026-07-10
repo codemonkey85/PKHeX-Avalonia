@@ -205,6 +205,7 @@ public class SaveHandlerTroubleshooterTests
     {
         public SaveFile? CurrentSave { get; private set; }
         public bool HasSave => CurrentSave is not null;
+        public string? CurrentPath => LastPath;
         public SaveFile? LastOpened { get; private set; }
         public string? LastPath { get; private set; }
 

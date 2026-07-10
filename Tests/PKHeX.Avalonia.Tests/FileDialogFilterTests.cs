@@ -90,7 +90,7 @@ public class FileDialogFilterTests
         var mainSaves = Directory.GetFiles(dir, "*.main");
         Assert.NotEmpty(mainSaves);
 
-        var service = new SaveFileService();
+        var service = new SaveFileService(new SaveBackupService(new FakeAppPaths()), new AppSettings());
         foreach (var path in mainSaves)
         {
             Assert.True(await service.LoadSaveFileAsync(path), $"Failed to load {Path.GetFileName(path)}");
