@@ -21,6 +21,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private readonly ISettingsStore _settingsStore;
     private readonly UndoRedoService _undoRedo;
     private readonly LanguageService _languageService;
+    private readonly IAutoLegalityService _autoLegalityService;
     private readonly string _currentVersion;
 
     [ObservableProperty] private UpdateNotificationViewModel? _updateNotification;
@@ -35,6 +36,7 @@ public partial class MainWindowViewModel : ViewModelBase
     [NotifyCanExecuteChangedFor(nameof(ExportShowdownCommand))]
     [NotifyCanExecuteChangedFor(nameof(OpenPKMDatabaseCommand))]
     [NotifyCanExecuteChangedFor(nameof(OpenBoxReportCommand))]
+    [NotifyCanExecuteChangedFor(nameof(OpenAutoLegalityModCommand))]
     [NotifyCanExecuteChangedFor(nameof(UndoCommand))]
     [NotifyCanExecuteChangedFor(nameof(RedoCommand))]
     private SaveFile? _currentSave;
@@ -70,7 +72,8 @@ public partial class MainWindowViewModel : ViewModelBase
         AppSettings settings,
         ISettingsStore settingsStore,
         UndoRedoService undoRedo,
-        LanguageService languageService)
+        LanguageService languageService,
+        IAutoLegalityService autoLegalityService)
     {
         _saveFileService = saveFileService;
         _dialogService = dialogService;
@@ -84,6 +87,7 @@ public partial class MainWindowViewModel : ViewModelBase
         _settingsStore = settingsStore;
         _undoRedo = undoRedo;
         _languageService = languageService;
+        _autoLegalityService = autoLegalityService;
         _currentVersion = GetCurrentVersion();
 
         _saveFileService.SaveFileChanged += OnSaveFileChanged;
@@ -124,6 +128,7 @@ public partial class MainWindowViewModel : ViewModelBase
         _windowService.CloseAllTools();
         _boxReport = null;
         _legalityAudit = null;
+        _autoLegalityMod = null;
 
         CurrentSave = sav;
         if (sav is not null)

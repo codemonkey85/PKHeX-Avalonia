@@ -43,7 +43,8 @@ public class ShowdownIntegrationTests : IDisposable
             new AppSettings(),
             new FakeSettingsStore(),
             new UndoRedoService(),
-            new LanguageService()
+            new LanguageService(),
+            new Mock<IAutoLegalityService>().Object
         );
         
         // Simulate loading a save

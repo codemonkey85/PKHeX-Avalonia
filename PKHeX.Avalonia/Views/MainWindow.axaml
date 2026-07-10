@@ -36,6 +36,7 @@
                     <MenuItem Header="Export Box to Clipboard" Command="{Binding ExportShowdownBoxCommand}" />
                     <MenuItem Header="Export All Boxes to Clipboard" Command="{Binding ExportShowdownAllBoxesCommand}" />
                 </MenuItem>
+                <MenuItem Header="Auto Legality Mod…" Command="{Binding OpenAutoLegalityModCommand}" />
                 <MenuItem Header="QR Code">
                     <MenuItem Header="Show Current Pokémon…" Command="{Binding ShowQrCodeCommand}" />
                     <MenuItem Header="Import from Image…" Command="{Binding ImportQrCodeCommand}" />
