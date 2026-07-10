@@ -169,6 +169,7 @@ public class MainWindowUpdateCheckTests
             updateCheckServiceMock.Object,
             settings,
             new FakeSettingsStore(),
+            new Mock<IThemeService>().Object,
             new UndoRedoService(),
             new LanguageService(),
             new Mock<IAutoLegalityService>().Object,

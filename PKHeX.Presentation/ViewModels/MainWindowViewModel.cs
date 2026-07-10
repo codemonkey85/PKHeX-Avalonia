@@ -20,6 +20,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private readonly IUpdateCheckService _updateCheckService;
     private readonly AppSettings _settings;
     private readonly ISettingsStore _settingsStore;
+    private readonly IThemeService _themeService;
     private readonly UndoRedoService _undoRedo;
     private readonly LanguageService _languageService;
     private readonly IAutoLegalityService _autoLegalityService;
@@ -74,6 +75,7 @@ public partial class MainWindowViewModel : ViewModelBase
         IUpdateCheckService updateCheckService,
         AppSettings settings,
         ISettingsStore settingsStore,
+        IThemeService themeService,
         UndoRedoService undoRedo,
         LanguageService languageService,
         IAutoLegalityService autoLegalityService,
@@ -89,6 +91,7 @@ public partial class MainWindowViewModel : ViewModelBase
         _updateCheckService = updateCheckService;
         _settings = settings;
         _settingsStore = settingsStore;
+        _themeService = themeService;
         _undoRedo = undoRedo;
         _languageService = languageService;
         _autoLegalityService = autoLegalityService;

@@ -10,13 +10,16 @@ public partial class SettingsViewModel : ViewModelBase, ICloseableDialog
 {
     private readonly AppSettings _settings;
     private readonly ISettingsStore _settingsStore;
+    private readonly IThemeService _themeService;
+    private bool _isLoading;
 
     public Action? CloseRequested { get; set; }
 
-    public SettingsViewModel(AppSettings settings, ISettingsStore settingsStore)
+    public SettingsViewModel(AppSettings settings, ISettingsStore settingsStore, IThemeService themeService)
     {
         _settings = settings;
         _settingsStore = settingsStore;
+        _themeService = themeService;
         Load();
     }
 
@@ -45,8 +48,22 @@ public partial class SettingsViewModel : ViewModelBase, ICloseableDialog
     [ObservableProperty] private SpritePreference _spritePreference;
     public IReadOnlyList<SpritePreference> SpritePreferences { get; } = Enum.GetValues<SpritePreference>();
 
+    // Appearance
+    [ObservableProperty] private AppTheme _selectedTheme;
+    public IReadOnlyList<AppTheme> Themes { get; } = Enum.GetValues<AppTheme>();
+
+    partial void OnSelectedThemeChanged(AppTheme value)
+    {
+        // Apply (and persist) immediately so the picker previews live, without needing Save.
+        // Skip during Load(), which sets the initial value from the already-applied preference.
+        if (!_isLoading)
+            _themeService.ApplyTheme(value);
+    }
+
     private void Load()
     {
+        _isLoading = true;
+
         DefaultSaveVersion = _settings.Startup.DefaultSaveVersion;
         AutoLoadMode = _settings.Startup.AutoLoadSaveOnStartup;
         ForceHaX = _settings.Startup.ForceHaXOnLaunch;
@@ -62,6 +79,9 @@ public partial class SettingsViewModel : ViewModelBase, ICloseableDialog
         ModifyUnset = _settings.SlotWrite.ModifyUnset;
 
         SpritePreference = _settings.Sprite.SpritePreference;
+        SelectedTheme = _themeService.CurrentTheme;
+
+        _isLoading = false;
     }
 
     [RelayCommand]

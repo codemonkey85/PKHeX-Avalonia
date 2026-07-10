@@ -66,8 +66,8 @@
         <TextBlock Grid.Row="2" Text="{Binding StatusText}" Margin="10,5"/>
         
         <!-- Loading Overlay -->
-        <Border Grid.RowSpan="3" Background="#80000000" IsVisible="{Binding IsLoading}">
-            <TextBlock Text="Loading..." Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
+        <Border Grid.RowSpan="3" Classes="overlay-scrim" IsVisible="{Binding IsLoading}">
+            <TextBlock Classes="overlay-text" Text="Loading..." HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
         </Border>
     </Grid>
 </UserControl>
