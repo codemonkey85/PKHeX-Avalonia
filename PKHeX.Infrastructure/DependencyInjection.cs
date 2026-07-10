@@ -1,7 +1,9 @@
 using Microsoft.Extensions.DependencyInjection;
 using PKHeX.Application.Abstractions;
+using PKHeX.Application.Abstractions.LiveHex;
 using PKHeX.Infrastructure.AutoLegality;
 using PKHeX.Infrastructure.Configuration;
+using PKHeX.Infrastructure.LiveHex;
 
 namespace PKHeX.Infrastructure;
 
@@ -15,6 +17,8 @@ public static class DependencyInjection
         services.AddSingleton<ISettingsStore, SettingsStore>();
         services.AddSingleton<IUpdateCheckService, GitHubUpdateCheckService>();
         services.AddSingleton<IAutoLegalityService, AutoLegalityService>();
+        services.AddSingleton<IConsoleConnectionFactory, SysBotConnectionFactory>();
+        services.AddSingleton<ILiveHexService, LiveHexService>();
         return services;
     }
 }

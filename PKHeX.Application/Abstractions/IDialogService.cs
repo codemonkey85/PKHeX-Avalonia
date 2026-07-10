@@ -11,6 +11,12 @@ public interface IDialogService
     Task<string?> SaveFileAsync(string title, string? defaultFileName = null, string[]? filters = null);
     Task ShowErrorAsync(string title, string message);
     Task ShowInformationAsync(string title, string message);
+
+    /// <summary>
+    /// Shows a modal confirm/cancel prompt. Returns <see langword="true"/> only when the user
+    /// explicitly confirms. Used to gate destructive actions such as writing to a live console.
+    /// </summary>
+    Task<bool> ShowConfirmationAsync(string title, string message, string confirmText = "Yes", string cancelText = "Cancel");
     Task<string?> GetClipboardTextAsync();
     Task SetClipboardTextAsync(string text);
 }

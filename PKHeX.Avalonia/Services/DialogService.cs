@@ -85,6 +85,50 @@ public sealed class DialogService : IDialogService
     public async Task ShowErrorAsync(string title, string message) => await ShowMessageBoxAsync(title, message);
     public async Task ShowInformationAsync(string title, string message) => await ShowMessageBoxAsync(title, message);
 
+    public async Task<bool> ShowConfirmationAsync(string title, string message, string confirmText = "Yes", string cancelText = "Cancel")
+    {
+        var window = GetMainWindow();
+        if (window is null) return false;
+
+        var confirmButton = new Button { Content = confirmText, MinWidth = 90 };
+        var cancelButton = new Button { Content = cancelText, MinWidth = 90 };
+
+        var dialog = new Window
+        {
+            Title = title,
+            Width = 440,
+            MinHeight = 130,
+            MaxWidth = 620,
+            MaxHeight = 520,
+            SizeToContent = SizeToContent.Height,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            CanResize = false,
+            Content = new StackPanel
+            {
+                Margin = new Thickness(20),
+                Spacing = 16,
+                Children =
+                {
+                    new TextBlock { Text = message, TextWrapping = TextWrapping.Wrap },
+                    new StackPanel
+                    {
+                        Orientation = Orientation.Horizontal,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        Spacing = 12,
+                        Children = { cancelButton, confirmButton },
+                    },
+                },
+            },
+        };
+
+        var result = false;
+        confirmButton.Click += (_, _) => { result = true; dialog.Close(); };
+        cancelButton.Click += (_, _) => { result = false; dialog.Close(); };
+
+        await dialog.ShowDialog(window);
+        return result;
+    }
+
     private async Task ShowMessageBoxAsync(string title, string message)
     {
         var window = GetMainWindow();
