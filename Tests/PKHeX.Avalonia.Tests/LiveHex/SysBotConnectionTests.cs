@@ -16,6 +16,31 @@ namespace PKHeX.Avalonia.Tests.LiveHex;
 /// </summary>
 public class SysBotConnectionTests
 {
+    /// <summary>
+    /// Connects with retries so the connect phase gets a generous overall budget even when a
+    /// contended CI runner makes the loopback handshake occasionally exceed <paramref name="timeoutMs"/>.
+    /// Each attempt still uses the caller's short <paramref name="timeoutMs"/>, so the socket's
+    /// ReceiveTimeout/SendTimeout (set from that same value by <see cref="SysBotConnection.Connect"/>)
+    /// stays tight for whatever read/write the test performs afterward - only the connect phase
+    /// is made generous, via retrying rather than inflating the per-attempt timeout.
+    /// </summary>
+    private static void ConnectGenerously(SysBotConnection conn, string ip, int port, int timeoutMs, int connectBudgetMs = 10_000)
+    {
+        var deadline = DateTime.UtcNow.AddMilliseconds(connectBudgetMs);
+        while (true)
+        {
+            try
+            {
+                conn.Connect(ip, port, timeoutMs);
+                return;
+            }
+            catch (LiveHexConnectionException) when (DateTime.UtcNow < deadline)
+            {
+                // Transient contention on the loopback handshake; retry until the generous budget is spent.
+            }
+        }
+    }
+
     /// <summary>Minimal loopback sys-botbase server. Set <paramref name="mute"/> to never respond (timeout tests).</summary>
     private sealed class FakeBotbaseServer : IDisposable
     {
@@ -114,7 +139,7 @@ public class SysBotConnectionTests
     {
         using var server = new FakeBotbaseServer();
         using var conn = new SysBotConnection();
-        conn.Connect("127.0.0.1", server.Port, 3000);
+        ConnectGenerously(conn, "127.0.0.1", server.Port, 3000);
 
         var data = conn.ReadHeap(0x1000, 8);
         Assert.Equal(new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }, data);
@@ -125,7 +150,7 @@ public class SysBotConnectionTests
     {
         using var server = new FakeBotbaseServer();
         using var conn = new SysBotConnection();
-        conn.Connect("127.0.0.1", server.Port, 3000);
+        ConnectGenerously(conn, "127.0.0.1", server.Port, 3000);
 
         Assert.Equal("0100ABF008968000", conn.GetTitleId());
         Assert.Equal("2.5", conn.GetBotbaseVersion());
@@ -138,7 +163,7 @@ public class SysBotConnectionTests
     {
         using var server = new FakeBotbaseServer();
         using var conn = new SysBotConnection();
-        conn.Connect("127.0.0.1", server.Port, 3000);
+        ConnectGenerously(conn, "127.0.0.1", server.Port, 3000);
 
         conn.WriteHeap([0xAB, 0xCD], 0x2000);
 
@@ -169,9 +194,14 @@ public class SysBotConnectionTests
     {
         using var server = new FakeBotbaseServer(mute: true);
         using var conn = new SysBotConnection();
-        conn.Connect("127.0.0.1", server.Port, 500);
+        // Connect phase gets a generous overall budget via retries (contended CI runners can make the
+        // loopback handshake exceed the short timeout below); each attempt still uses 500ms, so
+        // ReceiveTimeout/SendTimeout - set from that same value by Connect - stay short for the read below.
+        ConnectGenerously(conn, "127.0.0.1", server.Port, 500);
 
         var ex = Assert.Throws<LiveHexConnectionException>(() => conn.ReadHeap(0x1000, 8));
-        Assert.Contains("Timed out", ex.Message);
+        // Assert the read-timeout message specifically, not just "Timed out", so this test can't pass
+        // by silently catching a connect-phase timeout instead of the read-phase timeout it targets.
+        Assert.Contains("Timed out waiting for a response", ex.Message);
     }
 }
