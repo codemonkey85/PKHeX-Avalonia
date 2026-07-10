@@ -9,12 +9,14 @@ namespace PKHeX.Presentation.ViewModels;
 public partial class SettingsViewModel : ViewModelBase, ICloseableDialog
 {
     private readonly AppSettings _settings;
+    private readonly ISettingsStore _settingsStore;
 
     public Action? CloseRequested { get; set; }
 
-    public SettingsViewModel(AppSettings settings)
+    public SettingsViewModel(AppSettings settings, ISettingsStore settingsStore)
     {
         _settings = settings;
+        _settingsStore = settingsStore;
         Load();
     }
 
@@ -78,7 +80,7 @@ public partial class SettingsViewModel : ViewModelBase, ICloseableDialog
 
         _settings.Sprite.SpritePreference = SpritePreference;
 
-        _settings.Save();
+        _settingsStore.Save(_settings);
         _settings.InitializeCore();
 
         CloseRequested?.Invoke();

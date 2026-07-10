@@ -15,6 +15,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private readonly IClipboardService _clipboardService;
     private readonly IQrCodeService _qrCodeService;
     private readonly AppSettings _settings;
+    private readonly ISettingsStore _settingsStore;
     private readonly UndoRedoService _undoRedo;
     private readonly LanguageService _languageService;
 
@@ -60,6 +61,7 @@ public partial class MainWindowViewModel : ViewModelBase
         IClipboardService clipboardService,
         IQrCodeService qrCodeService,
         AppSettings settings,
+        ISettingsStore settingsStore,
         UndoRedoService undoRedo,
         LanguageService languageService)
     {
@@ -71,6 +73,7 @@ public partial class MainWindowViewModel : ViewModelBase
         _clipboardService = clipboardService;
         _qrCodeService = qrCodeService;
         _settings = settings;
+        _settingsStore = settingsStore;
         _undoRedo = undoRedo;
         _languageService = languageService;
 

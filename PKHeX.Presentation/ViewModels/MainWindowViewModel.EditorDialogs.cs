@@ -23,7 +23,7 @@ public partial class MainWindowViewModel
     [RelayCommand]
     private async Task OpenSettingsAsync()
     {
-        var vm = new SettingsViewModel(_settings);
+        var vm = new SettingsViewModel(_settings, _settingsStore);
         await _windowService.ShowDialogAsync(vm, "Settings");
 
         // The sprite preference may have changed; re-apply the style and refresh open views.
