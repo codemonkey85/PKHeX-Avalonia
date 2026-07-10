@@ -170,7 +170,8 @@ public class MainWindowUpdateCheckTests
             settings,
             new FakeSettingsStore(),
             new UndoRedoService(),
-            new LanguageService());
+            new LanguageService(),
+            new Mock<IAutoLegalityService>().Object);
     }
 
     [Fact]

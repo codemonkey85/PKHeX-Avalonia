@@ -17,6 +17,7 @@ public static class ViewLocator
     {
         [typeof(AboutViewModel)] = () => new AboutView(),
         [typeof(ApricornEditorViewModel)] = () => new ApricornEditor(),
+        [typeof(AutoLegalityModViewModel)] = () => new AutoLegalityModView(),
         [typeof(BatchEditorViewModel)] = () => new BatchEditor(),
         [typeof(BattlePassEditorViewModel)] = () => new BattlePassEditor(),
         [typeof(BerryFieldEditorViewModel)] = () => new BerryFieldEditorView(),

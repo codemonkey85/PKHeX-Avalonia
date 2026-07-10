@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using PKHeX.Application.Abstractions;
+using PKHeX.Infrastructure.AutoLegality;
 using PKHeX.Infrastructure.Configuration;
 
 namespace PKHeX.Infrastructure;
@@ -13,6 +14,7 @@ public static class DependencyInjection
         services.AddSingleton<IAppPaths, AppPaths>();
         services.AddSingleton<ISettingsStore, SettingsStore>();
         services.AddSingleton<IUpdateCheckService, GitHubUpdateCheckService>();
+        services.AddSingleton<IAutoLegalityService, AutoLegalityService>();
         return services;
     }
 }
