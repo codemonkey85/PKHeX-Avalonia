@@ -4,6 +4,7 @@ using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
 using PKHeX.Application;
 using PKHeX.Infrastructure;
+using PKHeX.Infrastructure.Configuration;
 using PKHeX.Avalonia.Services;
 using PKHeX.Presentation.ViewModels;
 using PKHeX.Avalonia.Views;
@@ -46,9 +47,14 @@ public partial class App : global::Avalonia.Application
         services.AddApplication();
         services.AddInfrastructure();
 
-        // Config: load + seed Core localization, then register as the IProgramSettings model.
-        var config = AppSettings.Load();
+        // Config: resolve platform paths, load (migrating/recovering as needed) + seed Core
+        // localization, then register the store and the loaded model for injection.
+        IAppPaths paths = new AppPaths();
+        ISettingsStore settingsStore = new SettingsStore(paths);
+        var config = settingsStore.Load();
         config.InitializeCore();
+        services.AddSingleton(paths);
+        services.AddSingleton(settingsStore);
         services.AddSingleton(config);
 
         // Host (Frameworks & Drivers): Avalonia/Skia implementations of the Application ports.

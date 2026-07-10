@@ -40,6 +40,7 @@ public class ShowdownIntegrationTests : IDisposable
             _clipboardServiceMock.Object,
             new Mock<IQrCodeService>().Object,
             new AppSettings(),
+            new FakeSettingsStore(),
             new UndoRedoService(),
             new LanguageService()
         );

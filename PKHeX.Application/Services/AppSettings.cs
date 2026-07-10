@@ -1,18 +1,17 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using PKHeX.Core;
 
 namespace PKHeX.Application.Services;
 
 /// <summary>
-/// Application-layer settings model. Implements Core's <see cref="IProgramSettings"/> and persists
-/// itself as JSON. Plain POCO (no MVVM-framework coupling) — the settings screen binds to
-/// <c>SettingsViewModel</c>, which wraps this model.
+/// Application-layer settings model. Implements Core's <see cref="IProgramSettings"/>. Plain POCO
+/// (no MVVM-framework coupling, no file IO) — persistence is handled by an
+/// <see cref="Abstractions.ISettingsStore"/> implementation in the Infrastructure layer, and the
+/// settings screen binds to <c>SettingsViewModel</c>, which wraps this model.
 /// </summary>
 public sealed class AppSettings : IProgramSettings
 {
-    private const string ConfigFileName = "config.json";
-    private static readonly string ConfigPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ConfigFileName);
-
     IStartupSettings IProgramSettings.Startup => Startup;
 
     // Settings groups (Core-defined types; locally-defined where Core only ships an interface).
@@ -28,37 +27,13 @@ public sealed class AppSettings : IProgramSettings
 
     public string DisplayLanguage { get; set; } = "en";
 
-    public static AppSettings Load()
-    {
-        if (!File.Exists(ConfigPath))
-            return new AppSettings();
-
-        try
-        {
-            var json = File.ReadAllText(ConfigPath);
-            var settings = JsonSerializer.Deserialize<AppSettings>(json);
-            return settings ?? new AppSettings();
-        }
-        catch (Exception)
-        {
-            // Fallback to defaults on error
-            return new AppSettings();
-        }
-    }
-
-    public void Save()
-    {
-        try
-        {
-            var options = new JsonSerializerOptions { WriteIndented = true };
-            var json = JsonSerializer.Serialize(this, options);
-            File.WriteAllText(ConfigPath, json);
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Trace.TraceWarning($"Failed to save settings: {ex.Message}");
-        }
-    }
+    /// <summary>
+    /// Forward-compatibility bucket: any JSON keys written by a newer version that this build does
+    /// not recognize are captured here and re-emitted on save, so upgrading/downgrading does not
+    /// silently drop settings. See issue #138 acceptance criteria.
+    /// </summary>
+    [JsonExtensionData]
+    public Dictionary<string, JsonElement>? ExtensionData { get; set; }
 
     public void InitializeCore()
     {

@@ -125,7 +125,7 @@ public class SpriteStyleTests
     {
         // Proves the new Sprites card wires up at runtime: the XAML resource (converter),
         // the ComboBox ItemsSource, and the SelectedItem binding.
-        var vm = new SettingsViewModel(new AppSettings());
+        var vm = new SettingsViewModel(new AppSettings(), new FakeSettingsStore());
         var view = new SettingsView { DataContext = vm };
         var window = new Window { Content = view, Width = 480, Height = 720 };
         window.Show();
