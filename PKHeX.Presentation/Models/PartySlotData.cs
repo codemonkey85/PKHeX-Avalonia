@@ -43,7 +43,38 @@ public partial class PartySlotData : ObservableObject
     /// <summary>
     /// Short summary for tooltip.
     /// </summary>
-    public string ToolTipSummary => IsEmpty 
-        ? "Empty" 
+    public string ToolTipSummary => IsEmpty
+        ? "Empty"
         : ShowdownSummary;
+
+    /// <summary>
+    /// Concise, screen-reader-friendly announcement for this slot, e.g.
+    /// "Party slot 2: Pikachu, Lv. 25, shiny" or "Party slot 4: Empty".
+    /// </summary>
+    public string AccessibleName
+    {
+        get
+        {
+            var header = $"Party slot {Slot + 1}";
+            if (IsEmpty)
+                return $"{header}: Empty";
+
+            if (IsEgg)
+                return $"{header}: {SpeciesName} Egg";
+
+            var parts = new System.Collections.Generic.List<string>
+            {
+                SpeciesName,
+                $"Lv. {Level}",
+            };
+            if (IsShiny)
+                parts.Add("shiny");
+            if (!IsLegal)
+                parts.Add("illegal");
+            if (MaxHp > 0 && CurrentHp == 0)
+                parts.Add("fainted");
+
+            return $"{header}: {string.Join(", ", parts)}";
+        }
+    }
 }

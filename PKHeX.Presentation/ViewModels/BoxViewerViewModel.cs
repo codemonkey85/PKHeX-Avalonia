@@ -39,6 +39,12 @@ public partial class BoxViewerViewModel : ViewModelBase, IBoxNavigator
     public int BoxCount => _sav.BoxCount;
     public int SlotsPerBox => _sav.BoxSlotCount;
 
+    /// <summary>
+    /// The slot under the current keyboard/selection cursor, used to drive
+    /// keyboard-only Ctrl+C/Ctrl+V/Delete slot operations (no mouse required).
+    /// </summary>
+    public SlotData? SelectedSlot => SelectedIndex >= 0 && SelectedIndex < Slots.Count ? Slots[SelectedIndex] : null;
+
     // IBoxNavigator
     int IBoxNavigator.CurrentSlot => SelectedIndex;
     void IBoxNavigator.NavigateTo(int box, int slot)
@@ -68,6 +74,7 @@ public partial class BoxViewerViewModel : ViewModelBase, IBoxNavigator
     {
         for (int i = 0; i < Slots.Count; i++)
             Slots[i].IsSelected = i == value;
+        OnPropertyChanged(nameof(SelectedSlot));
     }
 
     private void LoadBox(int box)

@@ -16,11 +16,13 @@
                 <ComboBox Width="150" ItemsSource="{Binding SpeciesSource}"
                           SelectedValue="{Binding Species}"
                           SelectedValueBinding="{Binding Value}"
-                          DisplayMemberBinding="{Binding Text}" />
+                          DisplayMemberBinding="{Binding Text}"
+                          AutomationProperties.Name="Species" />
                 <ComboBox Width="110" ItemsSource="{Binding FormList}"
                           SelectedValue="{Binding Form}"
                           SelectedValueBinding="{Binding Value}"
-                          DisplayMemberBinding="{Binding Text}" />
+                          DisplayMemberBinding="{Binding Text}"
+                          AutomationProperties.Name="Form" />
             </StackPanel>
         </DataTemplate>
 
@@ -36,11 +38,13 @@
                         <ComboBox Width="150" ItemsSource="{Binding SpeciesSource}"
                                   SelectedValue="{Binding Species}"
                                   SelectedValueBinding="{Binding Value}"
-                                  DisplayMemberBinding="{Binding Text}" />
+                                  DisplayMemberBinding="{Binding Text}"
+                                  AutomationProperties.Name="Species" />
                         <ComboBox Width="110" ItemsSource="{Binding FormList}"
                                   SelectedValue="{Binding Form}"
                                   SelectedValueBinding="{Binding Value}"
-                                  DisplayMemberBinding="{Binding Text}" />
+                                  DisplayMemberBinding="{Binding Text}"
+                                  AutomationProperties.Name="Form" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                         <TextBlock Text="Gender" VerticalAlignment="Center" />
@@ -216,14 +220,14 @@
                                     <DataGridTemplateColumn Header="1st Places" Width="160">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate DataType="vm:PokeathlonEventStatViewModel">
-                                                <NumericUpDown Value="{Binding FirstPlaces}" Minimum="0" Maximum="{Binding MaxStat}" FormatString="0" Classes="compact" HorizontalAlignment="Stretch" />
+                                                <NumericUpDown Value="{Binding FirstPlaces}" Minimum="0" Maximum="{Binding MaxStat}" FormatString="0" Classes="compact" HorizontalAlignment="Stretch" AutomationProperties.Name="1st Places" />
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
                                     <DataGridTemplateColumn Header="Best Score" Width="160">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate DataType="vm:PokeathlonEventStatViewModel">
-                                                <NumericUpDown Value="{Binding BestScore}" Minimum="0" Maximum="65535" FormatString="0" Classes="compact" HorizontalAlignment="Stretch" />
+                                                <NumericUpDown Value="{Binding BestScore}" Minimum="0" Maximum="65535" FormatString="0" Classes="compact" HorizontalAlignment="Stretch" AutomationProperties.Name="Best Score" />
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>

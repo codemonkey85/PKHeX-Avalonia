@@ -13,7 +13,7 @@
         <Grid ColumnDefinitions="250, 16, *" RowDefinitions="*,Auto">
             <!-- Species List -->
             <Grid Grid.Column="0" RowDefinitions="Auto, 8, *">
-                <TextBox Text="{Binding SearchText}" Watermark="Search Species..." />
+                <TextBox Text="{Binding SearchText}" Watermark="Search Species..." AutomationProperties.Name="Search Species" />
                 <Border Grid.Row="2" Classes="section-card" Padding="0">
                     <ListBox ItemsSource="{Binding Species}" SelectedItem="{Binding SelectedSpecies}" Background="Transparent">
                         <ListBox.ItemTemplate>
@@ -60,8 +60,8 @@
                                 
                                 <!-- Move Buttons -->
                                 <StackPanel Grid.Column="2" VerticalAlignment="Center" Spacing="8">
-                                    <Button Content="→" Command="{Binding AddGenderCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
-                                    <Button Content="←" Command="{Binding RemoveGenderCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+                                    <Button Content="→" Command="{Binding AddGenderCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" AutomationProperties.Name="Add Gender"/>
+                                    <Button Content="←" Command="{Binding RemoveGenderCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" AutomationProperties.Name="Remove Gender"/>
                                 </StackPanel>
                                 
                                 <!-- Seen -->
@@ -72,8 +72,8 @@
                                             <ListBox ItemsSource="{Binding SeenGenders}" SelectedItem="{Binding SelectedSeenGender}" Height="120" />
                                         </Border>
                                         <StackPanel Grid.Column="2" VerticalAlignment="Center" Spacing="8">
-                                            <Button Content="▲" Command="{Binding MoveGenderUpCommand}" Padding="8,6"/>
-                                            <Button Content="▼" Command="{Binding MoveGenderDownCommand}" Padding="8,6"/>
+                                            <Button Content="▲" Command="{Binding MoveGenderUpCommand}" Padding="8,6" AutomationProperties.Name="Move Gender Up"/>
+                                            <Button Content="▼" Command="{Binding MoveGenderDownCommand}" Padding="8,6" AutomationProperties.Name="Move Gender Down"/>
                                         </StackPanel>
                                     </Grid>
                                 </DockPanel>
@@ -96,8 +96,8 @@
                                 
                                 <!-- Move Buttons -->
                                 <StackPanel Grid.Column="2" VerticalAlignment="Center" Spacing="8">
-                                    <Button Content="→" Command="{Binding AddFormCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
-                                    <Button Content="←" Command="{Binding RemoveFormCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+                                    <Button Content="→" Command="{Binding AddFormCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" AutomationProperties.Name="Add Form"/>
+                                    <Button Content="←" Command="{Binding RemoveFormCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" AutomationProperties.Name="Remove Form"/>
                                 </StackPanel>
                                 
                                 <!-- Seen -->
@@ -108,8 +108,8 @@
                                             <ListBox ItemsSource="{Binding SeenForms}" SelectedItem="{Binding SelectedSeenForm}" Height="120" />
                                         </Border>
                                         <StackPanel Grid.Column="2" VerticalAlignment="Center" Spacing="8">
-                                            <Button Content="▲" Command="{Binding MoveFormUpCommand}" Padding="8,6"/>
-                                            <Button Content="▼" Command="{Binding MoveFormDownCommand}" Padding="8,6"/>
+                                            <Button Content="▲" Command="{Binding MoveFormUpCommand}" Padding="8,6" AutomationProperties.Name="Move Form Up"/>
+                                            <Button Content="▼" Command="{Binding MoveFormDownCommand}" Padding="8,6" AutomationProperties.Name="Move Form Down"/>
                                         </StackPanel>
                                     </Grid>
                                 </DockPanel>

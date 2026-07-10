@@ -20,9 +20,9 @@
     <Grid RowDefinitions="Auto, *, Auto" Margin="10">
         <!-- Header -->
         <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center">
-            <Button Content="&lt;" Command="{Binding PreviousGroupCommand}"/>
-            <ComboBox ItemsSource="{Binding GroupNames}" SelectedIndex="{Binding CurrentGroupIndex}" MinWidth="180" MaxDropDownHeight="400"/>
-            <Button Content="&gt;" Command="{Binding NextGroupCommand}"/>
+            <Button Content="&lt;" Command="{Binding PreviousGroupCommand}" AutomationProperties.Name="Previous Group"/>
+            <ComboBox ItemsSource="{Binding GroupNames}" SelectedIndex="{Binding CurrentGroupIndex}" MinWidth="180" MaxDropDownHeight="400" AutomationProperties.Name="Group Selection"/>
+            <Button Content="&gt;" Command="{Binding NextGroupCommand}" AutomationProperties.Name="Next Group"/>
         </StackPanel>
 
         <!-- Slots -->
@@ -37,7 +37,9 @@
                     <DataTemplate x:DataType="models:SlotData">
                         <Button Margin="2" Padding="4" MinWidth="80" MinHeight="100"
                                 Command="{Binding $parent[UserControl].((vm:GroupViewerViewModel)DataContext).ViewSlotCommand}"
-                                CommandParameter="{Binding}">
+                                CommandParameter="{Binding}"
+                                AutomationProperties.Name="{Binding AccessibleName}"
+                                ToolTip.Tip="{Binding ToolTipSummary}">
                             <Grid RowDefinitions="*, Auto, Auto">
                                 <!-- Sprite -->
                                 <Image Grid.Row="0" Source="{Binding Sprite, Converter={StaticResource PngBytesToBitmap}}" Stretch="Uniform" Height="60"/>

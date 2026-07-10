@@ -140,4 +140,7 @@ public class EncounterResultViewModel // Removed 'partial' as it's not needed un
             return names.FirstOrDefault(x => x.Value == locationId)?.Text ?? $"#{locationId}";
         }
     }
+
+    /// <summary>Screen-reader-friendly summary for this result card, e.g. "Pikachu, Lv. 5, Route 1, Yellow".</summary>
+    public string AccessibleName => $"{Species}, {Level}, {Location}, {Version}";
 }

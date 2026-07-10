@@ -22,6 +22,12 @@ public partial class PartyViewerViewModel : ViewModelBase
     [ObservableProperty]
     private ObservableCollection<PartySlotData> _slots = [];
 
+    /// <summary>
+    /// The slot under the current keyboard/selection cursor, used to drive
+    /// keyboard-only Ctrl+C/Ctrl+V/Delete slot operations (no mouse required).
+    /// </summary>
+    public PartySlotData? SelectedSlot => SelectedIndex >= 0 && SelectedIndex < Slots.Count ? Slots[SelectedIndex] : null;
+
     public event Action<int>? SlotActivated;
     public event Action<int>? ViewSlotRequested;
     public event Action<int>? SetSlotRequested;
@@ -40,6 +46,7 @@ public partial class PartyViewerViewModel : ViewModelBase
     {
         for (int i = 0; i < Slots.Count; i++)
             Slots[i].IsSelected = i == value;
+        OnPropertyChanged(nameof(SelectedSlot));
     }
 
     private void LoadParty()

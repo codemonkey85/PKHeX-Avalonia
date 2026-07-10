@@ -37,10 +37,11 @@
                             <Border Margin="2" BorderBrush="LightGray" BorderThickness="1" CornerRadius="3" Padding="4" Width="180">
                                 <Grid ColumnDefinitions="Auto,*">
                                     <TextBlock Grid.Column="0" Text="{Binding DisplayIndex, StringFormat='{}{0}: '}" VerticalAlignment="Center" Margin="0,0,5,0" />
-                                    <ComboBox Grid.Column="1" 
+                                    <ComboBox Grid.Column="1"
                                               ItemsSource="{Binding $parent[UserControl].((vm:PokepuffEditorViewModel)DataContext).PuffList}"
-                                              SelectedIndex="{Binding PuffIndex}" 
-                                              HorizontalAlignment="Stretch" />
+                                              SelectedIndex="{Binding PuffIndex}"
+                                              HorizontalAlignment="Stretch"
+                                              AutomationProperties.Name="{Binding DisplayIndex, StringFormat='Puff {0}'}" />
                                 </Grid>
                             </Border>
                         </DataTemplate>

@@ -40,7 +40,7 @@
                                 <Grid ColumnDefinitions="50,*,120" Margin="4">
                                     <TextBlock Text="{Binding Index, StringFormat='#{0}'}" VerticalAlignment="Center" FontWeight="SemiBold" />
                                     <TextBlock Grid.Column="1" Text="{Binding Location}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding Location}" />
-                                    <ComboBox Grid.Column="2" SelectedIndex="{Binding State}" Width="110">
+                                    <ComboBox Grid.Column="2" SelectedIndex="{Binding State}" Width="110" AutomationProperties.Name="Status">
                                         <ComboBoxItem Content="None" />
                                         <ComboBoxItem Content="Available" />
                                         <ComboBoxItem Content="Received" />

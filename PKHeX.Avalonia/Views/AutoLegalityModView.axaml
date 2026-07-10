@@ -33,6 +33,7 @@
         <Grid RowDefinitions="*,Auto,2*">
             <TextBox Grid.Row="0"
                      Text="{Binding ShowdownText}"
+                     AutomationProperties.Name="Showdown Set"
                      AcceptsReturn="True" AcceptsTab="False"
                      TextWrapping="NoWrap"
                      FontFamily="Consolas, Menlo, monospace"

@@ -62,14 +62,17 @@
                                          Text="{Binding SelectedProperty}"
                                          ItemsSource="{Binding PropertySuggestions}"
                                          FilterMode="Contains"
+                                         AutomationProperties.Name="Property Name"
                                          Watermark="Type a property name..." />
                         <ComboBox Grid.Column="1"
                                   ItemsSource="{Binding Operators}"
                                   SelectedItem="{Binding SelectedOperator}"
+                                  AutomationProperties.Name="Operator"
                                   MinWidth="100"
                                   Margin="8,0" />
                         <TextBox Grid.Column="2"
                                  Text="{Binding SelectedValue}"
+                                 AutomationProperties.Name="Value"
                                  Watermark="Value..." />
                         <Button Grid.Column="3"
                                 Content="+ Filter"

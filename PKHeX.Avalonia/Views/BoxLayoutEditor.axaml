@@ -29,10 +29,11 @@
                                 <DataTemplate DataType="vm:BoxLayoutItemViewModel">
                                     <Grid ColumnDefinitions="80,*,150" Margin="0,4" VerticalAlignment="Center">
                                         <TextBlock Text="{Binding DisplayIndex}" VerticalAlignment="Center" FontWeight="SemiBold" />
-                                        <TextBox Grid.Column="1" Text="{Binding Name}" Margin="8,0" />
-                                        <ComboBox Grid.Column="2" 
+                                        <TextBox Grid.Column="1" Text="{Binding Name}" AutomationProperties.Name="Box Name" Margin="8,0" />
+                                        <ComboBox Grid.Column="2"
                                                   ItemsSource="{Binding $parent[ItemsControl].((vm:BoxLayoutEditorViewModel)DataContext).WallpaperNames}"
-                                                  SelectedIndex="{Binding Wallpaper}" />
+                                                  SelectedIndex="{Binding Wallpaper}"
+                                                  AutomationProperties.Name="Wallpaper" />
                                     </Grid>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>

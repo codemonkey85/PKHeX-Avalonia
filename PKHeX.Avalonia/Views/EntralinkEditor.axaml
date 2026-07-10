@@ -88,10 +88,11 @@
                             <DataGridTemplateColumn Header="Species" Width="150">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <ComboBox ItemsSource="{Binding $parent[UserControl].((vm:EntralinkEditorViewModel)DataContext).SpeciesList}" 
-                                                  SelectedValue="{Binding Species}" 
+                                        <ComboBox ItemsSource="{Binding $parent[UserControl].((vm:EntralinkEditorViewModel)DataContext).SpeciesList}"
+                                                  SelectedValue="{Binding Species}"
                                                   SelectedValueBinding="{Binding Value}"
                                                   DisplayMemberBinding="{Binding Text}"
+                                                  AutomationProperties.Name="Species"
                                                   HorizontalAlignment="Stretch" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
@@ -100,10 +101,11 @@
                             <DataGridTemplateColumn Header="Move" Width="150">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <ComboBox ItemsSource="{Binding $parent[UserControl].((vm:EntralinkEditorViewModel)DataContext).MoveList}" 
-                                                  SelectedValue="{Binding Move}" 
+                                        <ComboBox ItemsSource="{Binding $parent[UserControl].((vm:EntralinkEditorViewModel)DataContext).MoveList}"
+                                                  SelectedValue="{Binding Move}"
                                                   SelectedValueBinding="{Binding Value}"
-                                                  DisplayMemberBinding="{Binding Text}" 
+                                                  DisplayMemberBinding="{Binding Text}"
+                                                  AutomationProperties.Name="Move"
                                                   HorizontalAlignment="Stretch" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
@@ -114,8 +116,9 @@
                                     <DataTemplate>
                                         <ComboBox ItemsSource="{Binding $parent[UserControl].((vm:EntralinkEditorViewModel)DataContext).GenderList}"
                                                   SelectedValue="{Binding Gender}"
-                                                  SelectedValueBinding="{Binding Value}" 
+                                                  SelectedValueBinding="{Binding Value}"
                                                   DisplayMemberBinding="{Binding Text}"
+                                                  AutomationProperties.Name="Gender"
                                                   HorizontalAlignment="Stretch" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
@@ -124,7 +127,7 @@
                             <DataGridTemplateColumn Header="Form" Width="60">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <NumericUpDown Value="{Binding Form}" Minimum="0" Maximum="31" ShowButtonSpinner="False" />
+                                        <NumericUpDown Value="{Binding Form}" Minimum="0" Maximum="31" AutomationProperties.Name="Form" ShowButtonSpinner="False" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
@@ -132,7 +135,7 @@
                             <DataGridTemplateColumn Header="Anim" Width="60">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <NumericUpDown Value="{Binding Animation}" Minimum="0" Maximum="7" ShowButtonSpinner="False" />
+                                        <NumericUpDown Value="{Binding Animation}" Minimum="0" Maximum="7" AutomationProperties.Name="Animation" ShowButtonSpinner="False" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>

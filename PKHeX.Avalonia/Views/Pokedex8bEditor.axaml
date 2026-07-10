@@ -12,7 +12,7 @@
         <Grid ColumnDefinitions="250, 16, *" RowDefinitions="*,Auto">
             <!-- Species List -->
             <Grid Grid.Column="0" RowDefinitions="Auto, 8, *">
-                <TextBox Grid.Row="0" Text="{Binding SearchText}" Watermark="Search Species..." />
+                <TextBox Grid.Row="0" Text="{Binding SearchText}" Watermark="Search Species..." AutomationProperties.Name="Search Species" />
                 <Border Grid.Row="2" Classes="section-card" Padding="0">
                     <ListBox ItemsSource="{Binding FilteredSpecies}" SelectedItem="{Binding SelectedSpecies}" Background="Transparent">
                         <ListBox.ItemTemplate>
@@ -97,8 +97,8 @@
                                     <DataTemplate x:DataType="vm:Pokedex8bFormViewModel">
                                         <Grid ColumnDefinitions="*,80,80" Margin="0,4">
                                             <TextBlock Grid.Column="0" Text="{Binding Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
-                                            <CheckBox Grid.Column="1" IsChecked="{Binding Seen}" HorizontalAlignment="Center"/>
-                                            <CheckBox Grid.Column="2" IsChecked="{Binding SeenShiny}" HorizontalAlignment="Center"/>
+                                            <CheckBox Grid.Column="1" IsChecked="{Binding Seen}" HorizontalAlignment="Center" AutomationProperties.Name="{Binding Name, StringFormat='{}{0} Seen'}"/>
+                                            <CheckBox Grid.Column="2" IsChecked="{Binding SeenShiny}" HorizontalAlignment="Center" AutomationProperties.Name="{Binding Name, StringFormat='{}{0} Seen Shiny'}"/>
                                         </Grid>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>

@@ -125,6 +125,10 @@ public sealed class DialogService : IDialogService
         confirmButton.Click += (_, _) => { result = true; dialog.Close(); };
         cancelButton.Click += (_, _) => { result = false; dialog.Close(); };
 
+        // Esc cancels, Enter confirms the default action; focus starts on the
+        // confirm button so keyboard/screen-reader users land somewhere meaningful.
+        AttachDialogConventions(dialog, confirmButton, cancelButton);
+
         await dialog.ShowDialog(window);
         return result;
     }
@@ -170,7 +174,26 @@ public sealed class DialogService : IDialogService
         var button = ((StackPanel)dialog.Content).Children[1] as Button;
         button!.Click += (_, _) => dialog.Close();
 
+        // Esc/Enter both dismiss this OK-only dialog; focus starts on the OK button.
+        AttachDialogConventions(dialog, button!, button!);
+
         await dialog.ShowDialog(window);
+    }
+
+    /// <summary>
+    /// Applies the app-wide modal dialog keyboard conventions: Esc triggers the
+    /// cancel action (<see cref="Button.IsCancel"/>), Enter triggers the default/
+    /// confirm action (<see cref="Button.IsDefault"/>), and initial focus lands on
+    /// the default action button so keyboard/screen-reader users don't have to hunt
+    /// for it. Avalonia restores focus to the invoking control when a modal
+    /// <see cref="Window.ShowDialog(Window)"/> closes, so no explicit "focus returns
+    /// to invoker" handling is needed here.
+    /// </summary>
+    private static void AttachDialogConventions(Window dialog, Button defaultButton, Button cancelButton)
+    {
+        defaultButton.IsDefault = true;
+        cancelButton.IsCancel = true;
+        dialog.Opened += (_, _) => defaultButton.Focus();
     }
 
     public async Task<string?> GetClipboardTextAsync()

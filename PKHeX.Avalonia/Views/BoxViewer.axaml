@@ -21,6 +21,10 @@
         <KeyBinding Gesture="Ctrl+F" Command="{Binding OpenSeekToolCommand}" />
         <KeyBinding Gesture="F3" Command="{Binding Seek.SeekNextCommand}" />
         <KeyBinding Gesture="Shift+F3" Command="{Binding Seek.SeekPreviousCommand}" />
+        <!-- Keyboard-only slot operations, mirroring the mouse modifier-clicks below -->
+        <KeyBinding Gesture="Ctrl+C" Command="{Binding ViewSlotCommand}" CommandParameter="{Binding SelectedSlot}" />
+        <KeyBinding Gesture="Ctrl+V" Command="{Binding SetSlotCommand}" CommandParameter="{Binding SelectedSlot}" />
+        <KeyBinding Gesture="Delete" Command="{Binding DeleteSlotCommand}" CommandParameter="{Binding SelectedSlot}" />
     </UserControl.KeyBindings>
 
     <Border Padding="16" Classes="view-container">
@@ -77,8 +81,8 @@
             </Border>
 
             <!-- Footer -->
-            <TextBlock DockPanel.Dock="Bottom" 
-                       Text="Arrow keys: Navigate | Enter: Select | PageUp/Down: Switch Box"
+            <TextBlock DockPanel.Dock="Bottom"
+                       Text="Arrow keys: Navigate | Enter: Select | PageUp/Down: Switch Box | Ctrl+C: View | Ctrl+V: Set | Delete: Clear"
                        Foreground="{DynamicResource ThemeTextMutedBrush}"
                        FontSize="11"
                        HorizontalAlignment="Center"
@@ -106,7 +110,7 @@
                                     DragDrop.AllowDrop="True"
                                     DragDrop.Drop="OnSlotDrop"
                                     ToolTip.Tip="{Binding ToolTipSummary}"
-                                    AutomationProperties.Name="{Binding ToolTipSummary}"
+                                    AutomationProperties.Name="{Binding AccessibleName}"
                                     Click="OnSlotClicked"
                                     DoubleTapped="OnSlotDoubleTapped"
                                     Tag="{Binding}">
