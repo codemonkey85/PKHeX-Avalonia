@@ -13,16 +13,28 @@ Get the latest build for your platform from the [Releases](https://github.com/re
 
 | Platform | File |
 |----------|------|
-| Windows (x64) | `PKHeX-Avalonia-win-x64.zip` |
-| Linux (x64) | `PKHeX-Avalonia-linux-x64.zip` |
-| macOS Apple Silicon | `PKHeX-Avalonia-osx-arm64.zip` |
-| macOS Intel | `PKHeX-Avalonia-osx-x64.zip` |
+| Windows (x64) | `PKHeX-Avalonia-win-x64.zip`, or the `PKHeX-Avalonia-Setup.exe` installer |
+| Linux (x64) | `PKHeX-Avalonia-linux-x64.zip`, or `PKHeX-Avalonia-linux-x64.AppImage` |
+| macOS Apple Silicon | `PKHeX-Avalonia-osx-arm64.zip`, or `PKHeX-Avalonia-osx-arm64.dmg` |
+| macOS Intel | `PKHeX-Avalonia-osx-x64.zip`, or `PKHeX-Avalonia-osx-x64.dmg` |
 
 Every build is self-contained, so you don't need to install .NET.
 
-**macOS note:** the app is ad-hoc signed but not notarized. So on first launch macOS warns about an "unidentified developer". To open it:
-1. Right-click the app, pick **Open**, then click **Open** in the dialog.
-2. Or run `xattr -d com.apple.quarantine ~/Downloads/PKHeX.Avalonia.app` in Terminal.
+**Signing note:** the installer/dmg builds are code-signed and (on macOS)
+notarized only once the repo owner has configured signing secrets — see
+[`docs/packaging.md`](docs/packaging.md). Until then, filenames ending in
+`-unsigned` (e.g. `PKHeX-Avalonia-Setup-unsigned.exe`,
+`PKHeX-Avalonia-osx-arm64-unsigned.dmg`) mean the OS will still warn on
+first launch:
+- **Windows:** SmartScreen "unknown publisher" — click **More info** then
+  **Run anyway**.
+- **macOS:** right-click the app, pick **Open**, then click **Open** in the
+  dialog (or run `xattr -d com.apple.quarantine
+  ~/Downloads/PKHeX.Avalonia.app`).
+
+Package-manager installs (Homebrew cask, winget) are templated under
+`packaging/` and documented in `docs/packaging.md`, pending signed release
+builds to submit.
 
 
 ## Project Structure
