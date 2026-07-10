@@ -29,6 +29,7 @@ public partial class SettingsViewModel : ViewModelBase, ICloseableDialog
 
     [ObservableProperty] private bool _forceHaX;
     [ObservableProperty] private bool _showChangelog;
+    [ObservableProperty] private bool _checkForUpdatesOnStartup;
 
     // Backup
     [ObservableProperty] private bool _bakEnabled;
@@ -50,6 +51,7 @@ public partial class SettingsViewModel : ViewModelBase, ICloseableDialog
         AutoLoadMode = _settings.Startup.AutoLoadSaveOnStartup;
         ForceHaX = _settings.Startup.ForceHaXOnLaunch;
         ShowChangelog = _settings.Startup.ShowChangelogOnUpdate;
+        CheckForUpdatesOnStartup = _settings.Startup.CheckForUpdatesOnStartup;
 
         BakEnabled = _settings.Backup.BAKEnabled;
         BakPrompt = _settings.Backup.BAKPrompt;
@@ -69,6 +71,7 @@ public partial class SettingsViewModel : ViewModelBase, ICloseableDialog
         _settings.Startup.AutoLoadSaveOnStartup = AutoLoadMode;
         _settings.Startup.ForceHaXOnLaunch = ForceHaX;
         _settings.Startup.ShowChangelogOnUpdate = ShowChangelog;
+        _settings.Startup.CheckForUpdatesOnStartup = CheckForUpdatesOnStartup;
 
         _settings.Backup.BAKEnabled = BakEnabled;
         _settings.Backup.BAKPrompt = BakPrompt;

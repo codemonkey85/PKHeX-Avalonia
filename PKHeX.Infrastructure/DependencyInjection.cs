@@ -12,6 +12,7 @@ public static class DependencyInjection
         services.AddSingleton<ISaveFileGateway, SaveFileService>();
         services.AddSingleton<IAppPaths, AppPaths>();
         services.AddSingleton<ISettingsStore, SettingsStore>();
+        services.AddSingleton<IUpdateCheckService, GitHubUpdateCheckService>();
         return services;
     }
 }

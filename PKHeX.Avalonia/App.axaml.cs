@@ -32,10 +32,15 @@ public partial class App : global::Avalonia.Application
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
+            var mainViewModel = Services.GetRequiredService<MainWindowViewModel>();
             desktop.MainWindow = new MainWindow
             {
-                DataContext = Services.GetRequiredService<MainWindowViewModel>()
+                DataContext = mainViewModel
             };
+
+            // Fire-and-forget: never awaited here, so the main window is shown immediately and is
+            // never blocked by a slow, offline, or rate-limited GitHub API call.
+            _ = mainViewModel.CheckForUpdatesAsync();
         }
 
         base.OnFrameworkInitializationCompleted();

@@ -96,8 +96,36 @@
                 </StackPanel>
             </Border>
 
+            <!-- Updates Settings Card -->
+            <Border Classes="section-card" Padding="20" CornerRadius="8">
+                <StackPanel Spacing="16">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <TextBlock Text="🔔" FontSize="20" VerticalAlignment="Center"/>
+                        <TextBlock Text="Updates" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <Grid ColumnDefinitions="*,Auto">
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Check for Updates on Startup" FontWeight="Medium"/>
+                            <TextBlock Text="Query GitHub for a newer release when the app launches. Disabling this makes zero network calls at startup."
+                                       FontSize="12" Opacity="0.6" TextWrapping="Wrap"/>
+                        </StackPanel>
+                        <ToggleSwitch Grid.Column="1" IsChecked="{Binding CheckForUpdatesOnStartup}" OnContent="On" OffContent="Off"/>
+                    </Grid>
+
+                    <Grid ColumnDefinitions="*,Auto">
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Show Changelog after Update" FontWeight="Medium"/>
+                            <TextBlock Text="Automatically show the 'What's New' dialog the first time you launch a newer version."
+                                       FontSize="12" Opacity="0.6" TextWrapping="Wrap"/>
+                        </StackPanel>
+                        <ToggleSwitch Grid.Column="1" IsChecked="{Binding ShowChangelog}" OnContent="On" OffContent="Off"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
             <Button Content="Save Changes"
-                    Command="{Binding SaveCommand}" 
+                    Command="{Binding SaveCommand}"
                     Classes="accent"
                     HorizontalAlignment="Right" 
                     Padding="24,12"/>

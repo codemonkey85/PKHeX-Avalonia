@@ -52,6 +52,16 @@ public sealed class AppSettings : IProgramSettings
         public string Version { get; set; } = string.Empty;
         public bool ShowChangelogOnUpdate { get; set; } = true;
         public bool ForceHaXOnLaunch { get; set; } = false;
+
+        /// <summary>Whether to query the GitHub Releases API for a newer version at startup.</summary>
+        public bool CheckForUpdatesOnStartup { get; set; } = true;
+
+        /// <summary>
+        /// Release tag (e.g. "1.26.0") the user chose to skip via "Skip this version" on the update
+        /// notification. Suppresses the notification for that exact version only — a later release
+        /// will notify again.
+        /// </summary>
+        public string SkippedUpdateVersion { get; set; } = string.Empty;
     }
 
     /// <summary>
