@@ -219,6 +219,31 @@ public partial class MainWindowViewModel
         _windowService.ShowTool(_boxReport, "Box Data Report");
     }
 
+    // Cached so re-invoking the menu item focuses the existing tool window instead of
+    // opening a duplicate (ShowTool keys off the ViewModel instance). Reset on save change.
+    private LegalityAuditViewModel? _legalityAudit;
+
+    [RelayCommand(CanExecute = nameof(HasSave))]
+    private void OpenLegalityAudit()
+    {
+        if (CurrentSave is null) return;
+
+        if (_legalityAudit is null)
+        {
+            _legalityAudit = new LegalityAuditViewModel(CurrentSave, _dialogService);
+            _legalityAudit.RowActivated += row =>
+            {
+                if (row.IsParty)
+                    PartyViewer?.RefreshParty();
+                else
+                    ((IBoxNavigator?)BoxViewer)?.NavigateTo(row.Box, row.Slot);
+                CurrentPokemonEditor?.LoadPKM(row.Entity);
+            };
+        }
+
+        _windowService.ShowTool(_legalityAudit, "Legality Audit");
+    }
+
     [RelayCommand(CanExecute = nameof(HasSave))]
     private async Task OpenMysteryGiftDatabaseAsync()
     {
