@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <Version>26.05.05</Version>
+    <Version>26.07.07</Version>
     <LangVersion>14</LangVersion>
     <Nullable>enable</Nullable>
     <NeutralLanguage>en</NeutralLanguage>
@@ -10,6 +10,6 @@
     <Copyright>Realgar</Copyright>
     <SourceRevisionId>$([System.DateTime]::UtcNow.ToString("yyMMddHHmmss"))</SourceRevisionId>
     <!-- UI version for PKHeX.Avalonia releases (semver) -->
-    <UIVersion>1.25.2</UIVersion>
+    <UIVersion>1.25.3</UIVersion>
   </PropertyGroup>
 </Project>
