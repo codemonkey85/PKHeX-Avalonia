@@ -52,6 +52,7 @@ public static class ViewLocator
         [typeof(LegalityViewModel)] = () => new LegalityView(),
         [typeof(LiveHeXViewModel)] = () => new LiveHeXView(),
         [typeof(Link6EditorViewModel)] = () => new Link6Editor(),
+        [typeof(LivingDexGeneratorViewModel)] = () => new LivingDexGeneratorView(),
         [typeof(MailBoxEditorViewModel)] = () => new MailBoxEditor(),
         [typeof(MedalEditorViewModel)] = () => new MedalEditorView(),
         [typeof(MemoryEditorViewModel)] = () => new MemoryEditor(),

@@ -25,6 +25,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private readonly LanguageService _languageService;
     private readonly IAutoLegalityService _autoLegalityService;
     private readonly ILiveHexService _liveHexService;
+    private readonly ILivingDexService _livingDexService;
     private readonly string _currentVersion;
 
     [ObservableProperty] private UpdateNotificationViewModel? _updateNotification;
@@ -41,6 +42,7 @@ public partial class MainWindowViewModel : ViewModelBase
     [NotifyCanExecuteChangedFor(nameof(OpenBoxReportCommand))]
     [NotifyCanExecuteChangedFor(nameof(OpenAutoLegalityModCommand))]
     [NotifyCanExecuteChangedFor(nameof(OpenLiveHeXCommand))]
+    [NotifyCanExecuteChangedFor(nameof(OpenLivingDexGeneratorCommand))]
     [NotifyCanExecuteChangedFor(nameof(UndoCommand))]
     [NotifyCanExecuteChangedFor(nameof(RedoCommand))]
     private SaveFile? _currentSave;
@@ -79,7 +81,8 @@ public partial class MainWindowViewModel : ViewModelBase
         UndoRedoService undoRedo,
         LanguageService languageService,
         IAutoLegalityService autoLegalityService,
-        ILiveHexService liveHexService)
+        ILiveHexService liveHexService,
+        ILivingDexService livingDexService)
     {
         _saveFileService = saveFileService;
         _dialogService = dialogService;
@@ -96,6 +99,7 @@ public partial class MainWindowViewModel : ViewModelBase
         _languageService = languageService;
         _autoLegalityService = autoLegalityService;
         _liveHexService = liveHexService;
+        _livingDexService = livingDexService;
         _currentVersion = GetCurrentVersion();
 
         _saveFileService.SaveFileChanged += OnSaveFileChanged;
@@ -138,6 +142,7 @@ public partial class MainWindowViewModel : ViewModelBase
         _legalityAudit = null;
         _autoLegalityMod = null;
         DisposeLiveHeX();
+        _livingDexGenerator = null;
 
         CurrentSave = sav;
         if (sav is not null)
