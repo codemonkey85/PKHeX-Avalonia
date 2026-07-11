@@ -81,6 +81,11 @@ public partial class App : global::Avalonia.Application
         services.AddSingleton<ThemeService>();
         services.AddSingleton<IThemeService>(sp => sp.GetRequiredService<ThemeService>());
 
+        // Update-check flow shared by the silent startup check and the manual "Check for Updates"
+        // buttons (Settings/About). Singleton so the status-bar notification it raises persists for
+        // the life of the main window regardless of which entry point ran the check.
+        services.AddSingleton<UpdateCheckCoordinator>();
+
         // Root ViewModel (transient). Child/editor ViewModels are created by their parent presenter
         // with the current save, so they are not registered in the container.
         services.AddTransient<MainWindowViewModel>();

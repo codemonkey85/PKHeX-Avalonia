@@ -1,5 +1,5 @@
 using System.Linq;
-using System.Reflection;
+using System.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -18,7 +18,6 @@ public partial class MainWindowViewModel : ViewModelBase
     private readonly ISlotService _slotService;
     private readonly IClipboardService _clipboardService;
     private readonly IQrCodeService _qrCodeService;
-    private readonly IUpdateCheckService _updateCheckService;
     private readonly ISaveBackupService _saveBackupService;
     private readonly AppSettings _settings;
     private readonly ISettingsStore _settingsStore;
@@ -28,7 +27,11 @@ public partial class MainWindowViewModel : ViewModelBase
     private readonly IAutoLegalityService _autoLegalityService;
     private readonly ILiveHexService _liveHexService;
     private readonly ILivingDexService _livingDexService;
-    private readonly string _currentVersion;
+    private readonly UpdateCheckCoordinator _updateCoordinator;
+
+    // Captured on the UI thread at construction so update-check continuations (which may complete on
+    // a thread-pool thread) marshal their status-bar mutation back onto the UI thread.
+    private readonly SynchronizationContext? _uiContext = SynchronizationContext.Current;
 
     [ObservableProperty] private UpdateNotificationViewModel? _updateNotification;
 
@@ -84,7 +87,7 @@ public partial class MainWindowViewModel : ViewModelBase
         ISlotService slotService,
         IClipboardService clipboardService,
         IQrCodeService qrCodeService,
-        IUpdateCheckService updateCheckService,
+        UpdateCheckCoordinator updateCoordinator,
         ISaveBackupService saveBackupService,
         AppSettings settings,
         ISettingsStore settingsStore,
@@ -102,7 +105,7 @@ public partial class MainWindowViewModel : ViewModelBase
         _slotService = slotService;
         _clipboardService = clipboardService;
         _qrCodeService = qrCodeService;
-        _updateCheckService = updateCheckService;
+        _updateCoordinator = updateCoordinator;
         _saveBackupService = saveBackupService;
         _settings = settings;
         _settingsStore = settingsStore;
@@ -112,7 +115,12 @@ public partial class MainWindowViewModel : ViewModelBase
         _autoLegalityService = autoLegalityService;
         _liveHexService = liveHexService;
         _livingDexService = livingDexService;
-        _currentVersion = GetCurrentVersion();
+
+        // Mirror the coordinator's status-bar notification (raised by either the startup check or a
+        // manual "Check for Updates" from the Settings/About dialogs) into the bound property.
+        // Marshal onto the UI thread: a startup check completes on a thread-pool continuation.
+        _updateCoordinator.NotificationChanged += n => RunOnUiThread(() => UpdateNotification = n);
+        UpdateNotification = _updateCoordinator.Notification;
 
         _saveFileService.SaveFileChanged += OnSaveFileChanged;
         _slotService.ViewRequested += OnViewRequested;
@@ -251,61 +259,16 @@ public partial class MainWindowViewModel : ViewModelBase
 
     /// <summary>
     /// Fire-and-forget from the host at startup (never awaited there, so the main window is never
-    /// blocked). Offline/rate-limited failures resolve to a null release list from
-    /// <see cref="IUpdateCheckService"/> and are handled silently — no error dialog, no retry.
+    /// blocked). Delegates to the shared <see cref="UpdateCheckCoordinator"/>, which honors the
+    /// startup opt-out and stays silent on failure.
     /// </summary>
-    public async Task CheckForUpdatesAsync()
+    public Task CheckForUpdatesAsync() => _updateCoordinator.RunStartupCheckAsync();
+
+    private void RunOnUiThread(Action action)
     {
-        var startup = _settings.Startup;
-        var previousVersion = startup.Version;
-        var showChangelogOnUpgrade = startup.ShowChangelogOnUpdate
-            && SemanticVersion.TryParse(previousVersion, out var previous)
-            && SemanticVersion.TryParse(_currentVersion, out var current)
-            && current > previous;
-
-        // Record that this version has now been run, so the "just upgraded" changelog fires only once.
-        if (!string.Equals(previousVersion, _currentVersion, StringComparison.Ordinal))
-        {
-            startup.Version = _currentVersion;
-            _settingsStore.Save(_settings);
-        }
-
-        if (!startup.CheckForUpdatesOnStartup)
-            return; // Settings toggle disabled: zero network calls.
-
-        var releases = await _updateCheckService.GetReleasesAsync();
-        if (releases is null || releases.Count == 0)
-            return; // Offline/rate-limited/malformed — already logged by the service; stay silent.
-
-        if (showChangelogOnUpgrade)
-        {
-            var upgradeNotes = UpdateAvailabilityEvaluator.GetReleasesNewerThan(releases, previousVersion);
-            if (upgradeNotes.Count > 0)
-                await _windowService.ShowDialogAsync(new UpdateChangelogViewModel(upgradeNotes), LocalizedStrings.Instance["Update_WhatsNew"]);
-        }
-
-        var latest = UpdateAvailabilityEvaluator.GetLatestRelease(releases);
-        if (latest is null)
-            return;
-        if (!UpdateAvailabilityEvaluator.ShouldNotify(_currentVersion, latest.TagName, startup.SkippedUpdateVersion))
-            return;
-
-        var newerReleases = UpdateAvailabilityEvaluator.GetReleasesNewerThan(releases, _currentVersion);
-        var notification = new UpdateNotificationViewModel(
-            newerReleases.Count > 0 ? newerReleases : [latest], _windowService, _settings, _settingsStore);
-        notification.Dismissed += () => UpdateNotification = null;
-        UpdateNotification = notification;
-    }
-
-    private static string GetCurrentVersion()
-    {
-        // Looked up by assembly name so this Presentation-layer type never references the host
-        // assembly directly (same trick used by AboutViewModel).
-        var asm = AppDomain.CurrentDomain.GetAssemblies()
-            .FirstOrDefault(a => string.Equals(a.GetName().Name, "PKHeX.Avalonia", StringComparison.Ordinal));
-        var version = asm?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
-                      ?? asm?.GetName().Version?.ToString(3)
-                      ?? "0.0.0";
-        return version.Contains('+') ? version[..version.IndexOf('+')] : version;
+        if (_uiContext is null || SynchronizationContext.Current == _uiContext)
+            action();
+        else
+            _uiContext.Post(_ => action(), null);
     }
 }
