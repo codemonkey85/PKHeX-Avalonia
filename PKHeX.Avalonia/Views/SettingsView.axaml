@@ -123,6 +123,17 @@
                         </StackPanel>
                         <ToggleSwitch Grid.Column="1" IsChecked="{Binding ShowChangelog}" OnContent="{loc:Loc Common_On}" OffContent="{loc:Loc Common_Off}"/>
                     </Grid>
+
+                    <!-- Manual check: not gated by the startup toggle above, never silent. -->
+                    <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+                        <TextBlock Grid.Column="0"
+                                   Text="{Binding UpdateCheckStatus}"
+                                   FontSize="12" Opacity="0.8" TextWrapping="Wrap"
+                                   VerticalAlignment="Center"/>
+                        <Button Grid.Column="1"
+                                Content="{loc:Loc Update_CheckNow}"
+                                Command="{Binding CheckForUpdatesCommand}"/>
+                    </Grid>
                 </StackPanel>
             </Border>
 

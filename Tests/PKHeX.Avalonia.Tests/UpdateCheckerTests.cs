@@ -1,5 +1,6 @@
 using System.Threading;
 using Moq;
+using PKHeX.Presentation.Localization;
 using PKHeX.Presentation.ViewModels;
 using Xunit;
 
@@ -146,6 +147,30 @@ public class UpdateAvailabilityEvaluatorTests
 
         Assert.Empty(UpdateAvailabilityEvaluator.GetReleasesNewerThan(releases, "not-a-version"));
     }
+
+    // Regression: pins the real-world GitHub tag format (leading "v") against the app's own version
+    // string (no "v"). The field bug was NOT here — this guards the chain that was wrongly suspected.
+    [Fact]
+    public void ShouldNotify_handles_real_github_tag_format_with_leading_v()
+    {
+        // App reports "1.37.1" (from AssemblyInformationalVersion); GitHub tag is "v1.38.0".
+        Assert.True(UpdateAvailabilityEvaluator.ShouldNotify("1.37.1", "v1.38.0", skippedVersion: null));
+        Assert.False(UpdateAvailabilityEvaluator.ShouldNotify("1.38.0", "v1.38.0", skippedVersion: null));
+        Assert.False(UpdateAvailabilityEvaluator.ShouldNotify("1.38.1", "v1.38.0", skippedVersion: null));
+    }
+
+    [Fact]
+    public void GetLatestRelease_picks_highest_across_real_v_prefixed_tags()
+    {
+        var releases = new[]
+        {
+            Release("v1.37.0"), Release("v1.38.1"), Release("v1.38.0"), Release("v1.37.1"),
+        };
+
+        var latest = UpdateAvailabilityEvaluator.GetLatestRelease(releases);
+
+        Assert.Equal("v1.38.1", latest!.TagName);
+    }
 }
 
 public class MainWindowUpdateCheckTests
@@ -153,12 +178,15 @@ public class MainWindowUpdateCheckTests
     private static ReleaseInfo Release(string tag, bool prerelease = false) =>
         new(tag, $"Release {tag}", $"Notes for {tag}", $"https://example.com/{tag}", prerelease, []);
 
-    private static MainWindowViewModel CreateViewModel(
+    private static (MainWindowViewModel Vm, UpdateCheckCoordinator Coordinator) Create(
         Mock<IUpdateCheckService> updateCheckServiceMock,
         Mock<IWindowService> windowServiceMock,
         AppSettings settings)
     {
-        return new MainWindowViewModel(
+        var coordinator = new UpdateCheckCoordinator(
+            updateCheckServiceMock.Object, windowServiceMock.Object, settings, new FakeSettingsStore());
+
+        var vm = new MainWindowViewModel(
             new Mock<ISaveFileGateway>().Object,
             new Mock<IDialogService>().Object,
             windowServiceMock.Object,
@@ -166,7 +194,7 @@ public class MainWindowUpdateCheckTests
             new Mock<ISlotService>().Object,
             new Mock<IClipboardService>().Object,
             new Mock<IQrCodeService>().Object,
-            updateCheckServiceMock.Object,
+            coordinator,
             new Mock<ISaveBackupService>().Object,
             settings,
             new FakeSettingsStore(),
@@ -176,6 +204,7 @@ public class MainWindowUpdateCheckTests
             new Mock<IAutoLegalityService>().Object,
             new Mock<PKHeX.Application.Abstractions.LiveHex.ILiveHexService>().Object,
             new Mock<ILivingDexService>().Object);
+        return (vm, coordinator);
     }
 
     [Fact]
@@ -186,11 +215,30 @@ public class MainWindowUpdateCheckTests
         var settings = new AppSettings();
         settings.Startup.CheckForUpdatesOnStartup = false;
 
-        var vm = CreateViewModel(updateCheckServiceMock, windowServiceMock, settings);
+        var (vm, _) = Create(updateCheckServiceMock, windowServiceMock, settings);
         await vm.CheckForUpdatesAsync();
 
         updateCheckServiceMock.Verify(
             s => s.GetReleasesAsync(It.IsAny<CancellationToken>()), Times.Never);
+        Assert.Null(vm.UpdateNotification);
+    }
+
+    // Pins the field-reported root cause: when the startup toggle is off, a newer release exists but
+    // no notification is raised — the whole check short-circuits before the service call.
+    [Fact]
+    public async Task CheckForUpdatesAsync_does_not_notify_when_disabled_even_though_a_newer_release_exists()
+    {
+        var updateCheckServiceMock = new Mock<IUpdateCheckService>();
+        updateCheckServiceMock
+            .Setup(s => s.GetReleasesAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync((IReadOnlyList<ReleaseInfo>?)[Release("99.0.0")]);
+        var windowServiceMock = new Mock<IWindowService>();
+        var settings = new AppSettings();
+        settings.Startup.CheckForUpdatesOnStartup = false;
+
+        var (vm, _) = Create(updateCheckServiceMock, windowServiceMock, settings);
+        await vm.CheckForUpdatesAsync();
+
         Assert.Null(vm.UpdateNotification);
     }
 
@@ -204,7 +252,7 @@ public class MainWindowUpdateCheckTests
         var windowServiceMock = new Mock<IWindowService>();
         var settings = new AppSettings();
 
-        var vm = CreateViewModel(updateCheckServiceMock, windowServiceMock, settings);
+        var (vm, _) = Create(updateCheckServiceMock, windowServiceMock, settings);
         await vm.CheckForUpdatesAsync();
 
         Assert.Null(vm.UpdateNotification);
@@ -222,7 +270,7 @@ public class MainWindowUpdateCheckTests
         var windowServiceMock = new Mock<IWindowService>();
         var settings = new AppSettings();
 
-        var vm = CreateViewModel(updateCheckServiceMock, windowServiceMock, settings);
+        var (vm, _) = Create(updateCheckServiceMock, windowServiceMock, settings);
         await vm.CheckForUpdatesAsync();
 
         Assert.NotNull(vm.UpdateNotification);
@@ -240,7 +288,7 @@ public class MainWindowUpdateCheckTests
         var settings = new AppSettings();
         settings.Startup.SkippedUpdateVersion = "99.0.0";
 
-        var vm = CreateViewModel(updateCheckServiceMock, windowServiceMock, settings);
+        var (vm, _) = Create(updateCheckServiceMock, windowServiceMock, settings);
         await vm.CheckForUpdatesAsync();
 
         Assert.Null(vm.UpdateNotification);
@@ -256,7 +304,7 @@ public class MainWindowUpdateCheckTests
         var windowServiceMock = new Mock<IWindowService>();
         var settings = new AppSettings();
 
-        var vm = CreateViewModel(updateCheckServiceMock, windowServiceMock, settings);
+        var (vm, _) = Create(updateCheckServiceMock, windowServiceMock, settings);
         await vm.CheckForUpdatesAsync();
         Assert.NotNull(vm.UpdateNotification);
 
@@ -264,6 +312,98 @@ public class MainWindowUpdateCheckTests
 
         Assert.Equal("99.0.0", settings.Startup.SkippedUpdateVersion);
         Assert.Null(vm.UpdateNotification);
+    }
+
+    // A manual check found an update: the same status-bar notification must appear on the main window.
+    [Fact]
+    public async Task Manual_check_surfaces_the_status_bar_notification_on_the_main_window()
+    {
+        var updateCheckServiceMock = new Mock<IUpdateCheckService>();
+        updateCheckServiceMock
+            .Setup(s => s.GetReleasesAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync((IReadOnlyList<ReleaseInfo>?)[Release("99.0.0")]);
+        var windowServiceMock = new Mock<IWindowService>();
+        var settings = new AppSettings();
+        settings.Startup.CheckForUpdatesOnStartup = false; // even with startup disabled, manual works
+
+        var (vm, coordinator) = Create(updateCheckServiceMock, windowServiceMock, settings);
+        await coordinator.CheckNowAsync();
+
+        Assert.NotNull(vm.UpdateNotification);
+        Assert.Equal("99.0.0", vm.UpdateNotification!.LatestVersion);
+    }
+}
+
+public class UpdateCheckCoordinatorTests
+{
+    private static ReleaseInfo Release(string tag, bool prerelease = false) =>
+        new(tag, $"Release {tag}", $"Notes for {tag}", $"https://example.com/{tag}", prerelease, []);
+
+    private static UpdateCheckCoordinator Create(
+        Mock<IUpdateCheckService> svc, AppSettings settings, Mock<IWindowService>? win = null) =>
+        new(svc.Object, (win ?? new Mock<IWindowService>()).Object, settings, new FakeSettingsStore());
+
+    [Fact]
+    public async Task CheckNowAsync_reports_update_available_and_raises_the_notification()
+    {
+        var svc = new Mock<IUpdateCheckService>();
+        svc.Setup(s => s.GetReleasesAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync((IReadOnlyList<ReleaseInfo>?)[Release("v99.0.0")]);
+        var coordinator = Create(svc, new AppSettings());
+
+        var result = await coordinator.CheckNowAsync();
+
+        Assert.Equal(UpdateCheckOutcome.UpdateAvailable, result.Outcome);
+        Assert.Equal(LocalizedStrings.Instance.Format("Update_AvailableManual", "99.0.0"), result.Message);
+        Assert.NotNull(coordinator.Notification);
+    }
+
+    [Fact]
+    public async Task CheckNowAsync_reports_up_to_date_when_no_newer_release_exists()
+    {
+        var svc = new Mock<IUpdateCheckService>();
+        // "0.0.0" == the version resolved in the test host (PKHeX.Avalonia assembly not loaded).
+        svc.Setup(s => s.GetReleasesAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync((IReadOnlyList<ReleaseInfo>?)[Release("0.0.0")]);
+        var coordinator = Create(svc, new AppSettings());
+
+        var result = await coordinator.CheckNowAsync();
+
+        Assert.Equal(UpdateCheckOutcome.UpToDate, result.Outcome);
+        Assert.Null(coordinator.Notification);
+    }
+
+    [Fact]
+    public async Task CheckNowAsync_reports_failure_with_a_reason_when_the_service_fails()
+    {
+        var svc = new Mock<IUpdateCheckService>();
+        svc.Setup(s => s.GetReleasesAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync((IReadOnlyList<ReleaseInfo>?)null);
+        var coordinator = Create(svc, new AppSettings());
+
+        var result = await coordinator.CheckNowAsync();
+
+        Assert.Equal(UpdateCheckOutcome.Failed, result.Outcome);
+        Assert.Equal(
+            LocalizedStrings.Instance.Format("Update_CheckFailed", LocalizedStrings.Instance["Update_CheckFailedReason"]),
+            result.Message);
+        Assert.Null(coordinator.Notification);
+    }
+
+    // A manual check is explicit user intent: a previously-skipped version must still be reported.
+    [Fact]
+    public async Task CheckNowAsync_ignores_the_skipped_version()
+    {
+        var svc = new Mock<IUpdateCheckService>();
+        svc.Setup(s => s.GetReleasesAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync((IReadOnlyList<ReleaseInfo>?)[Release("v99.0.0")]);
+        var settings = new AppSettings();
+        settings.Startup.SkippedUpdateVersion = "99.0.0";
+        var coordinator = Create(svc, settings);
+
+        var result = await coordinator.CheckNowAsync();
+
+        Assert.Equal(UpdateCheckOutcome.UpdateAvailable, result.Outcome);
     }
 }
 

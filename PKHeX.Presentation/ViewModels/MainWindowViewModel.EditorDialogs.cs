@@ -21,13 +21,13 @@ public partial class MainWindowViewModel
     [RelayCommand]
     private async Task OpenAboutAsync()
     {
-        await _windowService.ShowDialogAsync(new AboutViewModel(), T("Dialog_About"));
+        await _windowService.ShowDialogAsync(new AboutViewModel(_updateCoordinator), T("Dialog_About"));
     }
 
     [RelayCommand]
     private async Task OpenSettingsAsync()
     {
-        var vm = new SettingsViewModel(_settings, _settingsStore, _themeService, _languageService);
+        var vm = new SettingsViewModel(_settings, _settingsStore, _themeService, _languageService, _updateCoordinator);
         await _windowService.ShowDialogAsync(vm, T("Dialog_Settings"));
 
         // The sprite preference may have changed; re-apply the style and refresh open views.

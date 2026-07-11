@@ -4,7 +4,7 @@
              xmlns:loc="using:PKHeX.Avalonia.Localization"
              x:Class="PKHeX.Avalonia.Views.AboutView"
              x:DataType="vm:AboutViewModel"
-             Width="400" Height="250">
+             Width="400" Height="320">
     <Border Padding="24" Classes="view-container">
         <StackPanel Spacing="16" HorizontalAlignment="Center" VerticalAlignment="Center">
             <TextBlock Text="{loc:Loc About_Brand}"
@@ -40,11 +40,22 @@
                        Opacity="0.8"
                        HorizontalAlignment="Center" />
             
-            <Button Content="{loc:Loc Common_Close}"
-                    Click="OnCloseClick"
-                    HorizontalAlignment="Center"
-                    Classes="accent"
-                    Margin="0,8,0,0" />
+            <TextBlock Text="{Binding UpdateCheckStatus}"
+                       FontSize="12"
+                       Opacity="0.8"
+                       TextWrapping="Wrap"
+                       TextAlignment="Center"
+                       HorizontalAlignment="Center"
+                       IsVisible="{Binding UpdateCheckStatus, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                       Margin="0,4,0,0" />
+
+            <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center" Margin="0,8,0,0">
+                <Button Content="{loc:Loc Update_CheckNow}"
+                        Command="{Binding CheckForUpdatesCommand}" />
+                <Button Content="{loc:Loc Common_Close}"
+                        Click="OnCloseClick"
+                        Classes="accent" />
+            </StackPanel>
         </StackPanel>
     </Border>
 </UserControl>

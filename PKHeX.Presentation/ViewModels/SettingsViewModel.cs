@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PKHeX.Application.Services;
 using PKHeX.Core;
+using PKHeX.Presentation.Localization;
 
 namespace PKHeX.Presentation.ViewModels;
 
@@ -13,6 +14,7 @@ public partial class SettingsViewModel : ViewModelBase, ICloseableDialog
     private readonly ISettingsStore _settingsStore;
     private readonly IThemeService _themeService;
     private readonly LanguageService _languageService;
+    private readonly UpdateCheckCoordinator _updateCoordinator;
     private bool _isLoading;
 
     public Action? CloseRequested { get; set; }
@@ -20,13 +22,45 @@ public partial class SettingsViewModel : ViewModelBase, ICloseableDialog
     /// <summary>Exposed so the settings screen can host a UI-language selector that switches live.</summary>
     public LanguageService LanguageService => _languageService;
 
-    public SettingsViewModel(AppSettings settings, ISettingsStore settingsStore, IThemeService themeService, LanguageService languageService)
+    public SettingsViewModel(
+        AppSettings settings,
+        ISettingsStore settingsStore,
+        IThemeService themeService,
+        LanguageService languageService,
+        UpdateCheckCoordinator updateCoordinator)
     {
         _settings = settings;
         _settingsStore = settingsStore;
         _themeService = themeService;
         _languageService = languageService;
+        _updateCoordinator = updateCoordinator;
         Load();
+    }
+
+    /// <summary>Status line for the manual "Check for Updates" button; empty until a check runs.</summary>
+    [ObservableProperty] private string _updateCheckStatus = string.Empty;
+
+    /// <summary>Disables the button and shows the "checking…" state while a manual check is in flight.</summary>
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(CheckForUpdatesCommand))]
+    private bool _isCheckingForUpdates;
+
+    private bool CanCheckForUpdates => !IsCheckingForUpdates;
+
+    [RelayCommand(CanExecute = nameof(CanCheckForUpdates))]
+    private async Task CheckForUpdatesAsync()
+    {
+        IsCheckingForUpdates = true;
+        UpdateCheckStatus = LocalizedStrings.Instance["Update_Checking"];
+        try
+        {
+            var result = await _updateCoordinator.CheckNowAsync();
+            UpdateCheckStatus = result.Message;
+        }
+        finally
+        {
+            IsCheckingForUpdates = false;
+        }
     }
 
     // Startup
