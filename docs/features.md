@@ -116,13 +116,18 @@ Checks GitHub Releases for a newer version and shows what changed.
 
 ## OS drag-and-drop
 
-- **Drag out:** drag a box/party slot to the desktop/Finder/Explorer to get a decrypted entity
-  file (e.g. `.pk9`).
-- **Drag in:** drop entity files (`.pk1`–`.pk9`, `.pb7`/`.pb8`, `.pa8`, encrypted `.ek*`, Mystery
-  Gift files) onto a slot, or several onto a box to fill it.
-- **Drag a save file** anywhere on the main window to open it, same as File → Open.
-- Full details, including the sandboxed/browser-hosted fallback behavior, are in the README's
-  Features section.
+- **Drag out (box/party slot → desktop):** writes a decrypted entity file (e.g. `.pk9`) to a temp
+  location and hands the OS a real file reference via Avalonia's `IStorageProvider`. This is
+  desktop-backed: it works on Windows, macOS, and Linux (X11 and Wayland) when running as a normal
+  desktop app. If a future Avalonia backend can't resolve a real file path for the temp file (e.g.
+  a sandboxed or browser-hosted build), drag-out degrades gracefully to in-app-only dragging (box
+  ↔ party still works) instead of failing.
+- **Drag in** accepts `.pk1`–`.pk9`, `.pb7`/`.pb8`, `.pa8`, encrypted `.ek*`, and Mystery Gift
+  files, reusing the same detection/conversion/legality pipeline as the folder import feature.
+  Incompatible or unreadable files are rejected with a message dialog rather than crashing or
+  silently corrupting a slot.
+- **Drag a save file** onto any part of the main window (a slot, the editor panel, or elsewhere)
+  to open it, the same as File → Open.
 
 ## Platform config/data directories
 
