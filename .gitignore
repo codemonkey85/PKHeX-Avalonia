@@ -45,7 +45,9 @@ local.properties
 *.sln.docstates
 *.vs
 .vscode/
-.claude/
+.claude/worktrees/
+.claude/settings.local.json
+.claude/scheduled_tasks.lock
 
 # Build results
 
