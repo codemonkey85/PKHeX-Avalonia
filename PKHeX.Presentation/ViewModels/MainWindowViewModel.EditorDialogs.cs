@@ -1,10 +1,14 @@
 using CommunityToolkit.Mvvm.Input;
 using PKHeX.Core;
+using PKHeX.Presentation.Localization;
 
 namespace PKHeX.Presentation.ViewModels;
 
 public partial class MainWindowViewModel
 {
+    /// <summary>Short alias for localized dialog-title lookup (issue #132 UI localization).</summary>
+    private static string T(string key) => LocalizedStrings.Instance[key];
+
     [RelayCommand(CanExecute = nameof(CanUndo))]
     private void Undo() => _undoRedo.Undo();
 
@@ -17,14 +21,14 @@ public partial class MainWindowViewModel
     [RelayCommand]
     private async Task OpenAboutAsync()
     {
-        await _windowService.ShowDialogAsync(new AboutViewModel(), "About PKHeX");
+        await _windowService.ShowDialogAsync(new AboutViewModel(), T("Dialog_About"));
     }
 
     [RelayCommand]
     private async Task OpenSettingsAsync()
     {
-        var vm = new SettingsViewModel(_settings, _settingsStore, _themeService);
-        await _windowService.ShowDialogAsync(vm, "Settings");
+        var vm = new SettingsViewModel(_settings, _settingsStore, _themeService, _languageService);
+        await _windowService.ShowDialogAsync(vm, T("Dialog_Settings"));
 
         // The sprite preference may have changed; re-apply the style and refresh open views.
         if (CurrentSave is not null)
@@ -40,7 +44,7 @@ public partial class MainWindowViewModel
     private async Task OpenFolderListAsync()
     {
         var vm = new FolderListViewModel(_saveFileService, _settings, _dialogService);
-        await _windowService.ShowDialogAsync(vm, "Save Folder List");
+        await _windowService.ShowDialogAsync(vm, T("Dialog_SaveFolderList"));
     }
 
     // No HasSave gate: the troubleshooter exists to open a save the normal loader cannot recognize,
@@ -49,7 +53,7 @@ public partial class MainWindowViewModel
     private async Task OpenSaveHandlerTroubleshooterAsync()
     {
         var vm = new SaveHandlerTroubleshooterViewModel(_dialogService, _saveFileService);
-        await _windowService.ShowDialogAsync(vm, "Save Handler Troubleshooter");
+        await _windowService.ShowDialogAsync(vm, T("Dialog_SaveHandlerTroubleshooter"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -58,7 +62,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is null) return;
         var vm = new BatchEditorViewModel(CurrentSave, _dialogService);
         vm.BatchEditCompleted += OnBatchEditCompleted;
-        await _windowService.ShowDialogAsync(vm, "Batch Editor");
+        await _windowService.ShowDialogAsync(vm, T("Dialog_BatchEditor"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -67,7 +71,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is null) return;
         await _windowService.ShowDialogAsync(
             new BlockEditorViewModel(CurrentSave, _dialogService),
-            "Block Editor");
+            T("Dialog_BlockEditor"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -75,7 +79,7 @@ public partial class MainWindowViewModel
     {
         if (CurrentSave is null) return;
         var vm = new BoxManipViewModel(CurrentSave, _dialogService, () => BoxViewer?.RefreshCurrentBox());
-        await _windowService.ShowDialogAsync(vm, "Box Manipulation");
+        await _windowService.ShowDialogAsync(vm, T("Dialog_BoxManipulation"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -84,7 +88,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is null) return;
         var vm = new EncounterDatabaseViewModel(CurrentSave, _spriteRenderer, _dialogService,
             pk => CurrentPokemonEditor?.LoadPKM(pk));
-        await _windowService.ShowDialogAsync(vm, "Encounter Database");
+        await _windowService.ShowDialogAsync(vm, T("Dialog_EncounterDatabase"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -98,12 +102,12 @@ public partial class MainWindowViewModel
 
         if (groups is null || groups.Count == 0)
         {
-            await _dialogService.ShowErrorAsync("Info", "No groups available for this save file.");
+            await _dialogService.ShowErrorAsync(T("Common_Info"), T("Msg_NoGroupsAvailable"));
             return;
         }
 
         var vm = new GroupViewerViewModel(CurrentSave, groups, _spriteRenderer, _slotService);
-        await _windowService.ShowDialogAsync(vm, "Group Viewer");
+        await _windowService.ShowDialogAsync(vm, T("Dialog_GroupViewer"));
     }
 
     // — Save-specific editors —
@@ -114,7 +118,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is null) return;
         await _windowService.ShowDialogAsync(
             new DaycareEditorViewModel(CurrentSave, _spriteRenderer),
-            "Daycare");
+            T("Dialog_Daycare"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -123,7 +127,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is null) return;
         await _windowService.ShowDialogAsync(
             new RecordsEditorViewModel(CurrentSave),
-            "Game Records");
+            T("Dialog_GameRecords"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -132,7 +136,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is null) return;
         await _windowService.ShowDialogAsync(
             new HallOfFameEditorViewModel(CurrentSave, _spriteRenderer),
-            "Hall of Fame");
+            T("Dialog_HallOfFame"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -141,7 +145,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is null) return;
         await _windowService.ShowDialogAsync(
             new SecretBaseEditorViewModel(CurrentSave, _spriteRenderer),
-            "Secret Base Editor");
+            T("Dialog_SecretBaseEditor"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -150,7 +154,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is null) return;
         await _windowService.ShowDialogAsync(
             new PokebeanEditorViewModel(CurrentSave),
-            "Poké Bean Editor");
+            T("Dialog_PokeBeanEditor"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -159,7 +163,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is null) return;
         await _windowService.ShowDialogAsync(
             new FestivalPlazaEditorViewModel(CurrentSave),
-            "Festival Plaza Editor");
+            T("Dialog_FestivalPlazaEditor"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -168,7 +172,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is null) return;
         await _windowService.ShowDialogAsync(
             new RaidEditorViewModel(CurrentSave),
-            "Raid Editor");
+            T("Dialog_RaidEditor"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -177,7 +181,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is null) return;
         await _windowService.ShowDialogAsync(
             new SuperTrainingEditorViewModel(CurrentSave),
-            "Super Training Editor");
+            T("Dialog_SuperTrainingEditor"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -186,7 +190,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is null) return;
         await _windowService.ShowDialogAsync(
             new ApricornEditorViewModel(CurrentSave),
-            "Apricorn Editor");
+            T("Dialog_ApricornEditor"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -195,7 +199,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is null) return;
         await _windowService.ShowDialogAsync(
             new PokeGear4EditorViewModel(CurrentSave),
-            "PokéGear Editor");
+            T("Dialog_PokeGearEditor"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -204,7 +208,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is null) return;
         await _windowService.ShowDialogAsync(
             new Geonet4EditorViewModel(CurrentSave),
-            "Geonet Globe Editor");
+            T("Dialog_GeonetGlobeEditor"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -213,7 +217,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is null) return;
         await _windowService.ShowDialogAsync(
             new BoxLayoutEditorViewModel(CurrentSave),
-            "Box Layout Editor");
+            T("Dialog_BoxLayoutEditor"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -222,7 +226,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is null) return;
         await _windowService.ShowDialogAsync(
             new HoneyTreeEditorViewModel(CurrentSave),
-            "Honey Tree Editor");
+            T("Dialog_HoneyTreeEditor"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -231,7 +235,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is null) return;
         await _windowService.ShowDialogAsync(
             new UndergroundEditorViewModel(CurrentSave),
-            "Underground Editor");
+            T("Dialog_UndergroundEditor"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -240,7 +244,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is null) return;
         await _windowService.ShowDialogAsync(
             new RoamerEditorViewModel(CurrentSave),
-            "Roamer Editor");
+            T("Dialog_RoamerEditor"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -249,7 +253,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is null) return;
         await _windowService.ShowDialogAsync(
             new OPowerEditorViewModel(CurrentSave),
-            "O-Power Editor");
+            T("Dialog_OPowerEditor"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -258,7 +262,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is null) return;
         await _windowService.ShowDialogAsync(
             new ZygardeCellEditorViewModel(CurrentSave),
-            "Zygarde Cell Editor");
+            T("Dialog_ZygardeCellEditor"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -267,7 +271,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is null) return;
         await _windowService.ShowDialogAsync(
             new Raid9EditorViewModel(CurrentSave),
-            "Tera Raid Editor");
+            T("Dialog_TeraRaidEditor"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -276,7 +280,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is null) return;
         await _windowService.ShowDialogAsync(
             new RaidSevenStar9EditorViewModel(CurrentSave),
-            "7-Star Tera Raid Editor");
+            T("Dialog_SevenStarTeraRaidEditor"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -285,7 +289,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is not (SAV9SV or SAV9ZA)) return;
         await _windowService.ShowDialogAsync(
             new Fashion9EditorViewModel(CurrentSave!),
-            "Fashion Editor");
+            T("Dialog_FashionEditor"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -294,7 +298,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is not SAV9ZA sav) return;
         await _windowService.ShowDialogAsync(
             new DonutEditorViewModel(sav),
-            "Donut Editor (PLZA)");
+            T("Dialog_DonutEditorPLZA"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -303,7 +307,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is not SAV5 sav) return;
         await _windowService.ShowDialogAsync(
             new DLC5EditorViewModel(sav, _dialogService),
-            "DLC Editor (Gen 5)");
+            T("Dialog_DLCEditorGen5"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -312,7 +316,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is not SAV5 sav) return;
         await _windowService.ShowDialogAsync(
             new EntralinkEditorViewModel(sav),
-            "Entralink Editor");
+            T("Dialog_EntralinkEditor"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -321,7 +325,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is not SAV5 sav) return;
         await _windowService.ShowDialogAsync(
             new GlobalLink5EditorViewModel(sav, _spriteRenderer),
-            "Global Link Editor (Gen 5)");
+            T("Dialog_GlobalLinkEditorGen5"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -331,16 +335,16 @@ public partial class MainWindowViewModel
 
         (object view, string title) = CurrentSave switch
         {
-            SAV9SV s    => ((object)new PokedexGen9EditorViewModel(s),   "Pokédex Editor (Gen 9 SV)"),
-            SAV8SWSH s  => (new Pokedex8EditorViewModel(s),                "Pokédex Editor (Gen 8 SwSh)"),
-            SAV8BS s    => (new Pokedex8bEditorViewModel(s),               "Pokédex Editor (Gen 8 BDSP)"),
-            SAV8LA s    => (new PokedexLAEditorViewModel(s),               "Pokédex Editor (PLA)"),
-            SAV7b s     => (new Pokedex7bEditorViewModel(s),               "Pokédex Editor (Let's Go)"),
-            SAV7 s      => (new Pokedex7EditorViewModel(s),                "Pokédex Editor (Gen 7)"),
-            SAV6 s      => (new Pokedex6EditorViewModel(s),                "Pokédex Editor (Gen 6)"),
-            SAV5 s      => (new Pokedex5EditorViewModel(s),                "Pokédex Editor (Gen 5)"),
-            SAV4 s      => (new Pokedex4EditorViewModel(s),                "Pokédex Editor (Gen 4)"),
-            _           => (new PokedexSimpleEditorViewModel(CurrentSave), "Pokédex Editor (Simple)"),
+            SAV9SV s    => ((object)new PokedexGen9EditorViewModel(s),   T("Dialog_PokedexEditorGen9SV")),
+            SAV8SWSH s  => (new Pokedex8EditorViewModel(s),                T("Dialog_PokedexEditorGen8SwSh")),
+            SAV8BS s    => (new Pokedex8bEditorViewModel(s),               T("Dialog_PokedexEditorGen8BDSP")),
+            SAV8LA s    => (new PokedexLAEditorViewModel(s),               T("Dialog_PokedexEditorPLA")),
+            SAV7b s     => (new Pokedex7bEditorViewModel(s),               T("Dialog_PokedexEditorLetsGo")),
+            SAV7 s      => (new Pokedex7EditorViewModel(s),                T("Dialog_PokedexEditorGen7")),
+            SAV6 s      => (new Pokedex6EditorViewModel(s),                T("Dialog_PokedexEditorGen6")),
+            SAV5 s      => (new Pokedex5EditorViewModel(s),                T("Dialog_PokedexEditorGen5")),
+            SAV4 s      => (new Pokedex4EditorViewModel(s),                T("Dialog_PokedexEditorGen4")),
+            _           => (new PokedexSimpleEditorViewModel(CurrentSave), T("Dialog_PokedexEditorSimple")),
         };
 
         await _windowService.ShowDialogAsync(view, title);
@@ -352,7 +356,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is not SAV4BR sav) return;
         await _windowService.ShowDialogAsync(
             new BattlePassEditorViewModel(sav),
-            "Battle Pass Editor (PBR)");
+            T("Dialog_BattlePassEditorPBR"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -361,7 +365,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is not SAV8BS sav) return;
         await _windowService.ShowDialogAsync(
             new Underground8bEditorViewModel(sav),
-            "Underground Editor (BDSP)");
+            T("Dialog_UndergroundEditorBDSP"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -370,7 +374,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is not SAV8BS sav) return;
         await _windowService.ShowDialogAsync(
             new SealStickers8bEditorViewModel(sav),
-            "Seal Stickers Editor (BDSP)");
+            T("Dialog_SealStickersEditorBDSP"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -379,7 +383,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is not SAV8BS sav) return;
         await _windowService.ShowDialogAsync(
             new Poffin8bEditorViewModel(sav),
-            "Poffin Editor (BDSP)");
+            T("Dialog_PoffinEditorBDSP"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -388,7 +392,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is not SAV6 sav) return;
         await _windowService.ShowDialogAsync(
             new Link6EditorViewModel(sav, _dialogService),
-            "Pokémon Link Editor (Gen 6)");
+            T("Dialog_PokemonLinkEditorGen6"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -397,7 +401,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is not (SAV1 or SAV2 or SAV3 or SAV4 or SAV5)) return;
         await _windowService.ShowDialogAsync(
             new SimpleTrainerEditorViewModel(CurrentSave!),
-            "Simple Trainer Editor");
+            T("Dialog_SimpleTrainerEditor"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -406,7 +410,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is not SAV4BR sav) return;
         await _windowService.ShowDialogAsync(
             new GearBREditorViewModel(sav),
-            "Gear Editor (Battle Revolution)");
+            T("Dialog_GearEditorBattleRevolution"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -415,7 +419,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is not SAV3 sav3hoenn || sav3hoenn is not (SAV3RS or SAV3E)) return;
         await _windowService.ShowDialogAsync(
             new SecretBase3EditorViewModel(sav3hoenn),
-            "Secret Base Editor (RSE)");
+            T("Dialog_SecretBaseEditorRSE"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -424,7 +428,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is not SAV6AO sav) return;
         await _windowService.ShowDialogAsync(
             new SecretBase6EditorViewModel(sav),
-            "Secret Base Editor (ORAS)");
+            T("Dialog_SecretBaseEditorORAS"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -433,7 +437,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is not ISaveBlock6Main sav) return;
         await _windowService.ShowDialogAsync(
             new PokepuffEditorViewModel(sav),
-            "Poké Puff Editor");
+            T("Dialog_PokePuffEditor"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -442,7 +446,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is null) return;
         await _windowService.ShowDialogAsync(
             new PokeBlockEditorViewModel(CurrentSave),
-            "Pokéblock Editor");
+            T("Dialog_PokeblockEditor"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -451,7 +455,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is null) return;
         await _windowService.ShowDialogAsync(
             new BerryFieldEditorViewModel(CurrentSave),
-            "Berry Field Editor");
+            T("Dialog_BerryFieldEditor"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -460,7 +464,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is not SAV6XY sav) return;
         await _windowService.ShowDialogAsync(
             new Roamer6EditorViewModel(sav),
-            "Roamer Editor (XY)");
+            T("Dialog_RoamerEditorXY"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -469,7 +473,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is null) return;
         await _windowService.ShowDialogAsync(
             new ChatterEditorViewModel(CurrentSave),
-            "Chatter Editor");
+            T("Dialog_ChatterEditor"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -478,7 +482,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is null) return;
         await _windowService.ShowDialogAsync(
             new RTCEditorViewModel(CurrentSave),
-            "RTC Editor");
+            T("Dialog_RTCEditor"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -487,7 +491,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is null) return;
         await _windowService.ShowDialogAsync(
             new MedalEditorViewModel(CurrentSave, _dialogService),
-            "Medal Rally Editor");
+            T("Dialog_MedalRallyEditor"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -496,7 +500,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is null) return;
         await _windowService.ShowDialogAsync(
             new UnityTower5EditorViewModel(CurrentSave),
-            "Unity Tower Editor");
+            T("Dialog_UnityTowerEditor"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -505,7 +509,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is null) return;
         await _windowService.ShowDialogAsync(
             new PoffinCaseEditorViewModel(CurrentSave),
-            "Poffin Case Editor");
+            T("Dialog_PoffinCaseEditor"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -514,7 +518,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is null) return;
         await _windowService.ShowDialogAsync(
             new PoketchEditorViewModel(CurrentSave),
-            "Pokétch Editor");
+            T("Dialog_PoketchEditor"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -523,7 +527,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is null) return;
         await _windowService.ShowDialogAsync(
             new PokeBlock3CaseEditorViewModel(CurrentSave),
-            "Pokéblock Case Editor");
+            T("Dialog_PokeblockCaseEditor"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -532,7 +536,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is null) return;
         await _windowService.ShowDialogAsync(
             new HallOfFame3EditorViewModel(CurrentSave),
-            "Hall of Fame (Gen 3)");
+            T("Dialog_HallOfFameGen3"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -541,7 +545,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is null) return;
         await _windowService.ShowDialogAsync(
             new FashionEditorViewModel(CurrentSave),
-            "Fashion Editor");
+            T("Dialog_FashionEditor"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -550,7 +554,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is null) return;
         await _windowService.ShowDialogAsync(
             new TrainerCard8EditorViewModel(CurrentSave),
-            "Trainer Card Editor");
+            T("Dialog_TrainerCardEditor"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -559,7 +563,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is null) return;
         await _windowService.ShowDialogAsync(
             new MailBoxEditorViewModel(CurrentSave),
-            "Mail Box Editor");
+            T("Dialog_MailBoxEditor"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -568,7 +572,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is not SAV2 sav) return;
         await _windowService.ShowDialogAsync(
             new EventFlags2EditorViewModel(sav),
-            "Event Flags (Gen 2)");
+            T("Dialog_EventFlagsGen2"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -577,7 +581,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is not SAV2 sav) return;
         await _windowService.ShowDialogAsync(
             new Misc2EditorViewModel(sav),
-            "Misc Editor (Gen 2)");
+            T("Dialog_MiscEditorGen2"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -586,7 +590,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is not SAV3 sav) return;
         await _windowService.ShowDialogAsync(
             new Misc3EditorViewModel(sav),
-            "Misc Editor (Gen 3)");
+            T("Dialog_MiscEditorGen3"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -595,7 +599,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is not SAV4 sav) return;
         await _windowService.ShowDialogAsync(
             new Misc4EditorViewModel(sav),
-            "Misc Editor (Gen 4)");
+            T("Dialog_MiscEditorGen4"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -604,7 +608,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is not SAV4HGSS sav) return;
         await _windowService.ShowDialogAsync(
             new PokeathlonEditorViewModel(sav, _spriteRenderer),
-            "Pokéathlon Editor (HGSS)");
+            T("Dialog_PokeathlonEditorHGSS"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -613,7 +617,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is not SAV5 sav) return;
         await _windowService.ShowDialogAsync(
             new Misc5EditorViewModel(sav),
-            "Misc Editor (Gen 5)");
+            T("Dialog_MiscEditorGen5"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -622,7 +626,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is not SAV5B2W2 sav) return;
         await _windowService.ShowDialogAsync(
             new JoinAvenueEditorViewModel(sav, _spriteRenderer, _dialogService),
-            "Join Avenue Editor (B2W2)");
+            T("Dialog_JoinAvenueEditorB2W2"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -631,7 +635,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is not SAV7 sav) return;
         await _windowService.ShowDialogAsync(
             new Misc7EditorViewModel(sav),
-            "Misc Editor (Gen 7)");
+            T("Dialog_MiscEditorGen7"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -640,7 +644,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is not SAV8SWSH sav) return;
         await _windowService.ShowDialogAsync(
             new Misc8EditorViewModel(sav),
-            "Misc Editor (SWSH)");
+            T("Dialog_MiscEditorSWSH"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -649,7 +653,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is not SAV9SV sav) return;
         await _windowService.ShowDialogAsync(
             new Misc9EditorViewModel(sav),
-            "Misc Editor (SV)");
+            T("Dialog_MiscEditorSV"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -658,7 +662,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is not SAV7b sav) return;
         await _windowService.ShowDialogAsync(
             new Misc7bEditorViewModel(sav),
-            "Misc Editor (Let's Go)");
+            T("Dialog_MiscEditorLetsGo"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -667,7 +671,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is not SAV8LA sav) return;
         await _windowService.ShowDialogAsync(
             new Misc8aEditorViewModel(sav),
-            "Misc Editor (Legends Arceus)");
+            T("Dialog_MiscEditorLegendsArceus"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -676,7 +680,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is not SAV8BS sav) return;
         await _windowService.ShowDialogAsync(
             new Misc8bEditorViewModel(sav),
-            "Misc Editor (BDSP)");
+            T("Dialog_MiscEditorBDSP"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -685,7 +689,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is not SAV1 sav) return;
         await _windowService.ShowDialogAsync(
             new EventReset1EditorViewModel(sav),
-            "Event Reset (Gen 1)");
+            T("Dialog_EventResetGen1"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -694,7 +698,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is not SAV1 sav) return;
         await _windowService.ShowDialogAsync(
             new HallOfFame1EditorViewModel(sav),
-            "Hall of Fame (Gen 1)");
+            T("Dialog_HallOfFameGen1"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -703,7 +707,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is not SAV3 sav) return;
         await _windowService.ShowDialogAsync(
             new Roamer3EditorViewModel(sav),
-            "Roamer Editor (Gen 3)");
+            T("Dialog_RoamerEditorGen3"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -712,7 +716,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is not (SAV3RS or SAV3E)) return;
         await _windowService.ShowDialogAsync(
             new RTC3EditorViewModel(CurrentSave!),
-            "RTC Editor (Gen 3)");
+            T("Dialog_RTCEditorGen3"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -721,7 +725,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is not SAV7b sav) return;
         await _windowService.ShowDialogAsync(
             new Capture7GGEditorViewModel(sav),
-            "Capture Records (Let's Go)");
+            T("Dialog_CaptureRecordsLetsGo"));
     }
 
     [RelayCommand(CanExecute = nameof(HasSave))]
@@ -730,6 +734,6 @@ public partial class MainWindowViewModel
         if (CurrentSave is null) return;
         await _windowService.ShowDialogAsync(
             new HallOfFame7EditorViewModel(CurrentSave),
-            "Hall of Fame (SM/USUM)");
+            T("Dialog_HallOfFameSMUSUM"));
     }
 }

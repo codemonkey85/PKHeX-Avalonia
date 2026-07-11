@@ -4,6 +4,7 @@ using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
 using PKHeX.Application;
 using PKHeX.Application.Abstractions;
+using PKHeX.Application.Services;
 using PKHeX.Infrastructure;
 using PKHeX.Infrastructure.Configuration;
 using PKHeX.Avalonia.Services;
@@ -32,6 +33,12 @@ public partial class App : global::Avalonia.Application
 
         // Apply the persisted theme preference before any window is created.
         Services.GetRequiredService<ThemeService>().Initialize();
+
+        // Apply the persisted UI/data language before any window is created so both the game-data
+        // strings (GameInfo) and the shell's UI-chrome strings (LocalizedStrings, synced by the main
+        // ViewModel's ctor) render in the saved language from the first frame — no restart needed.
+        var settings = Services.GetRequiredService<AppSettings>();
+        Services.GetRequiredService<LanguageService>().SetLanguage(settings.DisplayLanguage);
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {

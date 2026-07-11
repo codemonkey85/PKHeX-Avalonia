@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:PKHeX.Presentation.ViewModels;assembly=PKHeX.Presentation"
              xmlns:conv="using:PKHeX.Avalonia.Converters"
+             xmlns:loc="using:PKHeX.Avalonia.Localization"
              x:Class="PKHeX.Avalonia.Views.SettingsView"
              x:DataType="vm:SettingsViewModel">
 
@@ -12,23 +13,23 @@
 
     <ScrollViewer>
         <StackPanel Margin="24" Spacing="24">
-            <TextBlock Text="Settings" FontSize="28" FontWeight="Light" Margin="0,0,0,12"/>
+            <TextBlock Text="{loc:Loc Settings_Title}" FontSize="28" FontWeight="Light" Margin="0,0,0,12"/>
 
             <!-- Backup Settings Card -->
             <Border Classes="section-card" Padding="20" CornerRadius="8">
                 <StackPanel Spacing="16">
                     <StackPanel Orientation="Horizontal" Spacing="12">
                         <TextBlock Text="💾" FontSize="20" VerticalAlignment="Center"/>
-                        <TextBlock Text="Backups" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        <TextBlock Text="{loc:Loc Settings_Backups}" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center"/>
                     </StackPanel>
-                    
+
                     <Grid ColumnDefinitions="*,Auto">
                         <StackPanel Grid.Column="0">
-                            <TextBlock Text="Enable Backups" FontWeight="Medium"/>
-                            <TextBlock Text="Automatically create a backup when saving." 
+                            <TextBlock Text="{loc:Loc Settings_EnableBackups}" FontWeight="Medium"/>
+                            <TextBlock Text="{loc:Loc Settings_EnableBackups_Desc}"
                                        FontSize="12" Opacity="0.6" TextWrapping="Wrap"/>
                         </StackPanel>
-                        <ToggleSwitch Grid.Column="1" IsChecked="{Binding BakEnabled}" OnContent="On" OffContent="Off"/>
+                        <ToggleSwitch Grid.Column="1" IsChecked="{Binding BakEnabled}" OnContent="{loc:Loc Common_On}" OffContent="{loc:Loc Common_Off}"/>
                     </Grid>
                 </StackPanel>
             </Border>
@@ -38,34 +39,34 @@
                 <StackPanel Spacing="16">
                     <StackPanel Orientation="Horizontal" Spacing="12">
                         <TextBlock Text="📝" FontSize="20" VerticalAlignment="Center"/>
-                        <TextBlock Text="Editor Behavior" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        <TextBlock Text="{loc:Loc Settings_EditorBehavior}" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center"/>
                     </StackPanel>
-                    
+
                     <Grid ColumnDefinitions="*,Auto">
                         <StackPanel Grid.Column="0">
-                            <TextBlock Text="Update Pokédex" FontWeight="Medium"/>
-                            <TextBlock Text="Automatically update the Save File's Pokédex when injecting a PKM." 
+                            <TextBlock Text="{loc:Loc Settings_UpdatePokedex}" FontWeight="Medium"/>
+                            <TextBlock Text="{loc:Loc Settings_UpdatePokedex_Desc}"
                                        FontSize="12" Opacity="0.6" TextWrapping="Wrap"/>
                         </StackPanel>
-                        <ToggleSwitch Grid.Column="1" IsChecked="{Binding SetUpdateDex}" OnContent="On" OffContent="Off"/>
+                        <ToggleSwitch Grid.Column="1" IsChecked="{Binding SetUpdateDex}" OnContent="{loc:Loc Common_On}" OffContent="{loc:Loc Common_Off}"/>
                     </Grid>
 
                     <Grid ColumnDefinitions="*,Auto">
                         <StackPanel Grid.Column="0">
-                            <TextBlock Text="Adapt PKM to Save" FontWeight="Medium"/>
-                            <TextBlock Text="Automatically adapt PKM info to the Save File (Handler, Format)." 
+                            <TextBlock Text="{loc:Loc Settings_AdaptPKM}" FontWeight="Medium"/>
+                            <TextBlock Text="{loc:Loc Settings_AdaptPKM_Desc}"
                                        FontSize="12" Opacity="0.6" TextWrapping="Wrap"/>
                         </StackPanel>
-                        <ToggleSwitch Grid.Column="1" IsChecked="{Binding SetUpdatePKM}" OnContent="On" OffContent="Off"/>
+                        <ToggleSwitch Grid.Column="1" IsChecked="{Binding SetUpdatePKM}" OnContent="{loc:Loc Common_On}" OffContent="{loc:Loc Common_Off}"/>
                     </Grid>
-                    
+
                     <Grid ColumnDefinitions="*,Auto">
                         <StackPanel Grid.Column="0">
-                             <TextBlock Text="Warn if closing modified" FontWeight="Medium"/>
-                             <TextBlock Text="Warn when closing the editor if changes are unsaved."
+                             <TextBlock Text="{loc:Loc Settings_WarnClosingModified}" FontWeight="Medium"/>
+                             <TextBlock Text="{loc:Loc Settings_WarnClosingModified_Desc}"
                                         FontSize="12" Opacity="0.6" TextWrapping="Wrap"/>
                         </StackPanel>
-                        <ToggleSwitch Grid.Column="1" IsChecked="{Binding ModifyUnset}" OnContent="On" OffContent="Off"/>
+                        <ToggleSwitch Grid.Column="1" IsChecked="{Binding ModifyUnset}" OnContent="{loc:Loc Common_On}" OffContent="{loc:Loc Common_Off}"/>
                     </Grid>
                 </StackPanel>
             </Border>
@@ -75,13 +76,13 @@
                 <StackPanel Spacing="16">
                     <StackPanel Orientation="Horizontal" Spacing="12">
                         <TextBlock Text="🎨" FontSize="20" VerticalAlignment="Center"/>
-                        <TextBlock Text="Sprites" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        <TextBlock Text="{loc:Loc Settings_Sprites}" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center"/>
                     </StackPanel>
 
                     <Grid ColumnDefinitions="*,Auto">
                         <StackPanel Grid.Column="0">
-                            <TextBlock Text="Sprite Style" FontWeight="Medium"/>
-                            <TextBlock Text="Which Pokémon sprite set to display. 'Use Suggested' matches the loaded save's game (artwork for Scarlet/Violet, mugshots for Legends: Arceus, classic otherwise)."
+                            <TextBlock Text="{loc:Loc Settings_SpriteStyle}" FontWeight="Medium"/>
+                            <TextBlock Text="{loc:Loc Settings_SpriteStyle_Desc}"
                                        FontSize="12" Opacity="0.6" TextWrapping="Wrap"/>
                         </StackPanel>
                         <ComboBox Grid.Column="1" MinWidth="170" VerticalAlignment="Center"
@@ -102,25 +103,25 @@
                 <StackPanel Spacing="16">
                     <StackPanel Orientation="Horizontal" Spacing="12">
                         <TextBlock Text="🔔" FontSize="20" VerticalAlignment="Center"/>
-                        <TextBlock Text="Updates" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        <TextBlock Text="{loc:Loc Settings_Updates}" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center"/>
                     </StackPanel>
 
                     <Grid ColumnDefinitions="*,Auto">
                         <StackPanel Grid.Column="0">
-                            <TextBlock Text="Check for Updates on Startup" FontWeight="Medium"/>
-                            <TextBlock Text="Query GitHub for a newer release when the app launches. Disabling this makes zero network calls at startup."
+                            <TextBlock Text="{loc:Loc Settings_CheckUpdates}" FontWeight="Medium"/>
+                            <TextBlock Text="{loc:Loc Settings_CheckUpdates_Desc}"
                                        FontSize="12" Opacity="0.6" TextWrapping="Wrap"/>
                         </StackPanel>
-                        <ToggleSwitch Grid.Column="1" IsChecked="{Binding CheckForUpdatesOnStartup}" OnContent="On" OffContent="Off"/>
+                        <ToggleSwitch Grid.Column="1" IsChecked="{Binding CheckForUpdatesOnStartup}" OnContent="{loc:Loc Common_On}" OffContent="{loc:Loc Common_Off}"/>
                     </Grid>
 
                     <Grid ColumnDefinitions="*,Auto">
                         <StackPanel Grid.Column="0">
-                            <TextBlock Text="Show Changelog after Update" FontWeight="Medium"/>
-                            <TextBlock Text="Automatically show the 'What's New' dialog the first time you launch a newer version."
+                            <TextBlock Text="{loc:Loc Settings_ShowChangelog}" FontWeight="Medium"/>
+                            <TextBlock Text="{loc:Loc Settings_ShowChangelog_Desc}"
                                        FontSize="12" Opacity="0.6" TextWrapping="Wrap"/>
                         </StackPanel>
-                        <ToggleSwitch Grid.Column="1" IsChecked="{Binding ShowChangelog}" OnContent="On" OffContent="Off"/>
+                        <ToggleSwitch Grid.Column="1" IsChecked="{Binding ShowChangelog}" OnContent="{loc:Loc Common_On}" OffContent="{loc:Loc Common_Off}"/>
                     </Grid>
                 </StackPanel>
             </Border>
@@ -130,13 +131,13 @@
                 <StackPanel Spacing="16">
                     <StackPanel Orientation="Horizontal" Spacing="12">
                         <TextBlock Text="🖥️" FontSize="20" VerticalAlignment="Center"/>
-                        <TextBlock Text="Appearance" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        <TextBlock Text="{loc:Loc Settings_Appearance}" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center"/>
                     </StackPanel>
 
                     <Grid ColumnDefinitions="*,Auto">
                         <StackPanel Grid.Column="0">
-                            <TextBlock Text="Theme" FontWeight="Medium"/>
-                            <TextBlock Text="Switches immediately, no restart required. 'Follow System' tracks the OS light/dark preference live."
+                            <TextBlock Text="{loc:Loc Settings_Theme}" FontWeight="Medium"/>
+                            <TextBlock Text="{loc:Loc Settings_Theme_Desc}"
                                        FontSize="12" Opacity="0.6" TextWrapping="Wrap"/>
                         </StackPanel>
                         <ComboBox Grid.Column="1" MinWidth="170" VerticalAlignment="Center"
@@ -149,13 +150,26 @@
                             </ComboBox.ItemTemplate>
                         </ComboBox>
                     </Grid>
+
+                    <Grid ColumnDefinitions="*,Auto">
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="{loc:Loc Settings_Language}" FontWeight="Medium"/>
+                            <TextBlock Text="{loc:Loc Settings_Language_Desc}"
+                                       FontSize="12" Opacity="0.6" TextWrapping="Wrap"/>
+                        </StackPanel>
+                        <ComboBox Grid.Column="1" MinWidth="170" VerticalAlignment="Center"
+                                  x:CompileBindings="False"
+                                  ItemsSource="{Binding LanguageService.AvailableLanguages}"
+                                  SelectedItem="{Binding LanguageService.CurrentLanguageOption, Mode=TwoWay}"
+                                  AutomationProperties.Name="UI Language Selection"/>
+                    </Grid>
                 </StackPanel>
             </Border>
 
-            <Button Content="Save Changes"
+            <Button Content="{loc:Loc Settings_SaveChanges}"
                     Command="{Binding SaveCommand}"
                     Classes="accent"
-                    HorizontalAlignment="Right" 
+                    HorizontalAlignment="Right"
                     Padding="24,12"/>
         </StackPanel>
     </ScrollViewer>

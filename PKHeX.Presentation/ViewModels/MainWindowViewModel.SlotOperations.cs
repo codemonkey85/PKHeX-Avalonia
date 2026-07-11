@@ -102,7 +102,7 @@ public partial class MainWindowViewModel
     private void OnPartyDeleteSlot(int slot)
     {
         if (CurrentSave is null || PartyViewer is null) return;
-        _ = _dialogService.ShowErrorAsync("Delete", "Cannot delete party Pokémon. Move to a box first.");
+        _ = _dialogService.ShowErrorAsync(T("Common_Delete"), T("Msg_CannotDeletePartyPokemon"));
     }
 
     private void OnBatchEditCompleted()

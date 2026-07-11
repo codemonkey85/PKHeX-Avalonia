@@ -1,16 +1,17 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:PKHeX.Presentation.ViewModels;assembly=PKHeX.Presentation"
+             xmlns:loc="using:PKHeX.Avalonia.Localization"
              x:Class="PKHeX.Avalonia.Views.AboutView"
              x:DataType="vm:AboutViewModel"
              Width="400" Height="250">
     <Border Padding="24" Classes="view-container">
         <StackPanel Spacing="16" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <TextBlock Text="PKHeX"
+            <TextBlock Text="{loc:Loc About_Brand}"
                        FontSize="32"
                        FontWeight="Bold"
                        HorizontalAlignment="Center" />
-            <TextBlock Text="Avalonia Edition"
+            <TextBlock Text="{loc:Loc About_Edition}"
                        FontSize="16"
                        Opacity="0.7"
                        HorizontalAlignment="Center" />
@@ -30,16 +31,16 @@
                            FontSize="12" />
             </StackPanel>
 
-            <TextBlock Text="UI Port by Realgar"
+            <TextBlock Text="{loc:Loc About_UIPort}"
                        FontSize="12"
                        HorizontalAlignment="Center"
                        Margin="0,8,0,0" />
-            <TextBlock Text="Core Logic by PKHeX Contributors"
+            <TextBlock Text="{loc:Loc About_CoreCredit}"
                        FontSize="11"
                        Opacity="0.8"
                        HorizontalAlignment="Center" />
             
-            <Button Content="Close"
+            <Button Content="{loc:Loc Common_Close}"
                     Click="OnCloseClick"
                     HorizontalAlignment="Center"
                     Classes="accent"
