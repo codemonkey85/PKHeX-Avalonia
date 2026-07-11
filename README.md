@@ -28,13 +28,16 @@ Get the latest build for your platform from the [Releases](https://github.com/re
 | macOS Apple Silicon | `PKHeX-Avalonia-osx-arm64.zip`, or `PKHeX-Avalonia-osx-arm64.dmg` |
 | macOS Intel | `PKHeX-Avalonia-osx-x64.zip`, or `PKHeX-Avalonia-osx-x64.dmg` |
 
-**Unsigned builds:** installer/dmg artifacts are only code-signed and notarized once signing
-secrets are configured (see [`docs/packaging.md`](docs/packaging.md)). Filenames ending in
-`-unsigned` will trigger an OS warning on first launch — on Windows, click **More info** → **Run
-anyway**; on macOS, right-click → **Open**, or run:
+**Unsigned builds:** installer/dmg artifacts are only fully code-signed and notarized once signing
+secrets are configured; macOS `.dmg`s may instead carry a stable self-signed identity
+(`-selfsigned`, avoids repeat Gatekeeper prompts on updates but still needs a one-time approval —
+see [`docs/packaging.md`](docs/packaging.md)). Filenames ending in `-unsigned` will trigger an OS
+warning on first launch — on Windows, click **More info** → **Run anyway**; on macOS, right-click →
+**Open**, or run:
 ```bash
-xattr -d com.apple.quarantine ~/Downloads/PKHeX.Avalonia.app
+xattr -dr com.apple.quarantine ~/Downloads/PKHeX.Avalonia.app
 ```
+Homebrew installs strip this automatically via the cask's postflight step.
 
 Package-manager installs (Homebrew cask, winget) are templated under `packaging/`, pending signed
 builds — see [`docs/packaging.md`](docs/packaging.md).

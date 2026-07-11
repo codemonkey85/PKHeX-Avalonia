@@ -51,6 +51,84 @@ Gatekeeper will still complain.
 
 The existing ad-hoc-signed `.zip` artifacts are untouched by this change.
 
+## macOS: stable self-signed identity (the "tertius" pattern)
+
+Real Developer ID signing needs a paid Apple Developer account. Without one,
+`release.yml` falls back to a second tier before giving up and shipping
+unsigned: a **stable self-signed identity**.
+
+**Why a stable identity matters.** Gatekeeper's "this app is from an
+unidentified developer" prompt, and macOS's re-prompting for TCC permissions
+(Accessibility, Full Disk Access, etc.) and keychain access, are keyed off
+the app's *codesign designated requirement* — effectively a hash derived
+from the signing certificate. An ad-hoc signature (`codesign --sign -`) has
+no stable identity: every build gets a new one, so macOS treats every
+update as a brand-new, never-before-seen app. That means every single
+release re-triggers Gatekeeper's "are you sure?" dialog and drops any TCC
+grants the user already approved.
+
+If instead every release is signed with the **same** self-signed
+certificate, the designated requirement stays identical release over
+release. macOS then recognizes an update as *the same app* upgrading in
+place — TCC grants and keychain items persist across `brew upgrade` or a
+manual re-download and reinstall, and Gatekeeper only has an opinion about
+the app once, not on every update.
+
+This does **not** replace notarization — a self-signed cert isn't trusted by
+Apple, so first launch of a freshly downloaded artifact still shows the
+Gatekeeper "unidentified developer" prompt once. What it fixes is the
+*repeat* prompting on every subsequent update, and it works entirely without
+an Apple Developer Program membership.
+
+**Generating the certificate (one-time, by the repo owner):**
+
+```bash
+P12_PASSWORD='choose-a-password' Scripts/make-signing-cert.sh ./secrets
+base64 -i ./secrets/signing.p12 | pbcopy   # paste into SELFSIGN_CERT_P12_BASE64
+```
+
+This produces a 10-year self-signed EC certificate with the `codeSigning`
+extended key usage, packaged as `signing.p12`. Keep this file (and the
+password) somewhere durable outside the repo — regenerating it produces a
+*different* identity, which resets the stability this whole pattern exists
+for.
+
+**The three secrets to add** (repo Settings → Secrets and variables →
+Actions), used only when the Developer ID secrets above are absent:
+
+| Secret | Contents |
+|---|---|
+| `SELFSIGN_CERT_P12_BASE64` | Base64 of the `.p12` produced above |
+| `SELFSIGN_CERT_PASSWORD` | The `P12_PASSWORD` used to generate it |
+| `SELFSIGN_IDENTITY` | The certificate's CN, default `PKHeX-Avalonia Self-Signed` (override via `CERT_CN` when running the script) |
+
+When present, `release.yml` imports the cert into a dedicated CI keychain
+(`Scripts/import-cert.sh`, same idempotent import-and-unlock-partition-list
+flow used for local testing) and re-signs every Mach-O in
+`PKHeX.Avalonia.app` with that identity before building the `.dmg`. The
+artifact is named `PKHeX-Avalonia-osx-<arch>-selfsigned.dmg` so it's
+distinguishable from a Developer ID build and from a fully unsigned one.
+
+**Homebrew users get the whole problem solved for them.** The cask template
+(`packaging/homebrew/pkhex-avalonia.rb`) runs a `postflight` block that
+strips the quarantine extended attribute Homebrew's downloader adds
+(`xattr -dr com.apple.quarantine`), so `brew install --cask pkhex-avalonia`
+never shows a Gatekeeper prompt at all, on first install or any later
+upgrade.
+
+**Manual `.dmg`/`.zip` downloads** still see the one-time "unidentified
+developer" prompt on first launch (self-signed, not notarized). Either
+right-click → **Open** once, or clear the quarantine bit yourself:
+
+```bash
+xattr -dr com.apple.quarantine /Applications/PKHeX-Avalonia.app
+```
+
+After that one time, updating in place (replacing the same `/Applications`
+copy) keeps the same designated requirement release to release, so this
+manual step should not be needed again as long as the self-signed cert
+itself isn't regenerated.
+
 ## Windows: installer & code signing
 
 `release.yml`'s Windows leg installs Inno Setup via `choco install
@@ -135,11 +213,12 @@ review is far more likely to reject them.
 ## Summary: what's automatic vs. gated vs. manual
 
 - **Fully automatic, every release:** zip artifacts (all platforms),
-  AppImage, `.dmg` (signed or unsigned), Windows installer (signed or
-  unsigned), GitHub Release creation and asset upload.
+  AppImage, `.dmg` (signed, self-signed, or unsigned), Windows installer
+  (signed or unsigned), GitHub Release creation and asset upload.
 - **Gated on secrets (automatic once configured):** Developer ID codesigning
-  + notarization/stapling for macOS, code signing for the Windows installer
-  and exe.
+  + notarization/stapling for macOS (tier 1), stable self-signed identity
+  for macOS (tier 2, the "tertius" pattern — no Apple Developer account
+  needed), code signing for the Windows installer and exe.
 - **Manual, one-time-per-version, by design (cannot be automated without
   publishing into third-party repos on the maintainer's behalf):**
   submitting the Homebrew cask and winget manifest PRs. Flathub packaging is
