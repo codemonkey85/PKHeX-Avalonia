@@ -95,10 +95,12 @@ jobs:
           zip -r ../${{ matrix.artifact }}.zip PKHeX.Avalonia.app
           cd ..
 
-      # Gate real Developer ID signing/notarization on repo secrets. Without
-      # them we still ship a .dmg (clearly named "-unsigned") so the artifact
-      # shape stays stable either way; see docs/packaging.md for the secrets
-      # a repo owner needs to add to turn this on.
+      # Three-tier signing priority for macOS (see docs/packaging.md):
+      #   1. Developer ID secrets present  → full sign + notarize (below, unchanged)
+      #   2. else self-signed cert secrets → stable self-signed identity (tertius
+      #      pattern) so repeat Gatekeeper prompts / TCC re-grants don't happen
+      #      across updates, artifact suffixed "-selfsigned"
+      #   3. else                          → ad-hoc/no identity, "-unsigned"
       - name: Determine macOS signing capability
         if: startsWith(matrix.rid, 'osx')
         id: mac_sign
@@ -108,7 +110,20 @@ jobs:
             echo "Signing secrets present — will produce a Developer ID signed, notarized .dmg"
             echo "enabled=true" >> "$GITHUB_OUTPUT"
           else
-            echo "Signing secrets absent — will produce an UNSIGNED .dmg"
+            echo "Developer ID signing secrets absent — will produce an UNSIGNED .dmg"
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Determine macOS self-sign capability
+        if: startsWith(matrix.rid, 'osx') && steps.mac_sign.outputs.enabled != 'true'
+        id: mac_selfsign
+        shell: bash
+        run: |
+          if [ -n "${{ secrets.SELFSIGN_CERT_P12_BASE64 }}" ] && [ -n "${{ secrets.SELFSIGN_CERT_PASSWORD }}" ] && [ -n "${{ secrets.SELFSIGN_IDENTITY }}" ]; then
+            echo "Self-signed cert secrets present — will sign with a stable self-signed identity"
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Self-signed cert secrets absent — will produce an UNSIGNED .dmg"
             echo "enabled=false" >> "$GITHUB_OUTPUT"
           fi
 
@@ -158,6 +173,38 @@ jobs:
           xcrun stapler staple publish/PKHeX.Avalonia.app
           rm -f "$RUNNER_TEMP/notarize.zip" "$RUNNER_TEMP/notary_key.p8"
 
+      # Tertius pattern: sign with a stable self-signed identity (not
+      # notarized — no Apple Developer ID needed) so the codesign designated
+      # requirement stays identical release over release. macOS then treats
+      # updates as the same app: keychain items and TCC (Accessibility, Full
+      # Disk Access, etc.) grants persist across `brew upgrade` / manual
+      # re-download instead of re-prompting every time. See docs/packaging.md.
+      - name: Import self-signed certificate
+        if: startsWith(matrix.rid, 'osx') && steps.mac_sign.outputs.enabled != 'true' && steps.mac_selfsign.outputs.enabled == 'true'
+        shell: bash
+        env:
+          P12_BASE64: ${{ secrets.SELFSIGN_CERT_P12_BASE64 }}
+          P12_PASSWORD: ${{ secrets.SELFSIGN_CERT_PASSWORD }}
+        run: |
+          printf '%s' "$P12_BASE64" | base64 --decode > "$RUNNER_TEMP/selfsign.p12"
+          export KEYCHAIN="$RUNNER_TEMP/pkhex-avalonia-ci.keychain-db"
+          chmod +x Scripts/import-cert.sh
+          Scripts/import-cert.sh "$RUNNER_TEMP/selfsign.p12"
+          rm -f "$RUNNER_TEMP/selfsign.p12"
+          echo "SELFSIGN_KEYCHAIN=$KEYCHAIN" >> "$GITHUB_ENV"
+
+      - name: Codesign with self-signed identity
+        if: startsWith(matrix.rid, 'osx') && steps.mac_sign.outputs.enabled != 'true' && steps.mac_selfsign.outputs.enabled == 'true'
+        shell: bash
+        env:
+          SELFSIGN_IDENTITY: ${{ secrets.SELFSIGN_IDENTITY }}
+        run: |
+          security unlock-keychain -p "pkhex-avalonia-build" "$SELFSIGN_KEYCHAIN" 2>/dev/null || true
+          # --deep re-signs every nested Mach-O (frameworks, native libs, the
+          # main executable) with the same identity, not just the top level.
+          codesign --force --deep --sign "$SELFSIGN_IDENTITY" --keychain "$SELFSIGN_KEYCHAIN" publish/PKHeX.Avalonia.app
+          codesign --verify --deep --strict --verbose=2 publish/PKHeX.Avalonia.app
+
       - name: Build DMG
         if: startsWith(matrix.rid, 'osx')
         shell: bash
@@ -167,6 +214,8 @@ jobs:
           ln -s /Applications "$DMG_STAGING/Applications"
           if [ "${{ steps.mac_sign.outputs.enabled }}" = "true" ]; then
             DMG_NAME="${{ matrix.artifact }}.dmg"
+          elif [ "${{ steps.mac_selfsign.outputs.enabled }}" = "true" ]; then
+            DMG_NAME="${{ matrix.artifact }}-selfsigned.dmg"
           else
             DMG_NAME="${{ matrix.artifact }}-unsigned.dmg"
           fi
