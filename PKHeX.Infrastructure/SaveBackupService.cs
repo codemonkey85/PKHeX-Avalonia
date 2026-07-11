@@ -96,7 +96,16 @@ public sealed class SaveBackupService : ISaveBackupService
             }
         }
 
-        entries.Sort((a, b) => b.TimestampUtc.CompareTo(a.TimestampUtc));
+        // Primary: newest write time first. Secondary (tie-break): filename descending, ordinal.
+        // Backups created inside the same millisecond (fast loops / rapid saves) share an identical
+        // LastWriteTimeUtc, so the timestamp alone is ambiguous; the filename encodes creation order
+        // (timestamp + "_N" collision suffix), and an ordinal compare keeps ordering deterministic and
+        // culture-invariant across platforms (NTFS vs APFS/ext4 enumerate directories differently).
+        entries.Sort((a, b) =>
+        {
+            var byTime = b.TimestampUtc.CompareTo(a.TimestampUtc);
+            return byTime != 0 ? byTime : string.CompareOrdinal(b.FileName, a.FileName);
+        });
         return new BackupListResult(entries, warnings);
     }
 
@@ -121,9 +130,13 @@ public sealed class SaveBackupService : ISaveBackupService
 
         try
         {
+            // Same tie-break as ListBackups: within an identical LastWriteTimeUtc, order by filename
+            // (ordinal) so the retained/pruned set is deterministic regardless of platform directory
+            // enumeration order — otherwise "keep newest N" is ambiguous for same-millisecond backups.
             var files = Directory.GetFiles(folder, $"*{Extension}")
                 .Select(f => new FileInfo(f))
                 .OrderByDescending(f => f.LastWriteTimeUtc)
+                .ThenByDescending(f => f.Name, StringComparer.Ordinal)
                 .ToList();
 
             for (int i = maxBackups; i < files.Count; i++)
