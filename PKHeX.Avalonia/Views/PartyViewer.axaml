@@ -79,18 +79,21 @@
                                         <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderDefaultBrush}" />
                                         <Setter Property="BorderThickness" Value="1" />
                                         <Setter Property="CornerRadius" Value="8" />
-                                        <!-- Local template (replacing Fluent's default) whose Border/ContentPresenter
-                                             are hit-test-transparent, so DragDrop hit-testing resolves to the Button
-                                             itself (which carries DragDrop.AllowDrop) instead of being swallowed by
-                                             the template's own Border. -->
+                                        <!-- Local template (replacing Fluent's default). PART_Border MUST stay
+                                             hit-test-visible with a non-null Background so a pointer press/release
+                                             resolves to this Button and its Click fires; a templated Button has no
+                                             hittable surface of its own, so an IsHitTestVisible="False" root excludes
+                                             the whole subtree from hit-testing and kills clicks (and drops). Drop
+                                             targeting still works: Avalonia walks UP from the hit element to the
+                                             nearest DragDrop.AllowDrop (this Button). The card content Panel below is
+                                             kept IsHitTestVisible="False" only so hits resolve here, not to the sprite. -->
                                         <Setter Property="Template">
                                             <ControlTemplate>
                                                 <Border Name="PART_Border"
                                                         Background="{TemplateBinding Background}"
                                                         BorderBrush="{TemplateBinding BorderBrush}"
                                                         BorderThickness="{TemplateBinding BorderThickness}"
-                                                        CornerRadius="{TemplateBinding CornerRadius}"
-                                                        IsHitTestVisible="False">
+                                                        CornerRadius="{TemplateBinding CornerRadius}">
                                                     <ContentPresenter Name="PART_ContentPresenter"
                                                                       Content="{TemplateBinding Content}"
                                                                       ContentTemplate="{TemplateBinding ContentTemplate}"

@@ -12,8 +12,8 @@ namespace PKHeX.Avalonia.Tests;
 ///    swallow the hit before it reaches the AllowDrop Button.
 ///  - PokemonEditor's AllowDrop lives on the inner Border (not the root UserControl).
 ///  - DragDrop.DragOver handlers are wired for drop-cursor feedback.
-/// This is a static-source check, not a rendered/headless behavioral test — full drag/drop
-/// verification happens by hand in a published .app (see PR description).
+/// This is a static-source check; the behavioral counterpart (real layout + hit-testing that a slot
+/// click routes to the Button) lives in <see cref="SlotClickHitTestTests"/>.
 /// </summary>
 public class SlotDragDropWiringTests(ITestOutputHelper output)
 {
@@ -41,16 +41,24 @@ public class SlotDragDropWiringTests(ITestOutputHelper output)
         Assert.Contains("DragDrop.Drop=\"OnSlotDrop\"", xml);
         Assert.Contains("DragDrop.DragOver=\"OnSlotDragOver\"", xml);
 
-        // The local Button template's Border root must be hit-test-transparent (Fluent's default
-        // Button template has its own opaque Border that would otherwise swallow the hit before
-        // it reaches the Button element that actually carries AllowDrop).
+        // The local Button template's PART_Border root must stay hit-test-VISIBLE (it carries the
+        // Button's Background), otherwise the Button's whole visual subtree is excluded from
+        // hit-testing and clicks/drops die. Regression guard for PR #169, which had set it
+        // IsHitTestVisible="False". Drop targeting still resolves because Avalonia walks up from the
+        // hit element to the Button's DragDrop.AllowDrop.
         Assert.Contains("<Border Name=\"PART_Border\"", xml);
-        Assert.Contains("IsHitTestVisible=\"False\"", xml);
-        output.WriteLine("PartyViewer.axaml: slot Button carries AllowDrop/Drop/DragOver, local template root is hit-test-transparent ✓");
+        var partBorderIndex = xml.IndexOf("<Border Name=\"PART_Border\"", StringComparison.Ordinal);
+        var partBorderTag = xml[partBorderIndex..xml.IndexOf('>', partBorderIndex)];
+        Assert.DoesNotContain("IsHitTestVisible=\"False\"", partBorderTag);
+
+        // The card content Panel (sprite + overlays) stays hit-test-transparent so hits resolve to
+        // the Button, not the Image.
+        Assert.Contains("<Panel IsHitTestVisible=\"False\">", xml);
+        output.WriteLine("PartyViewer.axaml: slot Button carries AllowDrop/Drop/DragOver, PART_Border root is hit-testable, content Panel is hit-test-transparent ✓");
     }
 
     [Fact]
-    public void BoxViewer_SlotTemplate_InThemeAxaml_HasTransparentRoot()
+    public void BoxViewer_SlotTemplate_InThemeAxaml_HasHitTestableRoot()
     {
         var repoRoot = FindRepoRoot();
         var themePath = Path.Combine(repoRoot, "PKHeX.Avalonia", "Styles", "Theme.axaml");
@@ -59,9 +67,14 @@ public class SlotDragDropWiringTests(ITestOutputHelper output)
         var styleIndex = xml.IndexOf("Selector=\"Button.slot\"", StringComparison.Ordinal);
         Assert.True(styleIndex >= 0, "Expected a Button.slot style in Theme.axaml.");
 
-        var templateSlice = xml[styleIndex..Math.Min(xml.Length, styleIndex + 1500)];
-        Assert.Contains("<Panel IsHitTestVisible=\"False\">", templateSlice);
-        output.WriteLine("Theme.axaml: Button.slot template root Panel is hit-test-transparent ✓");
+        var templateSlice = xml[styleIndex..Math.Min(xml.Length, styleIndex + 2000)];
+        // The template root Panel must stay hit-test-VISIBLE with a non-null fill (Transparent
+        // counts). A templated Button has no hittable surface of its own, so a non-hittable root
+        // excludes the entire subtree from hit-testing and kills every slot click (and drop).
+        // Regression guard for PR #169, which had set the root <Panel IsHitTestVisible="False">.
+        Assert.Contains("<Panel Background=\"Transparent\">", templateSlice);
+        Assert.DoesNotContain("<Panel IsHitTestVisible=\"False\">", templateSlice);
+        output.WriteLine("Theme.axaml: Button.slot template root Panel is hit-testable (Transparent fill) ✓");
     }
 
     [Fact]

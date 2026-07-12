@@ -346,11 +346,15 @@
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Template">
             <ControlTemplate x:DataType="models:SlotData">
-                <!-- Hit-test-transparent: Avalonia's drag/drop target resolution requires
-                     DragDrop.AllowDrop on the exact innermost hit-test-visible element. AllowDrop
-                     is set on the Button itself (see BoxViewer.axaml), so the template's visuals
-                     must not intercept hit-testing, letting the Button's own bounds win instead. -->
-                <Panel IsHitTestVisible="False">
+                <!-- Root MUST stay hit-test-visible with a non-null fill (Transparent counts) so a
+                     pointer press/release anywhere in the slot resolves to this Button and its Click
+                     fires. A templated Button has no independent hittable surface: if the template
+                     root is IsHitTestVisible="False" the Button's entire visual subtree is excluded
+                     from hit-testing and every click (and drop) dies. Drop targeting still works —
+                     Avalonia walks UP from the hit element to the nearest DragDrop.AllowDrop, which
+                     is this Button (see BoxViewer.axaml); the sprite content Panel is kept
+                     IsHitTestVisible="False" only so hits resolve here rather than to the Image. -->
+                <Panel Background="Transparent">
                     <Border Name="PART_Border"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
