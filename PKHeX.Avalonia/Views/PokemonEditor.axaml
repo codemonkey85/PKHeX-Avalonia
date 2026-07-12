@@ -2,12 +2,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:PKHeX.Presentation.ViewModels;assembly=PKHeX.Presentation"
              xmlns:loc="using:PKHeX.Avalonia.Localization"
+             xmlns:controls="clr-namespace:PKHeX.Avalonia.Controls"
              x:Class="PKHeX.Avalonia.Views.PokemonEditor"
              x:DataType="vm:PokemonEditorViewModel"
              Focusable="False"
-             KeyboardNavigation.IsTabStop="False"
-             DragDrop.AllowDrop="True"
-             DragDrop.Drop="OnEditorDrop">
+             KeyboardNavigation.IsTabStop="False">
 
     <UserControl.Resources>
         <SolidColorBrush x:Key="SystemControlFocusVisualPrimaryBrush" Color="Transparent" />
@@ -27,7 +26,13 @@
         </Style>
     </UserControl.Styles>
 
-        <Border Padding="6" Classes="view-container" VerticalAlignment="Stretch">
+        <!-- AllowDrop lives here (not on the root UserControl): Avalonia's drag/drop target
+             resolution requires AllowDrop on the exact innermost hit-test-visible element under
+             the pointer, and this Border's Background covers the editor's full visible area. -->
+        <Border Padding="6" Classes="view-container" VerticalAlignment="Stretch"
+                DragDrop.AllowDrop="True"
+                DragDrop.Drop="OnEditorDrop"
+                DragDrop.DragOver="OnEditorDragOver">
             <Grid RowDefinitions="Auto,*" VerticalAlignment="Stretch">
                 <!-- Header Section -->
                 <Grid Grid.Row="0" ColumnDefinitions="Auto,*" Margin="4,0,4,12">
@@ -128,9 +133,9 @@
                                     <!-- Species -->
                                     <StackPanel Grid.Row="1" Grid.Column="0">
                                         <TextBlock Text="{loc:Loc PokemonEditor_Species}" FontWeight="SemiBold" Margin="0,0,0,4" />
-                                        <ComboBox ItemsSource="{Binding SpeciesList}"
-                                                  SelectedValue="{Binding Species}" SelectedValueBinding="{Binding Value}"
-                                                  DisplayMemberBinding="{Binding Text}" HorizontalAlignment="Stretch" />
+                                        <controls:FilterableComboBox ItemsSource="{Binding SpeciesList}"
+                                                  SelectedValue="{Binding Species}" HorizontalAlignment="Stretch"
+                                                  AutomationProperties.Name="Species" />
                                     </StackPanel>
 
                                     <!-- Nickname -->
@@ -243,9 +248,9 @@
 
                                     <StackPanel Grid.Row="1" Grid.Column="0">
                                         <TextBlock Text="{loc:Loc PokemonEditor_HeldItem}" FontWeight="SemiBold" Margin="0,0,0,4" />
-                                        <ComboBox ItemsSource="{Binding ItemList}"
-                                                  SelectedValue="{Binding HeldItem}" SelectedValueBinding="{Binding Value}"
-                                                  DisplayMemberBinding="{Binding Text}" HorizontalAlignment="Stretch" />
+                                        <controls:FilterableComboBox ItemsSource="{Binding ItemList}"
+                                                  SelectedValue="{Binding HeldItem}" HorizontalAlignment="Stretch"
+                                                  AutomationProperties.Name="Held Item" />
                                     </StackPanel>
 
                                     <StackPanel Grid.Row="1" Grid.Column="2">
@@ -411,9 +416,8 @@
                                     <!-- Move 1 -->
                                     <Border Classes="section-card" Padding="12">
                                         <Grid RowDefinitions="Auto,12,Auto">
-                                            <ComboBox Grid.Row="0" ItemsSource="{Binding MoveList}"
-                                                      SelectedValue="{Binding Move1}" SelectedValueBinding="{Binding Value}"
-                                                      DisplayMemberBinding="{Binding Text}" HorizontalAlignment="Stretch"
+                                            <controls:FilterableComboBox Grid.Row="0" ItemsSource="{Binding MoveList}"
+                                                      SelectedValue="{Binding Move1}" HorizontalAlignment="Stretch"
                                                       AutomationProperties.Name="Move 1" />
                                             
                                             <Grid Grid.Row="2" ColumnDefinitions="Auto,*,8,Auto,*">
@@ -431,9 +435,8 @@
                                     <!-- Move 2 -->
                                     <Border Classes="section-card" Padding="12">
                                         <Grid RowDefinitions="Auto,12,Auto">
-                                            <ComboBox Grid.Row="0" ItemsSource="{Binding MoveList}"
-                                                      SelectedValue="{Binding Move2}" SelectedValueBinding="{Binding Value}"
-                                                      DisplayMemberBinding="{Binding Text}" HorizontalAlignment="Stretch"
+                                            <controls:FilterableComboBox Grid.Row="0" ItemsSource="{Binding MoveList}"
+                                                      SelectedValue="{Binding Move2}" HorizontalAlignment="Stretch"
                                                       AutomationProperties.Name="Move 2" />
                                             
                                             <Grid Grid.Row="2" ColumnDefinitions="Auto,*,8,Auto,*">
@@ -451,9 +454,8 @@
                                     <!-- Move 3 -->
                                     <Border Classes="section-card" Padding="12">
                                         <Grid RowDefinitions="Auto,12,Auto">
-                                            <ComboBox Grid.Row="0" ItemsSource="{Binding MoveList}"
-                                                      SelectedValue="{Binding Move3}" SelectedValueBinding="{Binding Value}"
-                                                      DisplayMemberBinding="{Binding Text}" HorizontalAlignment="Stretch"
+                                            <controls:FilterableComboBox Grid.Row="0" ItemsSource="{Binding MoveList}"
+                                                      SelectedValue="{Binding Move3}" HorizontalAlignment="Stretch"
                                                       AutomationProperties.Name="Move 3" />
                                             
                                             <Grid Grid.Row="2" ColumnDefinitions="Auto,*,8,Auto,*">
@@ -471,9 +473,8 @@
                                     <!-- Move 4 -->
                                     <Border Classes="section-card" Padding="12">
                                         <Grid RowDefinitions="Auto,12,Auto">
-                                            <ComboBox Grid.Row="0" ItemsSource="{Binding MoveList}"
-                                                      SelectedValue="{Binding Move4}" SelectedValueBinding="{Binding Value}"
-                                                      DisplayMemberBinding="{Binding Text}" HorizontalAlignment="Stretch"
+                                            <controls:FilterableComboBox Grid.Row="0" ItemsSource="{Binding MoveList}"
+                                                      SelectedValue="{Binding Move4}" HorizontalAlignment="Stretch"
                                                       AutomationProperties.Name="Move 4" />
                                             
                                             <Grid Grid.Row="2" ColumnDefinitions="Auto,*,8,Auto,*">
@@ -507,18 +508,18 @@
                                 </Grid>
 
                                 <Grid ColumnDefinitions="*,8,*" RowDefinitions="Auto,4,Auto">
-                                    <ComboBox Grid.Row="0" Grid.Column="0" ItemsSource="{Binding RelearnMoveDataSource}" SelectedValue="{Binding RelearnMove1}"
-                                              SelectedValueBinding="{Binding Value}" DisplayMemberBinding="{Binding Text}" HorizontalAlignment="Stretch"
+                                    <controls:FilterableComboBox Grid.Row="0" Grid.Column="0" ItemsSource="{Binding RelearnMoveDataSource}" SelectedValue="{Binding RelearnMove1}"
+                                              HorizontalAlignment="Stretch"
                                               AutomationProperties.Name="Relearn Move 1" />
-                                    <ComboBox Grid.Row="0" Grid.Column="2" ItemsSource="{Binding RelearnMoveDataSource}" SelectedValue="{Binding RelearnMove2}"
-                                              SelectedValueBinding="{Binding Value}" DisplayMemberBinding="{Binding Text}" HorizontalAlignment="Stretch"
+                                    <controls:FilterableComboBox Grid.Row="0" Grid.Column="2" ItemsSource="{Binding RelearnMoveDataSource}" SelectedValue="{Binding RelearnMove2}"
+                                              HorizontalAlignment="Stretch"
                                               AutomationProperties.Name="Relearn Move 2" />
 
-                                    <ComboBox Grid.Row="2" Grid.Column="0" ItemsSource="{Binding RelearnMoveDataSource}" SelectedValue="{Binding RelearnMove3}"
-                                              SelectedValueBinding="{Binding Value}" DisplayMemberBinding="{Binding Text}" HorizontalAlignment="Stretch"
+                                    <controls:FilterableComboBox Grid.Row="2" Grid.Column="0" ItemsSource="{Binding RelearnMoveDataSource}" SelectedValue="{Binding RelearnMove3}"
+                                              HorizontalAlignment="Stretch"
                                               AutomationProperties.Name="Relearn Move 3" />
-                                    <ComboBox Grid.Row="2" Grid.Column="2" ItemsSource="{Binding RelearnMoveDataSource}" SelectedValue="{Binding RelearnMove4}"
-                                              SelectedValueBinding="{Binding Value}" DisplayMemberBinding="{Binding Text}" HorizontalAlignment="Stretch"
+                                    <controls:FilterableComboBox Grid.Row="2" Grid.Column="2" ItemsSource="{Binding RelearnMoveDataSource}" SelectedValue="{Binding RelearnMove4}"
+                                              HorizontalAlignment="Stretch"
                                               AutomationProperties.Name="Relearn Move 4" />
                                 </Grid>
                             </StackPanel>

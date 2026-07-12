@@ -39,9 +39,7 @@ public class ShowdownIntegrationTests : IDisposable
             _slotServiceMock.Object,
             _clipboardServiceMock.Object,
             new Mock<IQrCodeService>().Object,
-            new UpdateCheckCoordinator(
-                new Mock<IUpdateCheckService>().Object, new Mock<IWindowService>().Object,
-                new AppSettings(), new FakeSettingsStore()),
+            UpdateTestDoubles.Coordinator(),
             new Mock<ISaveBackupService>().Object,
             new AppSettings(),
             new FakeSettingsStore(),

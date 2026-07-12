@@ -98,7 +98,17 @@ public partial class Link6EditorViewModel : ViewModelBase
         var path = await _dialogService.OpenFileAsync("Import Link Data", ["*.pl6"]);
         if (path is null) return;
 
-        var data = await File.ReadAllBytesAsync(path);
+        byte[] data;
+        try
+        {
+            data = await File.ReadAllBytesAsync(path);
+        }
+        catch (Exception ex)
+        {
+            await _dialogService.ShowErrorAsync(LocalizedStrings.Instance["Common_Error"], LocalizedStrings.Instance.Format("File_CouldNotReadFile", ex.Message));
+            return;
+        }
+
         if (data.Length != PL6.Size)
         {
             await _dialogService.ShowErrorAsync(LocalizedStrings.Instance["Common_Error"], LocalizedStrings.Instance["Link6Editor_InvalidFileSize"]);
@@ -116,7 +126,14 @@ public partial class Link6EditorViewModel : ViewModelBase
         var path = await _dialogService.SaveFileAsync(LocalizedStrings.Instance["Link6Editor_ExportLinkDataTitle"], "pokemon.pl6", ["*.pl6"]);
         if (path is null) return;
 
-        await File.WriteAllBytesAsync(path, _gifts.Data.ToArray());
+        try
+        {
+            await File.WriteAllBytesAsync(path, _gifts.Data.ToArray());
+        }
+        catch (Exception ex)
+        {
+            await _dialogService.ShowErrorAsync(LocalizedStrings.Instance["Common_Error"], LocalizedStrings.Instance.Format("File_CouldNotWriteFile", ex.Message));
+        }
     }
 }
 

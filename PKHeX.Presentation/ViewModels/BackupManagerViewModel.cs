@@ -127,7 +127,17 @@ public partial class BackupManagerViewModel : ViewModelBase
             }
         }
 
-        File.WriteAllBytes(currentPath, backupData);
+        try
+        {
+            File.WriteAllBytes(currentPath, backupData);
+        }
+        catch (Exception ex)
+        {
+            await _dialogService.ShowErrorAsync(LocalizedStrings.Instance["BackupManager_RestoreFailedTitle"], LocalizedStrings.Instance.Format("BackupManager_WriteFailed", ex.Message));
+            Refresh();
+            return;
+        }
+
         var reloaded = await _saveFileService.LoadSaveFileAsync(currentPath);
         if (!reloaded)
         {

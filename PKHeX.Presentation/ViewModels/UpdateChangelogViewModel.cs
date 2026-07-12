@@ -13,6 +13,9 @@ namespace PKHeX.Presentation.ViewModels;
 public partial class UpdateChangelogViewModel : ViewModelBase, ICloseableDialog
 {
     private readonly IReadOnlyList<ReleaseInfo> _releasesNewestFirst;
+    private readonly IUpdateInstaller _updateInstaller;
+    private readonly IWindowService _windowService;
+    private readonly IAppLifetime _appLifetime;
 
     public Action? CloseRequested { get; set; }
 
@@ -21,9 +24,13 @@ public partial class UpdateChangelogViewModel : ViewModelBase, ICloseableDialog
     public string LatestVersion { get; }
     public string LatestReleaseUrl { get; }
 
-    public UpdateChangelogViewModel(IReadOnlyList<ReleaseInfo> releasesNewestFirst)
+    public UpdateChangelogViewModel(
+        IReadOnlyList<ReleaseInfo> releasesNewestFirst, IUpdateInstaller updateInstaller, IWindowService windowService, IAppLifetime appLifetime)
     {
         _releasesNewestFirst = releasesNewestFirst;
+        _updateInstaller = updateInstaller;
+        _windowService = windowService;
+        _appLifetime = appLifetime;
 
         Releases = releasesNewestFirst
             .Select(r => new ReleaseNoteViewModel(r.TagName, r.Name, r.Body, r.HtmlUrl))
@@ -41,31 +48,15 @@ public partial class UpdateChangelogViewModel : ViewModelBase, ICloseableDialog
     }
 
     [RelayCommand]
-    private void Download()
+    private async Task Download()
     {
-        DownloadLatestRelease(_releasesNewestFirst);
+        await UpdateDownloadLauncher.DownloadAsync(_releasesNewestFirst, _updateInstaller, _windowService, _appLifetime);
     }
 
     [RelayCommand]
     private void Close()
     {
         CloseRequested?.Invoke();
-    }
-
-    /// <summary>
-    /// Opens the release asset matching the current OS/architecture (see <see cref="AssetSelector"/>),
-    /// falling back to the release page itself when no asset matches (e.g. a release with no
-    /// binaries attached, or an unrecognized platform). Shared by the changelog dialog and the
-    /// status-bar notification so both "Download" actions behave identically.
-    /// </summary>
-    internal static void DownloadLatestRelease(IReadOnlyList<ReleaseInfo> releasesNewestFirst)
-    {
-        if (releasesNewestFirst.Count == 0)
-            return;
-
-        var latest = releasesNewestFirst[0];
-        var asset = AssetSelector.SelectAsset(latest.Assets, CurrentPlatform.Os, CurrentPlatform.Arch);
-        OpenUrl(asset?.BrowserDownloadUrl ?? latest.HtmlUrl);
     }
 
     internal static void OpenUrl(string url)

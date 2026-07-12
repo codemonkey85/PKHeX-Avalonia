@@ -155,7 +155,19 @@ public sealed class AvaloniaSpriteRenderer : ISpriteRenderer
         using var surface = SKSurface.Create(new SKImageInfo(SpriteWidth, SpriteHeight));
         var canvas = surface.Canvas;
 
-        var typeColor = GetTypeColor(pk.PersonalInfo.Type1);
+        // An out-of-range/corrupt species can make the PersonalInfo lookup throw; fall back to
+        // the "unknown type" neutral color rather than letting a bad placeholder crash rendering.
+        int type1;
+        try
+        {
+            type1 = pk.PersonalInfo.Type1;
+        }
+        catch (Exception)
+        {
+            type1 = -1;
+        }
+
+        var typeColor = GetTypeColor(type1);
         if (pk.IsShiny)
             typeColor = BlendColors(typeColor, new SKColor(255, 215, 0), 0.3f);
 

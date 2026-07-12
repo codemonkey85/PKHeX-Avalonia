@@ -20,10 +20,17 @@ public partial class LegalityView : UserControl
 
     private async void OnCopyClick(object sender, RoutedEventArgs e)
     {
-        var topLevel = TopLevel.GetTopLevel(this);
-        if (topLevel?.Clipboard is not null)
+        try
         {
-            await topLevel.Clipboard.SetTextAsync(ReportText.Text);
+            var topLevel = TopLevel.GetTopLevel(this);
+            if (topLevel?.Clipboard is not null)
+            {
+                await topLevel.Clipboard.SetTextAsync(ReportText.Text);
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Trace.TraceWarning($"Failed to copy legality report to clipboard: {ex.Message}");
         }
     }
 }

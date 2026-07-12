@@ -73,7 +73,13 @@ public partial class MainWindowViewModel
     private void OnBoxSetSlot(int box, int slot)
     {
         if (CurrentSave is null || CurrentPokemonEditor is null) return;
-        CurrentSave.SetBoxSlotAtIndex(CurrentPokemonEditor.PreparePKM(), box, slot);
+        var prepared = CurrentPokemonEditor.PreparePKM();
+        if (!TryGetCompatible(prepared, out var pk))
+        {
+            _ = _dialogService.ShowErrorAsync(T("Slot_IncompatibleFormatTitle"), T("Slot_IncompatibleFormatMessage"));
+            return;
+        }
+        CurrentSave.SetBoxSlotAtIndex(pk, box, slot);
         BoxViewer?.RefreshCurrentBox();
     }
 
@@ -95,8 +101,40 @@ public partial class MainWindowViewModel
     private void OnPartySetSlot(int slot)
     {
         if (CurrentSave is null || PartyViewer is null || CurrentPokemonEditor is null) return;
-        CurrentSave.SetPartySlotAtIndex(CurrentPokemonEditor.PreparePKM(), slot);
+        var prepared = CurrentPokemonEditor.PreparePKM();
+        if (!TryGetCompatible(prepared, out var pk))
+        {
+            _ = _dialogService.ShowErrorAsync(T("Slot_IncompatibleFormatTitle"), T("Slot_IncompatibleFormatMessage"));
+            return;
+        }
+        CurrentSave.SetPartySlotAtIndex(pk, slot);
         PartyViewer.RefreshParty();
+    }
+
+    /// <summary>
+    /// Ensures <paramref name="pk"/> is a type the currently open save file accepts, converting
+    /// cross-format entities (e.g. a PK3 loaded via the Encounter Database into a Gen-4 save) when
+    /// possible. Returns false if no compatible conversion exists, so the caller can show an error
+    /// instead of letting <see cref="SaveFile.SetBoxSlotAtIndex"/>/<see cref="SaveFile.SetPartySlotAtIndex"/>
+    /// throw on a format mismatch (see GitHub issue #163).
+    /// </summary>
+    private bool TryGetCompatible(PKM pk, out PKM result)
+    {
+        if (CurrentSave is null || pk.GetType() == CurrentSave.PKMType)
+        {
+            result = pk;
+            return true;
+        }
+
+        var converted = CurrentSave.GetCompatiblePKM(pk);
+        if (converted.Species == 0 && pk.Species != 0)
+        {
+            result = pk;
+            return false;
+        }
+
+        result = converted;
+        return true;
     }
 
     private void OnPartyDeleteSlot(int slot)

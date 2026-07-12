@@ -42,6 +42,7 @@
                                     PointerMoved="OnSlotPointerMoved"
                                     DragDrop.AllowDrop="True"
                                     DragDrop.Drop="OnSlotDrop"
+                                    DragDrop.DragOver="OnSlotDragOver"
                                     ToolTip.Tip="{Binding ToolTipSummary}"
                                     AutomationProperties.Name="{Binding AccessibleName}"
                                     Click="OnSlotClicked"
@@ -78,6 +79,27 @@
                                         <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderDefaultBrush}" />
                                         <Setter Property="BorderThickness" Value="1" />
                                         <Setter Property="CornerRadius" Value="8" />
+                                        <!-- Local template (replacing Fluent's default) whose Border/ContentPresenter
+                                             are hit-test-transparent, so DragDrop hit-testing resolves to the Button
+                                             itself (which carries DragDrop.AllowDrop) instead of being swallowed by
+                                             the template's own Border. -->
+                                        <Setter Property="Template">
+                                            <ControlTemplate>
+                                                <Border Name="PART_Border"
+                                                        Background="{TemplateBinding Background}"
+                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                                        CornerRadius="{TemplateBinding CornerRadius}"
+                                                        IsHitTestVisible="False">
+                                                    <ContentPresenter Name="PART_ContentPresenter"
+                                                                      Content="{TemplateBinding Content}"
+                                                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                      Padding="{TemplateBinding Padding}"
+                                                                      HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                      VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter>
                                     </Style>
                                     <Style Selector="Button:pointerover">
                                         <Setter Property="BorderBrush" Value="{DynamicResource ThemeAccentPrimaryBrush}" />
@@ -88,8 +110,10 @@
                                     </Style>
                                 </Button.Styles>
                                 
-                                <!-- Card Content - Sprite centered with overlay info -->
-                                <Panel>
+                                <!-- Card Content - Sprite centered with overlay info. Hit-test-transparent
+                                     so drag/drop hit-testing resolves to the Button itself (which
+                                     carries DragDrop.AllowDrop) rather than the sprite Image swallowing it. -->
+                                <Panel IsHitTestVisible="False">
                                     <!-- Empty slot -->
                                     <Border Background="{DynamicResource ThemeBackgroundCardBrush}"
                                             CornerRadius="4" 

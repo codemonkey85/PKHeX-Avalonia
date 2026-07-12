@@ -116,6 +116,7 @@ public static class ViewLocator
         [typeof(UndergroundEditorViewModel)] = () => new UndergroundEditor(),
         [typeof(UnityTower5EditorViewModel)] = () => new UnityTower5Editor(),
         [typeof(UpdateChangelogViewModel)] = () => new UpdateChangelogView(),
+        [typeof(UpdateDownloadViewModel)] = () => new UpdateDownloadView(),
         [typeof(ZygardeCellEditorViewModel)] = () => new ZygardeCellEditor(),
     };
 

@@ -34,6 +34,8 @@ public sealed class UpdateCheckCoordinator
 {
     private readonly IUpdateCheckService _updateCheckService;
     private readonly IWindowService _windowService;
+    private readonly IUpdateInstaller _updateInstaller;
+    private readonly IAppLifetime _appLifetime;
     private readonly AppSettings _settings;
     private readonly ISettingsStore _settingsStore;
     private readonly string _currentVersion;
@@ -63,11 +65,15 @@ public sealed class UpdateCheckCoordinator
     public UpdateCheckCoordinator(
         IUpdateCheckService updateCheckService,
         IWindowService windowService,
+        IUpdateInstaller updateInstaller,
+        IAppLifetime appLifetime,
         AppSettings settings,
         ISettingsStore settingsStore)
     {
         _updateCheckService = updateCheckService;
         _windowService = windowService;
+        _updateInstaller = updateInstaller;
+        _appLifetime = appLifetime;
         _settings = settings;
         _settingsStore = settingsStore;
         _currentVersion = ResolveCurrentVersion();
@@ -105,7 +111,10 @@ public sealed class UpdateCheckCoordinator
         {
             var upgradeNotes = UpdateAvailabilityEvaluator.GetReleasesNewerThan(releases, previousVersion);
             if (upgradeNotes.Count > 0)
-                await _windowService.ShowDialogAsync(new UpdateChangelogViewModel(upgradeNotes), LocalizedStrings.Instance["Update_WhatsNew"]);
+            {
+                var changelog = new UpdateChangelogViewModel(upgradeNotes, _updateInstaller, _windowService, _appLifetime);
+                await _windowService.ShowDialogAsync(changelog, LocalizedStrings.Instance["Update_WhatsNew"]);
+            }
         }
 
         var latest = UpdateAvailabilityEvaluator.GetLatestRelease(releases);
@@ -152,7 +161,7 @@ public sealed class UpdateCheckCoordinator
     {
         var newerReleases = UpdateAvailabilityEvaluator.GetReleasesNewerThan(releases, _currentVersion);
         var notification = new UpdateNotificationViewModel(
-            newerReleases.Count > 0 ? newerReleases : [latest], _windowService, _settings, _settingsStore);
+            newerReleases.Count > 0 ? newerReleases : [latest], _windowService, _updateInstaller, _appLifetime, _settings, _settingsStore);
         notification.Dismissed += () => Notification = null;
         Notification = notification;
     }

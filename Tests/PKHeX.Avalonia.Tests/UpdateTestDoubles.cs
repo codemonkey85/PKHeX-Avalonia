@@ -10,5 +10,6 @@ internal static class UpdateTestDoubles
 {
     public static UpdateCheckCoordinator Coordinator() =>
         new(new Mock<IUpdateCheckService>().Object, new Mock<IWindowService>().Object,
+            new Mock<IUpdateInstaller>().Object, new Mock<IAppLifetime>().Object,
             new AppSettings(), new FakeSettingsStore());
 }

@@ -1,7 +1,8 @@
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:models="clr-namespace:PKHeX.Presentation.Models;assembly=PKHeX.Presentation"
-        xmlns:services="clr-namespace:PKHeX.Avalonia.Services">
+        xmlns:services="clr-namespace:PKHeX.Avalonia.Services"
+        xmlns:controls="clr-namespace:PKHeX.Avalonia.Controls">
 
     <!-- ═══════════════════════════════════════════════════════════════════════
          PKHeX Theme Tokens
@@ -345,7 +346,11 @@
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Template">
             <ControlTemplate x:DataType="models:SlotData">
-                <Panel>
+                <!-- Hit-test-transparent: Avalonia's drag/drop target resolution requires
+                     DragDrop.AllowDrop on the exact innermost hit-test-visible element. AllowDrop
+                     is set on the Button itself (see BoxViewer.axaml), so the template's visuals
+                     must not intercept hit-testing, letting the Button's own bounds win instead. -->
+                <Panel IsHitTestVisible="False">
                     <Border Name="PART_Border"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
@@ -543,6 +548,18 @@
     </Style>
 
     <Style Selector="ComboBox:pointerover">
+        <Setter Property="BorderBrush" Value="{DynamicResource ThemeAccentPrimaryBrush}" />
+    </Style>
+
+    <Style Selector="controls|FilterableComboBox">
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="BorderBrush" Duration="0:0:0.12" />
+            </Transitions>
+        </Setter>
+    </Style>
+
+    <Style Selector="controls|FilterableComboBox:pointerover">
         <Setter Property="BorderBrush" Value="{DynamicResource ThemeAccentPrimaryBrush}" />
     </Style>
 

@@ -16,6 +16,7 @@ public static class DependencyInjection
         services.AddSingleton<IAppPaths, AppPaths>();
         services.AddSingleton<ISettingsStore, SettingsStore>();
         services.AddSingleton<IUpdateCheckService, GitHubUpdateCheckService>();
+        services.AddSingleton<IUpdateInstaller, GitHubUpdateInstaller>();
         services.AddSingleton<IAutoLegalityService, AutoLegalityService>();
         services.AddSingleton<IConsoleConnectionFactory, SysBotConnectionFactory>();
         services.AddSingleton<ILiveHexService, LiveHexService>();

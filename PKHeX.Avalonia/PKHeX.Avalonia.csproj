@@ -25,6 +25,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Exposes internal helpers (e.g. SlotDragTransfer) for headless unit testing. -->
+    <InternalsVisibleTo Include="PKHeX.Avalonia.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
     <!-- Avalonia UI -->
     <PackageReference Include="Avalonia" Version="11.3.18" />
     <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.3.13" />

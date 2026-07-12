@@ -22,4 +22,9 @@ public sealed record ReleaseInfo(
     string TagName, string Name, string Body, string HtmlUrl, bool Prerelease, IReadOnlyList<ReleaseAsset> Assets);
 
 /// <summary>A downloadable file attached to a GitHub release (e.g. a per-platform zip).</summary>
-public sealed record ReleaseAsset(string Name, string BrowserDownloadUrl);
+/// <param name="Sha256">
+/// The asset's SHA-256 digest (lowercase hex, no "sha256:" prefix), when GitHub reports one via the
+/// release asset's <c>digest</c> field; <see langword="null"/> for older releases that predate digest
+/// reporting, in which case the installer skips verification rather than failing.
+/// </param>
+public sealed record ReleaseAsset(string Name, string BrowserDownloadUrl, string? Sha256 = null, long Size = 0);
