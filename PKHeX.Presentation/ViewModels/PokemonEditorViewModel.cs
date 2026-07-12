@@ -128,6 +128,7 @@ public partial class PokemonEditorViewModel : ViewModelBase
 
     public void LoadPKM(PKM pk)
     {
+        ArgumentNullException.ThrowIfNull(pk);
         _pk = pk.Clone();
         LoadFromPKM();
     }

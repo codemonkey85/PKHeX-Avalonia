@@ -28,7 +28,11 @@ public partial class MainWindowViewModel
 
     // Fired by BoxViewer/PartyViewer when an OS file dropped onto a slot turns out to be a save
     // file rather than a Pokémon entity; routed through the same open-save path as File > Open.
-    private void OnSaveFileDropRequested(string path) => _ = OpenSaveFilePathAsync(path);
+    // Fire-and-forget from an event handler (can't be awaited): observe a faulted continuation so
+    // it never surfaces as an UnobservedTaskException instead of the usual failed-load dialog.
+    private void OnSaveFileDropRequested(string path) => _ = OpenSaveFilePathAsync(path).ContinueWith(
+        t => System.Diagnostics.Trace.TraceWarning($"Failed to open dropped save file '{path}': {t.Exception?.GetBaseException().Message}"),
+        TaskContinuationOptions.OnlyOnFaulted);
 
     /// <summary>
     /// Handles one or more OS files dropped anywhere on the main window. A save file is opened
@@ -243,7 +247,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is null) return;
 
         var vm = new PKMDatabaseViewModel(CurrentSave, _spriteRenderer, _dialogService);
-        vm.PokemonSelected += pk => CurrentPokemonEditor?.LoadPKM(pk);
+        vm.PokemonSelected += LoadEntity;
 
         await _windowService.ShowDialogAsync(vm, T("Menu_Data_PKMDatabase"));
     }
@@ -263,7 +267,7 @@ public partial class MainWindowViewModel
             _boxReport.RowActivated += row =>
             {
                 ((IBoxNavigator?)BoxViewer)?.NavigateTo(row.Box, row.Slot);
-                CurrentPokemonEditor?.LoadPKM(row.Entity);
+                LoadEntity(row.Entity);
             };
         }
         else
@@ -292,7 +296,7 @@ public partial class MainWindowViewModel
                     PartyViewer?.RefreshParty();
                 else
                     ((IBoxNavigator?)BoxViewer)?.NavigateTo(row.Box, row.Slot);
-                CurrentPokemonEditor?.LoadPKM(row.Entity);
+                LoadEntity(row.Entity);
             };
         }
 
@@ -343,7 +347,7 @@ public partial class MainWindowViewModel
         if (CurrentSave is null) return;
 
         var vm = new MysteryGiftDatabaseViewModel(CurrentSave, _spriteRenderer, _dialogService);
-        vm.GiftSelected += mg => CurrentPokemonEditor?.LoadPKM(mg.ConvertToPKM(CurrentSave));
+        vm.GiftSelected += LoadEntity;
 
         await _windowService.ShowDialogAsync(vm, T("Menu_Data_MysteryGiftDatabase"));
     }

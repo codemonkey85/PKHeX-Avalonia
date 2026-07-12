@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:PKHeX.Presentation.ViewModels;assembly=PKHeX.Presentation"
              xmlns:loc="using:PKHeX.Avalonia.Localization"
+             xmlns:controls="clr-namespace:PKHeX.Avalonia.Controls"
              x:Class="PKHeX.Avalonia.Views.EncounterDatabaseView"
              x:DataType="vm:EncounterDatabaseViewModel"
              x:Name="Root"
@@ -14,11 +15,9 @@
             <Grid ColumnDefinitions="*,Auto">
                 <StackPanel Grid.Column="0" Spacing="4">
                     <TextBlock Text="{loc:Loc EncounterDatabaseView_Species}" FontWeight="SemiBold" FontSize="12" />
-                    <ComboBox ItemsSource="{Binding SpeciesList}"
+                    <controls:FilterableComboBox ItemsSource="{Binding SpeciesList}"
                               SelectedValue="{Binding SelectedSpecies}"
-                              SelectedValueBinding="{Binding Value}"
-                              DisplayMemberBinding="{Binding Text}"
-                              MaxDropDownHeight="300" />
+                              AutomationProperties.Name="Species" />
                 </StackPanel>
                 <Button Grid.Column="1" Content="{loc:Loc EncounterDatabaseView_Search}" Command="{Binding SearchCommand}" Margin="12,0,0,0" Padding="16,8" VerticalAlignment="Bottom" Classes="accent" />
             </Grid>
@@ -70,10 +69,5 @@
                 </ItemsControl>
             </ScrollViewer>
         </Border>
-
-        <!-- Action Buttons -->
-        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0" Spacing="8">
-            <Button Content="{loc:Loc EncounterDatabaseView_LoadToEditor}" Command="{Binding SelectEncounterCommand}" CommandParameter="{Binding SelectedResult}" Padding="12,6" />
-        </StackPanel>
     </DockPanel>
 </UserControl>

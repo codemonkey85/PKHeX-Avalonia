@@ -13,6 +13,15 @@ public partial class PokemonEditor : UserControl
         InitializeComponent();
     }
 
+    // Only OS file drops are meaningful here (no in-app slot payload), so always show the "copy" cursor.
+    private void OnEditorDragOver(object? sender, DragEventArgs e)
+    {
+        e.DragEffects = e.DataTransfer.TryGetFiles() is { Length: > 0 }
+            ? DragDropEffects.Copy
+            : DragDropEffects.None;
+        e.Handled = true;
+    }
+
     // Dropping an entity file directly onto the editor loads it without writing to a box/party
     // slot; dropping a save file routes through the host's "open save" path.
     private async void OnEditorDrop(object? sender, DragEventArgs e)

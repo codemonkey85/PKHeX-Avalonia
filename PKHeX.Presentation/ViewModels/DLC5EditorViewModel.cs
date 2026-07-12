@@ -83,13 +83,43 @@ public partial class DLC5EditorViewModel : ViewModelBase
         OnPropertyChanged(nameof(BattleVideoItems));
     }
 
+    /// <summary>Reads a file, surfacing an error dialog (instead of throwing) if the read fails.</summary>
+    private async Task<byte[]?> TryReadAllBytesAsync(string path)
+    {
+        try
+        {
+            return await File.ReadAllBytesAsync(path);
+        }
+        catch (Exception ex)
+        {
+            await _dialogService.ShowErrorAsync(LocalizedStrings.Instance["Common_Error"], LocalizedStrings.Instance.Format("File_CouldNotReadFile", ex.Message));
+            return null;
+        }
+    }
+
+    /// <summary>Writes a file, surfacing an error dialog (instead of throwing) if the write fails.</summary>
+    private async Task<bool> TryWriteAllBytesAsync(string path, byte[] data)
+    {
+        try
+        {
+            await File.WriteAllBytesAsync(path, data);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            await _dialogService.ShowErrorAsync(LocalizedStrings.Instance["Common_Error"], LocalizedStrings.Instance.Format("File_CouldNotWriteFile", ex.Message));
+            return false;
+        }
+    }
+
     [RelayCommand]
     private async Task ImportCGearAsync()
     {
-        var result = await _dialogService.OpenFileAsync("Import C-Gear Skin", ["cgb", "png"]);
+        var result = await _dialogService.OpenFileAsync(LocalizedStrings.Instance["DLC5Editor_ImportCGearTitle"], ["cgb", "png"]);
         if (result is null) return;
 
-        var data = await File.ReadAllBytesAsync(result);
+        var data = await TryReadAllBytesAsync(result);
+        if (data is null) return;
         if (data.Length != CGearBackground.SIZE)
         {
             await _dialogService.ShowErrorAsync(LocalizedStrings.Instance["Common_Error"], LocalizedStrings.Instance.Format("DLC5Editor_CGearSizeMismatch", data.Length, CGearBackground.SIZE));
@@ -124,8 +154,8 @@ public partial class DLC5EditorViewModel : ViewModelBase
         string ext = IsBW ? CGearBackgroundBW.Extension : CGearBackgroundB2W2.Extension;
         var path = await _dialogService.SaveFileAsync("Export C-Gear Skin", "CGear_Skin." + ext, [ext]);
         if (path is null) return;
-        
-        await File.WriteAllBytesAsync(path, _sav.CGearSkinData.ToArray());
+
+        await TryWriteAllBytesAsync(path, _sav.CGearSkinData.ToArray());
     }
     
     [RelayCommand]
@@ -135,7 +165,8 @@ public partial class DLC5EditorViewModel : ViewModelBase
         var result = await _dialogService.OpenFileAsync("Import Musical", [MusicalShow5.Extension]);
         if (result is null) return;
 
-        var data = await File.ReadAllBytesAsync(result);
+        var data = await TryReadAllBytesAsync(result);
+        if (data is null) return;
         if (data.Length != size)
         {
              await _dialogService.ShowErrorAsync(LocalizedStrings.Instance["Common_Error"], LocalizedStrings.Instance.Format("DLC5Editor_InvalidFileSizeBytes", size));
@@ -155,7 +186,7 @@ public partial class DLC5EditorViewModel : ViewModelBase
         var path = await _dialogService.SaveFileAsync("Export Musical", $"{name}.{MusicalShow5.Extension}", [MusicalShow5.Extension]);
         if (path is null) return;
 
-        await File.WriteAllBytesAsync(path, _sav.MusicalDownloadData.ToArray());
+        await TryWriteAllBytesAsync(path, _sav.MusicalDownloadData.ToArray());
     }
 
     [RelayCommand]
@@ -164,7 +195,8 @@ public partial class DLC5EditorViewModel : ViewModelBase
         var result = await _dialogService.OpenFileAsync("Import Pokédex Skin", [PokeDexSkin5.Extension]);
         if (result is null) return;
 
-        var data = await File.ReadAllBytesAsync(result);
+        var data = await TryReadAllBytesAsync(result);
+        if (data is null) return;
         if (data.Length != _sav.PokedexSkinData.Length)
         {
              await _dialogService.ShowErrorAsync(LocalizedStrings.Instance["Common_Error"], LocalizedStrings.Instance.Format("DLC5Editor_InvalidFileSizeBytes", _sav.PokedexSkinData.Length));
@@ -181,7 +213,7 @@ public partial class DLC5EditorViewModel : ViewModelBase
         var path = await _dialogService.SaveFileAsync("Export Pokédex Skin", $"PokedexSkin.{PokeDexSkin5.Extension}", [PokeDexSkin5.Extension]);
         if (path is null) return;
 
-        await File.WriteAllBytesAsync(path, _sav.PokedexSkinData.ToArray());
+        await TryWriteAllBytesAsync(path, _sav.PokedexSkinData.ToArray());
     }
 
     [RelayCommand]
@@ -192,7 +224,8 @@ public partial class DLC5EditorViewModel : ViewModelBase
         var result = await _dialogService.OpenFileAsync("Import PWT", [WorldTournament5.Extension]);
         if (result is null) return;
 
-        var data = await File.ReadAllBytesAsync(result);
+        var data = await TryReadAllBytesAsync(result);
+        if (data is null) return;
         if (data.Length != WorldTournament5.SIZE)
         {
              await _dialogService.ShowErrorAsync(LocalizedStrings.Instance["Common_Error"], LocalizedStrings.Instance.Format("DLC5Editor_InvalidFileSizeBytes", WorldTournament5.SIZE));
@@ -214,9 +247,9 @@ public partial class DLC5EditorViewModel : ViewModelBase
         var path = await _dialogService.SaveFileAsync("Export PWT", $"{name}.{WorldTournament5.Extension}", [WorldTournament5.Extension]);
         if (path is null) return;
 
-        await File.WriteAllBytesAsync(path, data);
+        await TryWriteAllBytesAsync(path, data);
     }
-    
+
     [RelayCommand]
     private async Task ImportPokestarAsync()
     {
@@ -225,7 +258,8 @@ public partial class DLC5EditorViewModel : ViewModelBase
         var result = await _dialogService.OpenFileAsync("Import Pokestar Movie", [PokestarMovie5.Extension]);
         if (result is null) return;
 
-        var data = await File.ReadAllBytesAsync(result);
+        var data = await TryReadAllBytesAsync(result);
+        if (data is null) return;
         if (data.Length != PokestarMovie5.SIZE)
         {
              await _dialogService.ShowErrorAsync(LocalizedStrings.Instance["Common_Error"], LocalizedStrings.Instance.Format("DLC5Editor_InvalidFileSizeBytes", PokestarMovie5.SIZE));
@@ -246,7 +280,7 @@ public partial class DLC5EditorViewModel : ViewModelBase
         var path = await _dialogService.SaveFileAsync("Export Pokestar Movie", $"{name}.{PokestarMovie5.Extension}", [PokestarMovie5.Extension]);
         if (path is null) return;
 
-        await File.WriteAllBytesAsync(path, data);
+        await TryWriteAllBytesAsync(path, data);
     }
 
     [RelayCommand]
@@ -255,7 +289,8 @@ public partial class DLC5EditorViewModel : ViewModelBase
         var result = await _dialogService.OpenFileAsync("Import Battle Video", [BattleVideo5.Extension]);
         if (result is null) return;
 
-        var data = await File.ReadAllBytesAsync(result);
+        var data = await TryReadAllBytesAsync(result);
+        if (data is null) return;
         if (data.Length != BattleVideo5.SIZE)
         {
              await _dialogService.ShowErrorAsync(LocalizedStrings.Instance["Common_Error"], LocalizedStrings.Instance.Format("DLC5Editor_InvalidFileSizeBytes", BattleVideo5.SIZE));
@@ -278,7 +313,7 @@ public partial class DLC5EditorViewModel : ViewModelBase
         var path = await _dialogService.SaveFileAsync("Export Battle Video", $"BattleVideo_{BattleVideoIndex}.{BattleVideo5.Extension}", [BattleVideo5.Extension]);
         if (path is null) return;
 
-        await File.WriteAllBytesAsync(path, _sav.GetBattleVideo(BattleVideoIndex).ToArray());
+        await TryWriteAllBytesAsync(path, _sav.GetBattleVideo(BattleVideoIndex).ToArray());
     }
     
     [RelayCommand]
@@ -297,8 +332,9 @@ public partial class DLC5EditorViewModel : ViewModelBase
     {
         var result = await _dialogService.OpenFileAsync("Import Memory Link", ["ml5"]);
         if (result is null) return;
-        var data = await File.ReadAllBytesAsync(result);
-        
+        var data = await TryReadAllBytesAsync(result);
+        if (data is null) return;
+
         if (data.Length != size)
         {
             await _dialogService.ShowErrorAsync(LocalizedStrings.Instance["Common_Error"], LocalizedStrings.Instance.Format("DLC5Editor_InvalidSizeExpected", size));
@@ -313,7 +349,7 @@ public partial class DLC5EditorViewModel : ViewModelBase
     {
         var path = await _dialogService.SaveFileAsync("Export Memory Link 1", "MemoryLink1.ml5", ["ml5"]);
         if (path is null) return;
-        await File.WriteAllBytesAsync(path, _sav.Link1Data.ToArray());
+        await TryWriteAllBytesAsync(path, _sav.Link1Data.ToArray());
     }
 
     [RelayCommand]
@@ -321,6 +357,6 @@ public partial class DLC5EditorViewModel : ViewModelBase
     {
         var path = await _dialogService.SaveFileAsync("Export Memory Link 2", "MemoryLink2.ml5", ["ml5"]);
         if (path is null) return;
-        await File.WriteAllBytesAsync(path, _sav.Link2Data.ToArray());
+        await TryWriteAllBytesAsync(path, _sav.Link2Data.ToArray());
     }
 }

@@ -96,6 +96,11 @@ public partial class LegalityAuditViewModel : ViewModelBase
         {
             StatusText = LocalizedStrings.Instance["LegalityAudit_Cancelled"];
         }
+        catch (Exception ex)
+        {
+            StatusText = LocalizedStrings.Instance.Format("LegalityAudit_Failed", ex.Message);
+            await _dialogService.ShowErrorAsync(LocalizedStrings.Instance["LegalityAudit_FailedTitle"], ex.Message);
+        }
         finally
         {
             IsRunning = false;

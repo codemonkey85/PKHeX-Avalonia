@@ -16,7 +16,7 @@ public partial class MainWindowViewModel
         if (_autoLegalityMod is null)
         {
             _autoLegalityMod = new AutoLegalityModViewModel(CurrentSave, _autoLegalityService, _clipboardService);
-            _autoLegalityMod.PokemonGenerated += pk => CurrentPokemonEditor?.LoadPKM(pk);
+            _autoLegalityMod.PokemonGenerated += LoadEntity;
         }
 
         _windowService.ShowTool(_autoLegalityMod, "Auto Legality Mod");

@@ -73,16 +73,47 @@ public partial class PartyViewer : UserControl
         _isDragging = true;
         try
         {
+            // No await between here and DoDragDropAsync: on macOS, yielding the pointer-moved
+            // frame means AppKit's [NSApp currentEvent] is no longer the live mouse-down event
+            // and the native drag session fails to start. Payload preparation must be synchronous.
             var pk = vm.GetSlotPKM(slot.Slot);
             var storageProvider = TopLevel.GetTopLevel(this)?.StorageProvider;
-            var data = await SlotDragTransfer.CreateWithFileAsync(new SlotDragData(slot.Location), pk, storageProvider);
+            var data = SlotDragTransfer.Create(new SlotDragData(slot.Location), pk, storageProvider);
 
             await DragDrop.DoDragDropAsync(e, data, DragDropEffects.Move | DragDropEffects.Copy);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Trace.TraceWarning($"Party slot drag failed: {ex.Message}");
         }
         finally
         {
             _isDragging = false;
         }
+    }
+
+    private void OnSlotDragOver(object? sender, DragEventArgs e)
+    {
+        if (sender is not Button button || button.Tag is not PartySlotData destSlot)
+            return;
+
+        var data = SlotDragTransfer.TryGet(e.DataTransfer);
+        if (data != null)
+        {
+            e.DragEffects = data.Source.Equals(destSlot.Location)
+                ? DragDropEffects.None
+                : DragDropEffects.Move;
+        }
+        else if (e.DataTransfer.TryGetFiles() is { Length: > 0 })
+        {
+            e.DragEffects = DragDropEffects.Copy;
+        }
+        else
+        {
+            e.DragEffects = DragDropEffects.None;
+        }
+
+        e.Handled = true;
     }
 
     private async void OnSlotDrop(object? sender, DragEventArgs e)

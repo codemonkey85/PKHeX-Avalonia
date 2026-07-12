@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PKHeX.Core;
+using PKHeX.Presentation.Localization;
 
 namespace PKHeX.Presentation.ViewModels;
 
@@ -63,79 +64,116 @@ public partial class MysteryGiftDatabaseViewModel : ViewModelBase
         IsSearching = true;
         StatusText = "Searching internal database...";
 
-        var gifts = EncounterEvent.GetAllEvents(sorted: true);
-        
-        // Apply filters
-        if (Species > 0)
-            gifts = gifts.Where(g => g.Species == Species);
-        
-        if (Generation > 0)
-            gifts = gifts.Where(g => g.Generation == Generation);
-
-        if (!ShowItems)
-            gifts = gifts.Where(g => !g.IsItem);
-        
-        if (!ShowPokemon)
-            gifts = gifts.Where(g => !g.IsEntity);
-
-        Results.Clear();
-        foreach (var gift in gifts)
+        try
         {
-            Results.Add(new MysteryGiftDatabaseEntry(gift, _spriteRenderer));
-        }
+            var gifts = EncounterEvent.GetAllEvents(sorted: true);
 
-        StatusText = $"Found {Results.Count} gifts.";
-        IsSearching = false;
+            // Apply filters
+            if (Species > 0)
+                gifts = gifts.Where(g => g.Species == Species);
+
+            if (Generation > 0)
+                gifts = gifts.Where(g => g.Generation == Generation);
+
+            if (!ShowItems)
+                gifts = gifts.Where(g => !g.IsItem);
+
+            if (!ShowPokemon)
+                gifts = gifts.Where(g => !g.IsEntity);
+
+            Results.Clear();
+            foreach (var gift in gifts)
+            {
+                Results.Add(new MysteryGiftDatabaseEntry(gift, _spriteRenderer));
+            }
+
+            StatusText = $"Found {Results.Count} gifts.";
+        }
+        catch (Exception ex)
+        {
+            StatusText = $"Error searching database: {ex.Message}";
+            _ = _dialogService.ShowErrorAsync(LocalizedStrings.Instance["MysteryGiftDatabase_SearchErrorTitle"], ex.Message);
+        }
+        finally
+        {
+            IsSearching = false;
+        }
     }
 
     [RelayCommand]
     private async Task LoadFolder()
     {
-        var folder = await _dialogService.OpenFolderAsync("Select Mystery Gift Folder");
+        var folder = await _dialogService.OpenFolderAsync(LocalizedStrings.Instance["MysteryGiftDatabase_SelectFolderTitle"]);
         if (string.IsNullOrEmpty(folder))
             return;
 
         IsSearching = true;
         StatusText = "Scanning folder...";
 
-        var matches = await Task.Run(() => 
+        try
         {
-            var gifts = MysteryUtil.GetGiftsFromFolder(folder);
-            
-            // Apply current filters to loaded gifts
-            if (Species > 0)
-                gifts = gifts.Where(g => g.Species == Species).ToList();
-            else
-                gifts = gifts.ToList();
+            var matches = await Task.Run(() =>
+            {
+                var gifts = MysteryUtil.GetGiftsFromFolder(folder);
 
-            if (Generation > 0)
-                gifts = gifts.Where(g => g.Generation == Generation).ToList();
+                // Apply current filters to loaded gifts
+                if (Species > 0)
+                    gifts = gifts.Where(g => g.Species == Species).ToList();
+                else
+                    gifts = gifts.ToList();
 
-            if (!ShowItems)
-                gifts = gifts.Where(g => !g.IsItem).ToList();
-            
-            if (!ShowPokemon)
-                gifts = gifts.Where(g => !g.IsEntity).ToList();
+                if (Generation > 0)
+                    gifts = gifts.Where(g => g.Generation == Generation).ToList();
 
-            return gifts.ToList();
-        });
+                if (!ShowItems)
+                    gifts = gifts.Where(g => !g.IsItem).ToList();
 
-        Results.Clear();
-        foreach (var gift in matches)
-        {
-            Results.Add(new MysteryGiftDatabaseEntry(gift, _spriteRenderer));
+                if (!ShowPokemon)
+                    gifts = gifts.Where(g => !g.IsEntity).ToList();
+
+                return gifts.ToList();
+            });
+
+            Results.Clear();
+            foreach (var gift in matches)
+            {
+                Results.Add(new MysteryGiftDatabaseEntry(gift, _spriteRenderer));
+            }
+
+            StatusText = $"Found {Results.Count} gifts in folder.";
         }
-
-        StatusText = $"Found {Results.Count} gifts in folder.";
-        IsSearching = false;
+        catch (Exception ex)
+        {
+            StatusText = $"Error scanning folder: {ex.Message}";
+        }
+        finally
+        {
+            IsSearching = false;
+        }
     }
 
-    public event Action<MysteryGift>? GiftSelected;
+    /// <summary>Raised with the converted <see cref="PKM"/> once a selected gift is a Pokémon entity.</summary>
+    public event Action<PKM>? GiftSelected;
 
     [RelayCommand]
-    private void SelectGift(MysteryGiftDatabaseEntry entry)
+    private void SelectGift(MysteryGiftDatabaseEntry? entry)
     {
-        GiftSelected?.Invoke(entry.Gift);
+        // Item-only gifts (IsEntity: false) have no Pokémon to convert; guard so they never reach
+        // ConvertToPKM (mirrors EncounterDatabaseViewModel.SelectEncounter's guard/try-catch shape).
+        if (entry?.Gift is not { IsEntity: true } gift)
+            return;
+
+        try
+        {
+            var pk = gift.ConvertToPKM(_sav);
+            GiftSelected?.Invoke(pk);
+        }
+        catch (Exception ex)
+        {
+            _ = _dialogService.ShowErrorAsync(
+                LocalizedStrings.Instance["MysteryGiftDatabase_ConversionErrorTitle"],
+                LocalizedStrings.Instance.Format("MysteryGiftDatabase_ConversionErrorMessage", ex.Message));
+        }
     }
 }
 
@@ -154,9 +192,17 @@ public class MysteryGiftDatabaseEntry
         Gift = gift;
         if (gift.IsEntity)
         {
-            // Create a temp PKM for the sprite renderer
-            var pk = gift.ConvertToPKM(new SimpleTrainerInfo(gift.Version));
-            Sprite = renderer.GetSprite(pk);
+            // Create a temp PKM for the sprite renderer. A malformed/edge-case gift can throw
+            // during conversion; skip the sprite rather than crashing the whole database open.
+            try
+            {
+                var pk = gift.ConvertToPKM(new SimpleTrainerInfo(gift.Version));
+                Sprite = renderer.GetSprite(pk);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceWarning($"Failed to render sprite for mystery gift '{gift.CardTitle}': {ex.Message}");
+            }
         }
     }
 }

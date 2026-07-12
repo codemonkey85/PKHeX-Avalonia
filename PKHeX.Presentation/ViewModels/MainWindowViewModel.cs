@@ -271,4 +271,27 @@ public partial class MainWindowViewModel : ViewModelBase
         else
             _uiContext.Post(_ => action(), null);
     }
+
+    /// <summary>
+    /// Single guarded entry point for loading a Pokémon into the current editor from any of the
+    /// on-demand selection sources (PKM database, mystery gift database, Auto Legality Mod, box
+    /// report, legality audit). A null/malformed entity or a conversion that throws mid-load
+    /// surfaces as an error dialog instead of crashing the application.
+    /// </summary>
+    private void LoadEntity(PKM? pk)
+    {
+        if (pk is null || CurrentPokemonEditor is null)
+            return;
+
+        try
+        {
+            CurrentPokemonEditor.LoadPKM(pk);
+        }
+        catch (Exception ex)
+        {
+            _ = _dialogService.ShowErrorAsync(
+                LocalizedStrings.Instance["Common_Error"],
+                LocalizedStrings.Instance.Format("File_LoadEntityFailed", ex.Message));
+        }
+    }
 }

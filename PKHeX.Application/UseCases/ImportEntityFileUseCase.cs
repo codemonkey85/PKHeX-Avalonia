@@ -46,18 +46,36 @@ public sealed class ImportEntityFileUseCase
         if (obj is SaveFile)
             return new EntityFileDropResult(EntityFileDropKind.SaveFile, null, null);
 
-        var candidate = obj switch
+        PKM? candidate;
+        try
         {
-            PKM pk => pk,
-            MysteryGift { IsEntity: true } g => g.ConvertToPKM(sav),
-            IEncounterInfo { Species: > 0 } g => g.ConvertToPKM(sav),
-            _ => null,
-        };
+            candidate = obj switch
+            {
+                PKM pk => pk,
+                MysteryGift { IsEntity: true } g => g.ConvertToPKM(sav),
+                IEncounterInfo { Species: > 0 } g => g.ConvertToPKM(sav),
+                _ => null,
+            };
+        }
+        catch
+        {
+            return new EntityFileDropResult(EntityFileDropKind.Unsupported, null, $"'{Path.GetFileName(path)}' could not be converted to a Pokémon file.");
+        }
 
         if (candidate is null)
             return new EntityFileDropResult(EntityFileDropKind.Unsupported, null, $"'{Path.GetFileName(path)}' is not a supported Pokémon file.");
 
-        var compatible = sav.GetCompatible([candidate]).FirstOrDefault();
+        PKM? compatible;
+        try
+        {
+            compatible = sav.GetCompatible([candidate]).FirstOrDefault();
+        }
+        catch
+        {
+            return new EntityFileDropResult(EntityFileDropKind.Incompatible, null,
+                $"'{Path.GetFileName(path)}' ({candidate.GetType().Name}) is not compatible with this save file.");
+        }
+
         if (compatible is null)
         {
             return new EntityFileDropResult(EntityFileDropKind.Incompatible, null,

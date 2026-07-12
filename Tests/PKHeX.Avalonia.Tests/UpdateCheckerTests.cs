@@ -184,7 +184,9 @@ public class MainWindowUpdateCheckTests
         AppSettings settings)
     {
         var coordinator = new UpdateCheckCoordinator(
-            updateCheckServiceMock.Object, windowServiceMock.Object, settings, new FakeSettingsStore());
+            updateCheckServiceMock.Object, windowServiceMock.Object,
+            new Mock<IUpdateInstaller>().Object, new Mock<IAppLifetime>().Object,
+            settings, new FakeSettingsStore());
 
         var vm = new MainWindowViewModel(
             new Mock<ISaveFileGateway>().Object,
@@ -341,7 +343,9 @@ public class UpdateCheckCoordinatorTests
 
     private static UpdateCheckCoordinator Create(
         Mock<IUpdateCheckService> svc, AppSettings settings, Mock<IWindowService>? win = null) =>
-        new(svc.Object, (win ?? new Mock<IWindowService>()).Object, settings, new FakeSettingsStore());
+        new(svc.Object, (win ?? new Mock<IWindowService>()).Object,
+            new Mock<IUpdateInstaller>().Object, new Mock<IAppLifetime>().Object,
+            settings, new FakeSettingsStore());
 
     [Fact]
     public async Task CheckNowAsync_reports_update_available_and_raises_the_notification()

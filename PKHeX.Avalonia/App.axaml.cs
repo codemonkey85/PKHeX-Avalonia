@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
@@ -28,6 +29,9 @@ public partial class App : global::Avalonia.Application
         ConfigureServices(services);
         Services = services.BuildServiceProvider();
 
+        // Register process-wide last-chance handlers first, before anything else can throw.
+        GlobalExceptionHandler.Install(Services);
+
         // Initialize PKHeX Core
         // GameInfo is initialized via AppSettings in ConfigureServices
 
@@ -49,8 +53,12 @@ public partial class App : global::Avalonia.Application
             };
 
             // Fire-and-forget: never awaited here, so the main window is shown immediately and is
-            // never blocked by a slow, offline, or rate-limited GitHub API call.
-            _ = mainViewModel.CheckForUpdatesAsync();
+            // never blocked by a slow, offline, or rate-limited GitHub API call. The coordinator
+            // already stays silent on failure, but observe the task's exception anyway so a
+            // faulted continuation can never surface as an UnobservedTaskException.
+            _ = mainViewModel.CheckForUpdatesAsync().ContinueWith(
+                t => Trace.TraceWarning($"Startup update check failed: {t.Exception?.GetBaseException().Message}"),
+                TaskContinuationOptions.OnlyOnFaulted);
         }
 
         base.OnFrameworkInitializationCompleted();
@@ -78,6 +86,7 @@ public partial class App : global::Avalonia.Application
         services.AddSingleton<ISpriteRenderer, AvaloniaSpriteRenderer>();
         services.AddSingleton<IClipboardService, ClipboardService>();
         services.AddSingleton<IQrCodeService, QrCodeService>();
+        services.AddSingleton<IAppLifetime, AppLifetimeService>();
         services.AddSingleton<ThemeService>();
         services.AddSingleton<IThemeService>(sp => sp.GetRequiredService<ThemeService>());
 

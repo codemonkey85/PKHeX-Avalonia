@@ -52,8 +52,13 @@ public partial class BoxExporterViewModel : ViewModelBase
         var folder = await _dialogService.OpenFolderAsync("Select Export Folder");
         if (string.IsNullOrEmpty(folder)) return;
 
-        var namer = _namers.First(n => n.Name == SelectedNamer);
-        
+        var namer = _namers.FirstOrDefault(n => n.Name == SelectedNamer);
+        if (namer is null)
+        {
+            await _dialogService.ShowErrorAsync(LocalizedStrings.Instance["BoxExporter_ExportErrorTitle"], LocalizedStrings.Instance["BoxExporter_NoNamerSelected"]);
+            return;
+        }
+
         // Update settings object
         // Assuming BoxExportSettings is compatible or we use a manual implementation
         // BoxExport.Export uses BoxExportSettings

@@ -39,9 +39,6 @@ public partial class EncounterDatabaseViewModel : ViewModelBase
     [ObservableProperty]
     private ObservableCollection<EncounterResultViewModel> _results = [];
 
-    [ObservableProperty]
-    private EncounterResultViewModel? _selectedResult;
-
     private void LoadSpeciesList()
     {
         var names = GameInfo.Strings.Species;
@@ -96,7 +93,7 @@ public partial class EncounterDatabaseViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void SelectEncounter(EncounterResultViewModel? result)
+    private async Task SelectEncounterAsync(EncounterResultViewModel? result)
     {
         if (result?.Encounter == null) return;
 
@@ -108,7 +105,7 @@ public partial class EncounterDatabaseViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            _ = _dialogService.ShowErrorAsync(LocalizedStrings.Instance["EncounterDatabase_ConversionErrorTitle"], LocalizedStrings.Instance.Format("EncounterDatabase_ConversionErrorMessage", ex.Message));
+            await _dialogService.ShowErrorAsync(LocalizedStrings.Instance["EncounterDatabase_ConversionErrorTitle"], LocalizedStrings.Instance.Format("EncounterDatabase_ConversionErrorMessage", ex.Message));
         }
     }
 }

@@ -17,6 +17,26 @@ public sealed class DialogService : IDialogService
         return null;
     }
 
+    /// <summary>
+    /// Returns the window that should own a newly-shown dialog: the topmost active window if one
+    /// exists, falling back to the main window. Using <see cref="GetMainWindow"/> unconditionally
+    /// would parent dialogs raised while another modal is already open (e.g. an error surfaced from
+    /// inside a tool window) to the main window instead of that modal, letting them appear behind it.
+    /// </summary>
+    private Window? GetActiveWindow()
+    {
+        if (global::Avalonia.Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+            return null;
+
+        foreach (var window in desktop.Windows)
+        {
+            if (window.IsActive)
+                return window;
+        }
+
+        return desktop.MainWindow;
+    }
+
     public async Task<string?> OpenFileAsync(string title, string[]? filters = null)
     {
         var window = GetMainWindow();
@@ -87,7 +107,7 @@ public sealed class DialogService : IDialogService
 
     public async Task<bool> ShowConfirmationAsync(string title, string message, string confirmText = "Yes", string cancelText = "Cancel")
     {
-        var window = GetMainWindow();
+        var window = GetActiveWindow();
         if (window is null) return false;
 
         var confirmButton = new Button { Content = confirmText, MinWidth = 90 };
@@ -160,7 +180,7 @@ public sealed class DialogService : IDialogService
 
     private async Task ShowMessageBoxAsync(string title, string message)
     {
-        var window = GetMainWindow();
+        var window = GetActiveWindow();
         if (window is null) return;
 
         var dialog = new Window

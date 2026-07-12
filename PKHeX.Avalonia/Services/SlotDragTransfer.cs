@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Threading.Tasks;
 using Avalonia.Input;
 using Avalonia.Platform.Storage;
 using PKHeX.Application.Abstractions;
@@ -32,11 +31,17 @@ internal static class SlotDragTransfer
     /// <summary>
     /// Creates the drag payload for the given slot, additionally attaching a decrypted entity
     /// file (e.g. ".pk9") so the OS receives a real file when the slot is dragged out to the
-    /// desktop/Finder/Explorer. If <paramref name="storageProvider"/> is unavailable or the
-    /// platform can't materialize a real file reference (e.g. some browser/mobile backends),
-    /// this degrades gracefully to an in-app-only drag (no exception, no OS file).
+    /// desktop/Finder/Explorer.
+    ///
+    /// This is intentionally synchronous: on macOS, <c>DragDrop.DoDragDropAsync</c> must be
+    /// invoked from within the live pointer-moved frame with no prior <c>await</c>, otherwise
+    /// AppKit's <c>[NSApp currentEvent]</c> is no longer the originating mouse-down event and the
+    /// native drag session silently fails to start. The temp file write is a few hundred bytes
+    /// (fine as a blocking call), and <see cref="IStorageProvider.TryGetFileFromPathAsync"/> is
+    /// only consulted if it happens to complete synchronously; otherwise the OS file attachment
+    /// is skipped and the payload degrades gracefully to an in-app-only drag (no exception).
     /// </summary>
-    public static async Task<DataTransfer> CreateWithFileAsync(SlotDragData data, PKM? pk, IStorageProvider? storageProvider)
+    public static DataTransfer Create(SlotDragData data, PKM? pk, IStorageProvider? storageProvider)
     {
         var transfer = Create(data);
 
@@ -50,9 +55,10 @@ internal static class SlotDragTransfer
         try
         {
             var tempPath = Path.Combine(Path.GetTempPath(), file.FileName);
-            await File.WriteAllBytesAsync(tempPath, file.Data);
+            File.WriteAllBytes(tempPath, file.Data);
 
-            var storageFile = await storageProvider.TryGetFileFromPathAsync(new Uri(tempPath));
+            var fileTask = storageProvider.TryGetFileFromPathAsync(new Uri(tempPath));
+            var storageFile = fileTask.IsCompletedSuccessfully ? fileTask.Result : null;
             if (storageFile is not null)
                 transfer.Add(DataTransferItem.CreateFile(storageFile));
         }

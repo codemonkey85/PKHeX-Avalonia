@@ -65,7 +65,7 @@ public sealed class GitHubUpdateCheckService : IUpdateCheckService
                     r.Prerelease,
                     (r.Assets ?? [])
                         .Where(a => !string.IsNullOrEmpty(a.Name) && !string.IsNullOrEmpty(a.BrowserDownloadUrl))
-                        .Select(a => new ReleaseAsset(a.Name!, a.BrowserDownloadUrl!))
+                        .Select(a => new ReleaseAsset(a.Name!, a.BrowserDownloadUrl!, StripDigestPrefix(a.Digest), a.Size))
                         .ToList()))
                 .ToList();
         }
@@ -108,5 +108,21 @@ public sealed class GitHubUpdateCheckService : IUpdateCheckService
 
         [JsonPropertyName("browser_download_url")]
         public string? BrowserDownloadUrl { get; set; }
+
+        /// <summary>e.g. "sha256:abcdef…". Only populated on releases uploaded after GitHub added digest reporting.</summary>
+        [JsonPropertyName("digest")]
+        public string? Digest { get; set; }
+
+        [JsonPropertyName("size")]
+        public long Size { get; set; }
+    }
+
+    private static string? StripDigestPrefix(string? digest)
+    {
+        if (string.IsNullOrEmpty(digest))
+            return null;
+
+        const string prefix = "sha256:";
+        return digest.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) ? digest[prefix.Length..] : digest;
     }
 }

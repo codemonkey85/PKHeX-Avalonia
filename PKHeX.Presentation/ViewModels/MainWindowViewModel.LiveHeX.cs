@@ -29,7 +29,11 @@ public partial class MainWindowViewModel
     {
         if (_liveHeX is null)
             return;
-        _ = _liveHexService.DisconnectAsync();
+        // Fire-and-forget: observe a faulted disconnect so it never surfaces as an
+        // UnobservedTaskException — a failed disconnect here is non-fatal (best effort).
+        _ = _liveHexService.DisconnectAsync().ContinueWith(
+            t => System.Diagnostics.Trace.TraceWarning($"LiveHeX disconnect failed: {t.Exception?.GetBaseException().Message}"),
+            TaskContinuationOptions.OnlyOnFaulted);
         _liveHeX = null;
     }
 }
