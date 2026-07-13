@@ -25,9 +25,7 @@ public partial class App : global::Avalonia.Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        var services = new ServiceCollection();
-        ConfigureServices(services);
-        Services = services.BuildServiceProvider();
+        Services = BuildServiceProvider();
 
         // Register process-wide last-chance handlers first, before anything else can throw.
         GlobalExceptionHandler.Install(Services);
@@ -64,17 +62,47 @@ public partial class App : global::Avalonia.Application
         base.OnFrameworkInitializationCompleted();
     }
 
-    private static void ConfigureServices(IServiceCollection services)
+    /// <summary>
+    /// Builds the application's dependency-injection container — the single source of truth for the
+    /// object graph, shared by the real host startup (<see cref="OnFrameworkInitializationCompleted"/>)
+    /// and the headless full-app UI test harness.
+    /// </summary>
+    /// <remarks>
+    /// Production callers pass nothing: real OS config paths and the persisted settings store are used.
+    /// Tests pass a throwaway <paramref name="paths"/>/<paramref name="settingsStore"/> so no real user
+    /// config is read or written, and a <paramref name="configureOverrides"/> callback to swap host
+    /// services (e.g. dialogs/windows) for deterministic test doubles. Overrides run last, so — with
+    /// Microsoft.Extensions.DependencyInjection's last-registration-wins resolution — they replace the
+    /// production registrations without the graph drifting from this single definition.
+    /// </remarks>
+    public static IServiceProvider BuildServiceProvider(
+        IAppPaths? paths = null,
+        ISettingsStore? settingsStore = null,
+        AppSettings? settings = null,
+        Action<IServiceCollection>? configureOverrides = null)
+    {
+        var services = new ServiceCollection();
+        ConfigureServices(services, paths, settingsStore, settings);
+        configureOverrides?.Invoke(services);
+        return services.BuildServiceProvider();
+    }
+
+    private static void ConfigureServices(
+        IServiceCollection services,
+        IAppPaths? paths = null,
+        ISettingsStore? settingsStore = null,
+        AppSettings? settings = null)
     {
         // Inner layers (framework-free): use cases, ports + app-side impls, non-UI drivers.
         services.AddApplication();
         services.AddInfrastructure();
 
         // Config: resolve platform paths, load (migrating/recovering as needed) + seed Core
-        // localization, then register the store and the loaded model for injection.
-        IAppPaths paths = new AppPaths();
-        ISettingsStore settingsStore = new SettingsStore(paths);
-        var config = settingsStore.Load();
+        // localization, then register the store and the loaded model for injection. Tests inject
+        // temp paths/store (and often a fresh AppSettings) so nothing touches the real user config.
+        paths ??= new AppPaths();
+        settingsStore ??= new SettingsStore(paths);
+        var config = settings ?? settingsStore.Load();
         config.InitializeCore();
         services.AddSingleton(paths);
         services.AddSingleton(settingsStore);
