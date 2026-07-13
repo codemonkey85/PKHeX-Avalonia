@@ -34,7 +34,11 @@ public class FilterableComboBoxTests
     /// to <c>FilterableComboBox</c> and the Fluent <see cref="AutoCompleteBox"/> ControlTheme would never
     /// apply — the control would render with no chrome. Assert the override points at the base type.
     /// </summary>
-    [Fact]
+    // Must be [AvaloniaFact], not [Fact]: it constructs a FilterableComboBox (an AvaloniaObject),
+    // whose ctor calls Dispatcher.VerifyAccess(). Once any headless test has established the UI-thread
+    // dispatcher, constructing a control on a plain xUnit worker thread throws "Call from invalid
+    // thread" — a latent, test-order-dependent failure surfaced by adding more [AvaloniaFact] tests.
+    [AvaloniaFact]
     public void StyleKeyOverride_IsAutoCompleteBox()
     {
         var control = new FilterableComboBox();
