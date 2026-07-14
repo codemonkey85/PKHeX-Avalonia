@@ -2138,5 +2138,6 @@
   "Update_Error_Checksum": "The download failed verification and was discarded.",
   "Update_Error_NeedsAdmin": "Updating this install needs administrator rights. Opening the download page instead.",
   "Update_Error_SwapFailed": "The update could not be applied. Your current version is unchanged.",
-  "Update_Error_Generic": "The update could not be completed: {0}"
+  "Update_Error_Generic": "The update could not be completed: {0}",
+  "PokemonEditor_RerollPidTooltip": "Re-roll PID"
 }

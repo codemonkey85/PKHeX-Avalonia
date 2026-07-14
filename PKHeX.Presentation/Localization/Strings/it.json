@@ -2138,5 +2138,6 @@
   "Update_Error_Checksum": "Il download non ha superato la verifica ed è stato eliminato.",
   "Update_Error_NeedsAdmin": "L'aggiornamento di questa installazione richiede diritti di amministratore. Verrà aperta invece la pagina di download.",
   "Update_Error_SwapFailed": "Impossibile applicare l'aggiornamento. La versione attuale non è cambiata.",
-  "Update_Error_Generic": "Impossibile completare l'aggiornamento: {0}"
+  "Update_Error_Generic": "Impossibile completare l'aggiornamento: {0}",
+  "PokemonEditor_RerollPidTooltip": "Rigenera PID"
 }

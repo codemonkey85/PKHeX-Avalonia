@@ -2138,5 +2138,6 @@
   "Update_Error_Checksum": "다운로드가 검증에 실패하여 삭제되었습니다.",
   "Update_Error_NeedsAdmin": "이 설치를 업데이트하려면 관리자 권한이 필요합니다. 대신 다운로드 페이지를 엽니다.",
   "Update_Error_SwapFailed": "업데이트를 적용할 수 없습니다. 현재 버전은 변경되지 않았습니다.",
-  "Update_Error_Generic": "업데이트를 완료할 수 없습니다: {0}"
+  "Update_Error_Generic": "업데이트를 완료할 수 없습니다: {0}",
+  "PokemonEditor_RerollPidTooltip": "PID 재생성"
 }

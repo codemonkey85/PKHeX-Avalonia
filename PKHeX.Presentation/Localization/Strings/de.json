@@ -2138,5 +2138,6 @@
   "Update_Error_Checksum": "Der Download hat die Überprüfung nicht bestanden und wurde verworfen.",
   "Update_Error_NeedsAdmin": "Die Aktualisierung dieser Installation erfordert Administratorrechte. Die Download-Seite wird stattdessen geöffnet.",
   "Update_Error_SwapFailed": "Das Update konnte nicht angewendet werden. Ihre aktuelle Version ist unverändert.",
-  "Update_Error_Generic": "Das Update konnte nicht abgeschlossen werden: {0}"
+  "Update_Error_Generic": "Das Update konnte nicht abgeschlossen werden: {0}",
+  "PokemonEditor_RerollPidTooltip": "PID neu würfeln"
 }

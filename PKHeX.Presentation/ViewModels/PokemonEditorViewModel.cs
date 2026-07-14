@@ -1,4 +1,5 @@
 
+using System;
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -472,6 +473,20 @@ public partial class PokemonEditorViewModel : ViewModelBase
     private void ToggleShiny()
     {
         IsShiny = !IsShiny;
+    }
+
+    [RelayCommand]
+    private void RerollPid()
+    {
+        var rnd = new Random();
+        var newPid = EntityPID.GetRandomPID(rnd, (ushort)Species, (byte)Gender, _pk.Version, (Nature)Nature, (byte)Form, _pk.PID);
+        _pk.PID = newPid;
+        _isLoading = true;
+        Pid = newPid.ToString("X8");
+        IsShiny = _pk.IsShiny;
+        _isLoading = false;
+        UpdateSprite();
+        Validate();
     }
 
     public PKM PreparePKM()
