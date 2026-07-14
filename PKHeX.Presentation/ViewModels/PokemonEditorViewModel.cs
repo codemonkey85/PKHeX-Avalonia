@@ -67,7 +67,7 @@ public partial class PokemonEditorViewModel : ViewModelBase
     private string _nickname = string.Empty;
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(Title), nameof(Stat_HP), nameof(Stat_ATK), nameof(Stat_DEF), nameof(Stat_SPA), nameof(Stat_SPD), nameof(Stat_SPE))]
+    [NotifyPropertyChangedFor(nameof(Title), nameof(Stat_HP), nameof(Stat_ATK), nameof(Stat_DEF), nameof(Stat_SPA), nameof(Stat_SPD), nameof(Stat_SPE), nameof(Exp), nameof(ExpPercent))]
     private int _level;
 
     [ObservableProperty]
@@ -408,7 +408,7 @@ public partial class PokemonEditorViewModel : ViewModelBase
     }
 
     partial void OnNicknameChanged(string value) { if (!_isLoading) Validate(); }
-    partial void OnLevelChanged(int value) { if (!_isLoading) { RecalculateStats(); OnPropertyChanged(nameof(ExpPercent)); Validate(); } }
+    partial void OnLevelChanged(int value) { if (!_isLoading) { Exp = Experience.GetEXP((byte)value, _pk.PersonalInfo.EXPGrowth); RecalculateStats(); Validate(); } }
     partial void OnNatureChanged(int value) { if (!_isLoading) { RecalculateStats(); Validate(); } }
     partial void OnAbilityChanged(int value) { if (!_isLoading) Validate(); }
     partial void OnHeldItemChanged(int value) { if (!_isLoading) Validate(); }

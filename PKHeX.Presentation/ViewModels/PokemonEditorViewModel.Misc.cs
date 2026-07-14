@@ -130,6 +130,7 @@ public partial class PokemonEditorViewModel
 
     // EXP & Friendship
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(Level), nameof(ExpPercent))]
     private long _exp;
 
     [ObservableProperty]
@@ -146,7 +147,9 @@ public partial class PokemonEditorViewModel
     partial void OnExpChanged(long value)
     {
         if (_isLoading) return;
-        OnPropertyChanged(nameof(ExpPercent));
+        var newLevel = Experience.GetLevel((uint)value, _pk.PersonalInfo.EXPGrowth);
+        if (Level != newLevel)
+            Level = newLevel;
     }
 
     /// <summary>
