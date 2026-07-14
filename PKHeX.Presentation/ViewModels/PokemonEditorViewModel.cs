@@ -480,8 +480,8 @@ public partial class PokemonEditorViewModel : ViewModelBase
         _pk.Form = (byte)Form;
         _pk.Nickname = Nickname;
         _pk.Stat_Level = (byte)Level;
-        _pk.Nature = (Nature)Nature;
         _pk.StatAlignment = (Nature)StatAlignment;
+        _pk.Nature = (Nature)Nature;
         _pk.Ability = Ability;
         _pk.HeldItem = HeldItem;
         _pk.Ball = (byte)Ball;
