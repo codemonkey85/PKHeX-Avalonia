@@ -2138,5 +2138,6 @@
   "Update_Error_Checksum": "Le téléchargement a échoué à la vérification et a été supprimé.",
   "Update_Error_NeedsAdmin": "La mise à jour de cette installation nécessite des droits d'administrateur. Ouverture de la page de téléchargement à la place.",
   "Update_Error_SwapFailed": "La mise à jour n'a pas pu être appliquée. Votre version actuelle est inchangée.",
-  "Update_Error_Generic": "La mise à jour n'a pas pu être terminée : {0}"
+  "Update_Error_Generic": "La mise à jour n'a pas pu être terminée : {0}",
+  "PokemonEditor_RerollPidTooltip": "Re-générer le PID"
 }

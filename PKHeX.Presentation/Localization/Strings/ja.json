@@ -2138,5 +2138,6 @@
   "Update_Error_Checksum": "ダウンロードの検証に失敗したため破棄されました。",
   "Update_Error_NeedsAdmin": "このインストールを更新するには管理者権限が必要です。代わりにダウンロードページを開きます。",
   "Update_Error_SwapFailed": "アップデートを適用できませんでした。現在のバージョンは変更されていません。",
-  "Update_Error_Generic": "アップデートを完了できませんでした: {0}"
+  "Update_Error_Generic": "アップデートを完了できませんでした: {0}",
+  "PokemonEditor_RerollPidTooltip": "PIDを再生成"
 }

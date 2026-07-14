@@ -2138,5 +2138,6 @@
   "Update_Error_Checksum": "下载未通过验证，已被丢弃。",
   "Update_Error_NeedsAdmin": "更新此安装需要管理员权限，将改为打开下载页面。",
   "Update_Error_SwapFailed": "无法应用更新。当前版本未更改。",
-  "Update_Error_Generic": "无法完成更新：{0}"
+  "Update_Error_Generic": "无法完成更新：{0}",
+  "PokemonEditor_RerollPidTooltip": "重新生成PID"
 }

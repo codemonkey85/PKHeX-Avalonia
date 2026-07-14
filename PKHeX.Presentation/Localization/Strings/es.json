@@ -2138,5 +2138,6 @@
   "Update_Error_Checksum": "La descarga no superó la verificación y fue descartada.",
   "Update_Error_NeedsAdmin": "Actualizar esta instalación requiere permisos de administrador. Se abrirá la página de descarga en su lugar.",
   "Update_Error_SwapFailed": "No se pudo aplicar la actualización. Su versión actual no ha cambiado.",
-  "Update_Error_Generic": "No se pudo completar la actualización: {0}"
+  "Update_Error_Generic": "No se pudo completar la actualización: {0}",
+  "PokemonEditor_RerollPidTooltip": "Volver a generar PID"
 }
