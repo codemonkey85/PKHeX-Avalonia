@@ -6,7 +6,7 @@ namespace PKHeX.Avalonia.Tests;
 
 /// <summary>
 /// Loads all .pk* fixture files from PKHeX.Core.Tests/Legality into PokemonEditorViewModel.
-/// Covers 133 legal and 43 illegal Pokemon spanning generations 1–9 and all variants.
+/// Covers 132 legal and 44 illegal Pokemon spanning generations 1–9 and all variants.
 /// </summary>
 public class RealPKMFixtureTests(ITestOutputHelper output)
 {
