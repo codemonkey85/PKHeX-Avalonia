@@ -240,6 +240,17 @@ public sealed class HeadlessAppFixture : IDisposable
             .OfType<Button>()
             .FirstOrDefault(b => b.Tag is SlotData sd && sd.Box == box && sd.Slot == slot);
 
+    /// <summary>Selects a realized main-editor tab by its localized header text and pumps its content.</summary>
+    public void SelectTab(string header)
+    {
+        var tab = Window.GetVisualDescendants()
+            .OfType<TabItem>()
+            .FirstOrDefault(item => Equals(item.Header, header))
+            ?? throw new InvalidOperationException($"No realized tab with header '{header}'.");
+        tab.IsSelected = true;
+        Pump();
+    }
+
     // ---------------------------------------------------------------------
     // Input simulation
     // ---------------------------------------------------------------------

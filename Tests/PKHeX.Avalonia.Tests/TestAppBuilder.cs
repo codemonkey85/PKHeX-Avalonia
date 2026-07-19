@@ -7,6 +7,13 @@ using PKHeX.Avalonia;
 
 public class TestAppBuilder
 {
-    public static AppBuilder BuildAvaloniaApp() => AppBuilder.Configure<App>()
-        .UseHeadless(new AvaloniaHeadlessPlatformOptions());
+    public static AppBuilder BuildAvaloniaApp()
+    {
+        var builder = AppBuilder.Configure<App>();
+        return Environment.GetEnvironmentVariable("PKHEX_HEADLESS_CAPTURE") == "1"
+            ? builder.UseSkia()
+                .WithInterFont()
+                .UseHeadless(new AvaloniaHeadlessPlatformOptions { UseHeadlessDrawing = false })
+            : builder.UseHeadless(new AvaloniaHeadlessPlatformOptions());
+    }
 }

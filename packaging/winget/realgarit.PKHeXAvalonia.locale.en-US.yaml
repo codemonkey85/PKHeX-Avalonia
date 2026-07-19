@@ -3,7 +3,7 @@
 PackageIdentifier: realgarit.PKHeXAvalonia
 PackageVersion: "{{VERSION}}"
 PackageLocale: en-US
-Publisher: realgarit
+Publisher: Patrik Lleshaj
 PublisherUrl: https://github.com/realgarit
 PublisherSupportUrl: https://github.com/realgarit/PKHeX-Avalonia/issues
 PackageName: PKHeX-Avalonia

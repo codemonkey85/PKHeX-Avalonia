@@ -129,26 +129,19 @@ real click handler and the whole app-level pipeline behind it.
 `HeadlessAppFixture.CaptureFrame(pngPath)` calls `TopLevel.GetLastRenderedFrame()`. Under the default
 headless drawing mode (`UseHeadlessDrawing = true`, set in `TestAppBuilder`) the compositor produces
 **no real pixels**, so the frame is blank/geometry-only and `CaptureFrame` may return `null`.
+`HeadlessGiftRecordTests.CaptureSvGiftRecords_WhenEnabled_WritesPng` provides the reproducible
+Scarlet/Violet Gifts-tab frame used by the main README.
 
-To capture true pixels, the **whole test assembly's** app builder must enable real drawing, because
-Avalonia is a per-process singleton and drawing mode is fixed at app-build time. Switch
-`TestAppBuilder.BuildAvaloniaApp()` to:
-
-```csharp
-AppBuilder.Configure<App>()
-    .UseSkia()
-    .WithInterFont()
-    .UseHeadless(new AvaloniaHeadlessPlatformOptions { UseHeadlessDrawing = false });
-```
-
-This is intentionally **not** the default: it pulls in the Skia rasterizer + a real font manager,
-which is slower and adds native-dependency surface that we don't want gating every CI run. When you
-need visual evidence, flip it locally and run:
+Avalonia is a per-process singleton and drawing mode is fixed at app-build time. Setting
+`PKHEX_HEADLESS_CAPTURE=1` before the test process starts makes `TestAppBuilder` select Skia, Inter,
+and `UseHeadlessDrawing = false`; without it, the normal fast headless mode remains the default.
+Run the capture in its own filtered test process so the slower native rasterizer never affects the
+regular CI suite:
 
 ```
 PKHEX_HEADLESS_CAPTURE=1 PKHEX_HEADLESS_CAPTURE_DIR=/path/to/out \
   dotnet test Tests/PKHeX.Avalonia.Tests -c Release \
-  --filter FullyQualifiedName~CaptureFrame_WhenEnabled_WritesPng
+  --filter FullyQualifiedName~HeadlessGiftRecordTests.CaptureSvGiftRecords_WhenEnabled_WritesPng
 ```
 
 ## Known caveat

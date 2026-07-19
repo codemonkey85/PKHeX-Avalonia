@@ -9,12 +9,12 @@
 # user every time. Store it as a GitHub Actions secret for CI.
 #
 # Usage:   P12_PASSWORD=... Scripts/make-signing-cert.sh [output-dir]
-# Env:     P12_PASSWORD (required)   CERT_CN (default "PKHeX-Avalonia Self-Signed")
+# Env:     P12_PASSWORD (required)   CERT_CN (default "Patrik Lleshaj")
 #
 set -euo pipefail
 
 OUTDIR="${1:-./secrets}"
-CN="${CERT_CN:-PKHeX-Avalonia Self-Signed}"
+CN="${CERT_CN:-Patrik Lleshaj}"
 : "${P12_PASSWORD:?set P12_PASSWORD}"
 
 mkdir -p "$OUTDIR"

@@ -8,6 +8,8 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <RootNamespace>PKHeX.Avalonia</RootNamespace>
+    <Product>PKHeX-Avalonia</Product>
+    <AssemblyTitle>PKHeX-Avalonia</AssemblyTitle>
     <ApplicationIcon>Assets/Icons/icon.ico</ApplicationIcon>
     <CFBundleIconFile>icon.icns</CFBundleIconFile>
     <!-- Override assembly version with UIVersion for Avalonia releases -->

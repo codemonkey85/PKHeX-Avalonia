@@ -74,6 +74,8 @@ Tests live under `Tests/`: `PKHeX.Core.Tests`, `PKHeX.Avalonia.Tests`, and `PKHe
 * Search your boxes with the PKM, Mystery Gift, and Encounter databases.
 * Edit many Pokémon at once with the batch editor.
 * Game-specific editors under Tools, like Pokédex, Hall of Fame, and Secret Base.
+* View and manage Switch received Mystery Gift records for Sword/Shield, BDSP, Legends: Arceus,
+  and Scarlet/Violet. This manages the save's gift history—not BCAT delivery or redemption.
 
 ### App experience
 
@@ -174,6 +176,15 @@ PKM Database — search your boxes with a filter rail you can resize or hide.
 
 Save editors — Gen 1 to 9 plus game-specific tools under Tools → Save Editors.
 ![Save editors menu](docs/screenshots/save-editors-menu.png)
+
+</td>
+</tr>
+<tr>
+<td colspan="2">
+
+Switch Gift Records — inspect and manage received Mystery Gift history for Sword/Shield, BDSP,
+Legends: Arceus, and Scarlet/Violet.
+![Switch Gift Records for Scarlet/Violet](docs/screenshots/gift-records-sv.png)
 
 </td>
 </tr>
