@@ -48,7 +48,8 @@ public class ShowdownIntegrationTests : IDisposable
             new LanguageService(),
             new Mock<IAutoLegalityService>().Object,
             new Mock<PKHeX.Application.Abstractions.LiveHex.ILiveHexService>().Object,
-            new Mock<ILivingDexService>().Object
+            new Mock<ILivingDexService>().Object,
+            new Mock<PKHeX.Application.Abstractions.GiftRecords.IGiftRecordProvider>().Object
         );
         
         // Simulate loading a save

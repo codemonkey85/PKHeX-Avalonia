@@ -1,8 +1,10 @@
 using Microsoft.Extensions.DependencyInjection;
 using PKHeX.Application.Abstractions;
 using PKHeX.Application.Abstractions.LiveHex;
+using PKHeX.Application.Abstractions.GiftRecords;
 using PKHeX.Infrastructure.AutoLegality;
 using PKHeX.Infrastructure.Configuration;
+using PKHeX.Infrastructure.GiftRecords;
 using PKHeX.Infrastructure.LiveHex;
 
 namespace PKHeX.Infrastructure;
@@ -22,6 +24,7 @@ public static class DependencyInjection
         services.AddSingleton<ILiveHexService, LiveHexService>();
         services.AddSingleton<ILivingDexService, LivingDexService>();
         services.AddSingleton<ISaveBackupService, SaveBackupService>();
+        services.AddSingleton<IGiftRecordProvider, GiftRecordProvider>();
         return services;
     }
 }
