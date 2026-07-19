@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.IO;
 using System.Security.Cryptography;
 using PKHeX.Application.Abstractions;
 using PKHeX.Application.Services;
@@ -66,33 +67,40 @@ public sealed class GitHubUpdateInstaller : IUpdateInstaller
         if (!_strategies.TryGetValue(location.Kind, out var strategy))
             return new UpdateInstallResult(false, false, "Update_Error_Generic");
 
-        var tempPath = Path.Combine(Path.GetTempPath(), $"{SanitizeFileName(asset.Name)}.part");
-        try
-        {
-            progress.Report(new UpdateProgress(UpdatePhase.Downloading, 0, asset.Size > 0 ? asset.Size : null));
-            await DownloadAsync(asset, tempPath, progress, ct).ConfigureAwait(false);
-
-            progress.Report(new UpdateProgress(UpdatePhase.Verifying, 0, null));
-            if (!await VerifyChecksumAsync(tempPath, asset.Sha256, ct).ConfigureAwait(false))
+            var sanitizedName = SanitizeFileName(asset.Name);
+            var tempPath = Path.Combine(Path.GetTempPath(), $"{sanitizedName}.part");
+            var finalPath = Path.Combine(Path.GetTempPath(), sanitizedName);
+            try
             {
-                TryDelete(tempPath);
-                return new UpdateInstallResult(false, false, "Update_Error_Checksum");
-            }
+                progress.Report(new UpdateProgress(UpdatePhase.Downloading, 0, asset.Size > 0 ? asset.Size : null));
+                await DownloadAsync(asset, tempPath, progress, ct).ConfigureAwait(false);
 
-            return await strategy.InstallAsync(tempPath, asset, location, progress, ct).ConfigureAwait(false);
+                progress.Report(new UpdateProgress(UpdatePhase.Verifying, 0, null));
+                if (!await VerifyChecksumAsync(tempPath, asset.Sha256, ct).ConfigureAwait(false))
+                {
+                    TryDelete(tempPath);
+                    return new UpdateInstallResult(false, false, "Update_Error_Checksum");
+                }
+
+                // Rename from .part to the proper filename so platform strategies receive the correct extension.
+                File.Move(tempPath, finalPath, overwrite: true);
+
+                return await strategy.InstallAsync(finalPath, asset, location, progress, ct).ConfigureAwait(false);
         }
-        catch (OperationCanceledException)
+            catch (OperationCanceledException)
         {
-            TryDelete(tempPath);
-            throw;
+                TryDelete(tempPath);
+                TryDelete(finalPath);
+                throw;
         }
-        catch (Exception ex)
-        {
-            Trace.TraceWarning($"Update install failed: {ex.Message}");
-            TryDelete(tempPath);
-            return new UpdateInstallResult(false, false, "Update_Error_Generic");
+            catch (Exception ex)
+            {
+                Trace.TraceWarning($"Update install failed: {ex.Message}");
+                TryDelete(tempPath);
+                TryDelete(finalPath);
+                return new UpdateInstallResult(false, false, "Update_Error_Generic");
+            }
         }
-    }
 
     private async Task DownloadAsync(ReleaseAsset asset, string destinationPath, IProgress<UpdateProgress> progress, CancellationToken ct)
     {

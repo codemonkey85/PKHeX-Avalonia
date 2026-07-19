@@ -148,4 +148,37 @@ public class GitHubUpdateInstallerTests
         Assert.False(strategy.Invoked);
         Assert.False(File.Exists(Path.Combine(Path.GetTempPath(), $"{asset.Name}.part")));
     }
-}
+
+            [Fact]
+            public async Task Windows_installer_receives_the_correct_extension_not_part()
+            {
+                // Regression: the .part extension has no shell association on Windows, so Process.Start
+                // would show an "open with" dialog instead of launching the installer. The fix renames
+                // the temp file to the sanitized asset name before handing it to the platform strategy.
+                var payload = new byte[30_000];
+                new Random(99).NextBytes(payload);
+                var sha256 = Convert.ToHexStringLower(SHA256.HashData(payload));
+
+                var handler = new FakeHttpMessageHandler(_ =>
+                {
+                    var response = new HttpResponseMessage(HttpStatusCode.OK) { Content = new ByteArrayContent(payload) };
+                    response.Content.Headers.ContentLength = payload.Length;
+                    return response;
+                });
+                var strategy = new FakeStrategy();
+                var installer = CreateInstaller(handler, strategy, InstallKind.WindowsInstaller);
+                var asset = new ReleaseAsset("MyApp-Setup.exe", "https://example.com/MyApp-Setup.exe", sha256, payload.Length);
+                var progress = new SyncProgress();
+
+                var result = await installer.DownloadAndInstallAsync(asset, progress, CancellationToken.None);
+
+                Assert.True(result.Success);
+                Assert.True(strategy.Invoked);
+                Assert.NotNull(strategy.DownloadedFilePath);
+                // The received file must have the .exe extension, not .part.
+                Assert.EndsWith(".exe", strategy.DownloadedFilePath, StringComparison.OrdinalIgnoreCase);
+                Assert.DoesNotContain(".part", strategy.DownloadedFilePath, StringComparison.OrdinalIgnoreCase);
+                // The temp .part file must not be left behind after the rename.
+                Assert.False(File.Exists(Path.Combine(Path.GetTempPath(), $"{asset.Name}.part")));
+            }
+        }
