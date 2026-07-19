@@ -3,6 +3,7 @@ using System.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using PKHeX.Application.Abstractions.GiftRecords;
 using PKHeX.Application.Abstractions.LiveHex;
 using PKHeX.Core;
 using PKHeX.Presentation.Localization;
@@ -27,6 +28,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private readonly IAutoLegalityService _autoLegalityService;
     private readonly ILiveHexService _liveHexService;
     private readonly ILivingDexService _livingDexService;
+    private readonly IGiftRecordProvider _giftRecordProvider;
     private readonly UpdateCheckCoordinator _updateCoordinator;
 
     // Captured on the UI thread at construction so update-check continuations (which may complete on
@@ -96,7 +98,8 @@ public partial class MainWindowViewModel : ViewModelBase
         LanguageService languageService,
         IAutoLegalityService autoLegalityService,
         ILiveHexService liveHexService,
-        ILivingDexService livingDexService)
+        ILivingDexService livingDexService,
+        IGiftRecordProvider giftRecordProvider)
     {
         _saveFileService = saveFileService;
         _dialogService = dialogService;
@@ -115,6 +118,7 @@ public partial class MainWindowViewModel : ViewModelBase
         _autoLegalityService = autoLegalityService;
         _liveHexService = liveHexService;
         _livingDexService = livingDexService;
+        _giftRecordProvider = giftRecordProvider;
 
         // Mirror the coordinator's status-bar notification (raised by either the startup check or a
         // manual "Check for Updates" from the Settings/About dialogs) into the bound property.
@@ -161,6 +165,7 @@ public partial class MainWindowViewModel : ViewModelBase
         BoxViewer?.RefreshCurrentBox();
         TrainerEditor?.RefreshLanguage();
         InventoryEditor?.RefreshLanguage();
+        MysteryGiftEditor?.RefreshLocalization();
 
         // Relay to on-demand dialog ViewModels (e.g. PKM database) that subscribe via the messenger.
         WeakReferenceMessenger.Default.Send(new LanguageChangedMessage(_languageService.CurrentLanguage));
@@ -209,7 +214,7 @@ public partial class MainWindowViewModel : ViewModelBase
                 TrainerEditor = new TrainerEditorViewModel(sav);
                 InventoryEditor = new InventoryEditorViewModel(sav, _spriteRenderer);
                 EventFlagsEditor = new EventFlagsEditorViewModel(sav);
-                MysteryGiftEditor = new MysteryGiftEditorViewModel(sav, _dialogService);
+                MysteryGiftEditor = new MysteryGiftEditorViewModel(sav, _dialogService, _giftRecordProvider);
                 BatchEditor = new BatchEditorViewModel(sav, _dialogService);
                 BatchEditor.BatchEditCompleted += OnBatchEditCompleted;
             }

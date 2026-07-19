@@ -8,7 +8,8 @@ namespace PKHeX.Avalonia.Tests;
 
 /// <summary>
 /// Behavioral tests for MysteryGiftEditorViewModel.
-/// Mystery gifts are supported in Gen4-7 (and LGPE); absent in Gen1-3/Gen9.
+/// Wondercard albums are supported in Gen4-7 (and LGPE); this class tests that legacy mode.
+/// Switch received-gift record mode is covered by <see cref="GiftRecordStoreTests"/>.
 /// </summary>
 public class MysteryGiftEditorTests(ITestOutputHelper output)
 {

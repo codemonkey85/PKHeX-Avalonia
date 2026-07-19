@@ -206,3 +206,5 @@ WinForms UI changes, version bump, PR, and auto-merge once CI is green — is en
 ## Working notes
 
 <!-- Any agent: append short dated notes here (YYYY-MM-DD — note). Prune notes when stale or once folded into the sections above. -->
+
+- 2026-07-19 — Issue #167 adds a save-side Switch Mystery Gift record manager in `feat/switch-gift-records`: SWSH (50 WR8 records), BDSP (50 records + 10 one-day entries, 2048 received flags, serial lock), PLA (50 trimmed WA8 records), and SV (32 retained trimmed WC9 records). Imports are deliberately limited to documented conversions; no BCAT redemption forging. The BDSP flag adapter accesses the full bitfield directly because upstream Core's helper shifts by 8 instead of 3.

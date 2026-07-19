@@ -12,6 +12,7 @@ using PKHeX.Avalonia.Services;
 using PKHeX.Presentation.ViewModels;
 using PKHeX.Avalonia.Views;
 using PKHeX.Core;
+using PKHeX.Infrastructure.GiftRecords;
 using Moq;
 using Xunit;
 using Xunit.Sdk;
@@ -130,6 +131,17 @@ public class LayoutTests
     {
         var dialogMock = new Mock<IDialogService>();
         var vm = new MysteryGiftEditorViewModel(_saveFile, dialogMock.Object);
+        var view = new MysteryGiftEditor { DataContext = vm };
+        ForceLayout(view);
+        LayoutValidator.Validate(view);
+    }
+
+    [AvaloniaFact]
+    public void Verify_SwitchGiftRecordEditor_Layout()
+    {
+        var dialogMock = new Mock<IDialogService>();
+        var save = BlankSaveFile.Get(GameVersion.SL);
+        var vm = new MysteryGiftEditorViewModel(save, dialogMock.Object, new GiftRecordProvider());
         var view = new MysteryGiftEditor { DataContext = vm };
         ForceLayout(view);
         LayoutValidator.Validate(view);
