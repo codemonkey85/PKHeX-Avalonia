@@ -100,7 +100,7 @@ Actions), used only when the Developer ID secrets above are absent:
 |---|---|
 | `SELFSIGN_CERT_P12_BASE64` | Base64 of the `.p12` produced above |
 | `SELFSIGN_CERT_PASSWORD` | The `P12_PASSWORD` used to generate it |
-| `SELFSIGN_IDENTITY` | The certificate's CN, default `PKHeX-Avalonia Self-Signed` (override via `CERT_CN` when running the script) |
+| `SELFSIGN_IDENTITY` | The certificate's CN, default `Patrik Lleshaj` (override via `CERT_CN` when running the script) |
 
 When present, `release.yml` imports the cert into a dedicated CI keychain
 (`Scripts/import-cert.sh`, same idempotent import-and-unlock-partition-list

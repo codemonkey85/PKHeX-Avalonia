@@ -20,7 +20,7 @@
 #endif
 
 #define MyAppName "PKHeX-Avalonia"
-#define MyAppPublisher "realgarit"
+#define MyAppPublisher "Patrik Lleshaj"
 #define MyAppURL "https://github.com/realgarit/PKHeX-Avalonia"
 #define MyAppExeName "PKHeX.Avalonia.exe"
 
@@ -29,10 +29,12 @@
 AppId={{B6C9F1B4-7B7B-4B7A-9C2E-8B6C9C7B7B7B}}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
+AppVerName={#MyAppName}
 AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
+UninstallDisplayName={#MyAppName}
 DefaultDirName={autopf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 DisableProgramGroupPage=yes
