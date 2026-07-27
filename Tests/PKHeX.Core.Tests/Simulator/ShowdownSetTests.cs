@@ -200,7 +200,8 @@ public class ShowdownSetTests
             set2.Form.Should().Be(set.Form);
 
             var result = set2.GetText(settingsOriginal);
-            result.Should().Be(message);
+            // GetText joins with Environment.NewLine (CRLF on Windows); the expected literal is LF. Compare normalized.
+            result.ReplaceLineEndings("\n").Should().Be(message.ReplaceLineEndings("\n"));
         }
     }
 
@@ -261,7 +262,8 @@ public class ShowdownSetTests
         set2.Form.Should().Be(set.Form);
 
         var result = set2.GetText(settingsOriginal);
-        result.Should().Be(message);
+        // GetText joins with Environment.NewLine (CRLF on Windows); the expected literal is LF. Compare normalized.
+        result.ReplaceLineEndings("\n").Should().Be(message.ReplaceLineEndings("\n"));
     }
 
     [Theory]
