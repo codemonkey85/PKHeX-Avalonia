@@ -53,6 +53,10 @@ On each Core sync, re-check this engine against the new Core and adapt any API d
    drift to patch**. If a future Core sync breaks compilation, fix it here (not in `PKHeX.Core`) and
    record the change in this file.
 
+3. **`AutoMod/APILegality.cs`: pass trainer context to `IGenerateSeed64`.** PKHeX.Core commit
+   `757a297` added an `ITrainerInfo` parameter so Legends: Arceus encounter generation can derive the
+   save-specific shiny-roll count. The vendored call now forwards its existing source trainer.
+
 ## Re-sync procedure
 
 1. `git clone https://github.com/santacrab2/PKHeX-Plugins` and check out the new commit.
