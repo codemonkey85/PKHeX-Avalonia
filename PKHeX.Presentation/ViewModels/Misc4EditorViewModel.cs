@@ -275,6 +275,12 @@ public partial class Misc4EditorViewModel : ViewModelBase
             {
                 item.Index = 0;
                 item.Count = 0;
+
+                // The Gen 4 bag pouch is a null-terminated array: leaving a zeroed slot in the
+                // middle would strand any items after it behind the hole, making them invisible
+                // in-game. Compact so all remaining non-empty entries stay contiguous from the
+                // start, preserving their relative order.
+                pouch.ClearCount0();
             }
         }
 
