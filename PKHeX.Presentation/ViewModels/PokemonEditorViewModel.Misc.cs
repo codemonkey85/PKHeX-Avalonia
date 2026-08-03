@@ -203,6 +203,36 @@ public partial class PokemonEditorViewModel
     [ObservableProperty]
     private bool _isPokerusCured;
 
+    // Equality guards skip the load-time assignments (the values are read from _pk) while still writing live edits through.
+    partial void OnIsPokerusInfectedChanged(bool value)
+    {
+        if (value == _pk.IsPokerusInfected)
+            return;
+        _pk.IsPokerusInfected = value;
+        if (value)
+        {
+            if (_pk.PokerusDays == 0)
+                _pk.PokerusDays = 1;
+        }
+        else
+        {
+            _pk.PokerusDays = 0;
+            IsPokerusCured = false;
+        }
+        PkrsStrain = _pk.PokerusStrain;
+        PkrsDays = _pk.PokerusDays;
+    }
+
+    partial void OnIsPokerusCuredChanged(bool value)
+    {
+        if (value == _pk.IsPokerusCured)
+            return;
+        _pk.IsPokerusCured = value;
+        IsPokerusInfected = true;
+        PkrsStrain = _pk.PokerusStrain;
+        PkrsDays = _pk.PokerusDays;
+    }
+
     // OT Info
     [ObservableProperty]
     private string _originalTrainerName = string.Empty;

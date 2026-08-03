@@ -237,6 +237,17 @@ public partial class PokemonEditorViewModel : ViewModelBase
             EvSPD = _pk.EV_SPD;
             EvSPE = _pk.EV_SPE;
 
+            // Hyper Training (Partial)
+            if (_pk is IHyperTrain ht)
+            {
+                HyperTrainedHP = ht.HT_HP;
+                HyperTrainedATK = ht.HT_ATK;
+                HyperTrainedDEF = ht.HT_DEF;
+                HyperTrainedSPA = ht.HT_SPA;
+                HyperTrainedSPD = ht.HT_SPD;
+                HyperTrainedSPE = ht.HT_SPE;
+            }
+
             IsFatefulEncounter = _pk.FatefulEncounter;
             Happiness = _pk.CurrentFriendship;
             Sid = (int)_pk.DisplaySID;
@@ -280,6 +291,8 @@ public partial class PokemonEditorViewModel : ViewModelBase
             OnPropertyChanged(nameof(MetDate));
             OnPropertyChanged(nameof(EggDate));
             OnPropertyChanged(nameof(ShowStatAlignment));
+            OnPropertyChanged(nameof(HasHyperTraining));
+            OnPropertyChanged(nameof(CanHyperTrain));
             OnPropertyChanged(nameof(Tsv));
             UpdateFormArgument();
 
@@ -409,7 +422,7 @@ public partial class PokemonEditorViewModel : ViewModelBase
     }
 
     partial void OnNicknameChanged(string value) { if (!_isLoading) Validate(); }
-    partial void OnLevelChanged(int value) { if (!_isLoading) { Exp = Experience.GetEXP((byte)value, _pk.PersonalInfo.EXPGrowth); RecalculateStats(); Validate(); } }
+    partial void OnLevelChanged(int value) { if (!_isLoading) { Exp = Experience.GetEXP((byte)value, _pk.PersonalInfo.EXPGrowth); RecalculateStats(); Validate(); OnPropertyChanged(nameof(CanHyperTrain)); } }
     partial void OnNatureChanged(int value) { if (!_isLoading) { RecalculateStats(); Validate(); } }
     partial void OnAbilityChanged(int value) { if (!_isLoading) Validate(); }
     partial void OnHeldItemChanged(int value) { if (!_isLoading) Validate(); }

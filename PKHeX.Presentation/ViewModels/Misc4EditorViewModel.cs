@@ -22,6 +22,7 @@ public partial class Misc4EditorViewModel : ViewModelBase
         LoadFlyDestinations();
         LoadWalker();
         LoadBattleFrontier();
+        LoadPokeRadar();
     }
 
     #region Main Properties
@@ -41,10 +42,14 @@ public partial class Misc4EditorViewModel : ViewModelBase
     [ObservableProperty]
     private int _mapUnlockState;
 
+    [ObservableProperty]
+    private bool _pokeRadar;
+
     public bool IsSinnoh => _sav is SAV4Sinnoh;
     public bool IsHGSS => _sav is SAV4HGSS;
     public bool IsWalkerVisible => IsHGSS;
     public bool IsBattleFrontierVisible => _sav is not SAV4DP;
+    public bool IsPokeRadarVisible => _sav is SAV4DP or SAV4Pt;
 
     public string[] MapStates { get; } = ["Map Johto", "Map Johto+", "Map Johto & Kanto"];
 
@@ -233,6 +238,49 @@ public partial class Misc4EditorViewModel : ViewModelBase
         }
     }
 
+    private const int PokeRadarItem = 431;
+
+    private void LoadPokeRadar()
+    {
+        if (!IsPokeRadarVisible) return;
+        PokeRadar = _sav.Inventory.Pouches.First(p => p.Type is InventoryType.KeyItems).HasItem(PokeRadarItem);
+    }
+
+    private void SavePokeRadar()
+    {
+        if (!IsPokeRadarVisible) return;
+
+        var bag = _sav.Inventory;
+        var pouch = bag.Pouches.First(p => p.Type is InventoryType.KeyItems);
+        var hasRadar = pouch.HasItem(PokeRadarItem);
+        if (PokeRadar == hasRadar)
+            return;
+
+        if (PokeRadar)
+        {
+            var item = pouch.Items.FirstOrDefault(it => it.Index == 0);
+            if (item == null)
+            {
+                // No empty slot to place the radar; revert the checkbox to the save's actual state.
+                LoadPokeRadar();
+                return;
+            }
+            item.Index = PokeRadarItem;
+            item.Count = 1;
+        }
+        else
+        {
+            var item = pouch.Items.FirstOrDefault(it => it.Index == PokeRadarItem);
+            if (item != null)
+            {
+                item.Index = 0;
+                item.Count = 0;
+            }
+        }
+
+        bag.CopyTo(_sav);
+    }
+
     #endregion
 
     #region Commands
@@ -244,6 +292,7 @@ public partial class Misc4EditorViewModel : ViewModelBase
         SaveFlyDestinations();
         SaveWalker();
         SaveBattleFrontier();
+        SavePokeRadar();
     }
 
     #endregion
