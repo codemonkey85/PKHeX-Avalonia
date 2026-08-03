@@ -21,7 +21,7 @@
                             <Border Classes="section-card" Padding="12">
                                 <StackPanel Spacing="12">
                                     <TextBlock Text="{loc:Loc Misc4Editor_Currency}" FontWeight="SemiBold" Opacity="0.6" />
-                                    <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,8,Auto,8,Auto,8,Auto,8,Auto">
+                                    <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,8,Auto,8,Auto,8,Auto,8,Auto,8,Auto">
                                         <TextBlock Grid.Row="0" Grid.Column="0" Text="{loc:Loc Misc4Editor_Coins}" VerticalAlignment="Center" Width="100" />
                                         <NumericUpDown Grid.Row="0" Grid.Column="1"
                                                        Value="{Binding Coins}"
@@ -51,11 +51,17 @@
                                         <!-- HGSS Map Upgrade -->
                                         <TextBlock Grid.Row="8" Grid.Column="0" Text="{loc:Loc Misc4Editor_MapState}" VerticalAlignment="Center"
                                                    IsVisible="{Binding IsHGSS}" />
-                                        <ComboBox Grid.Row="8" Grid.Column="1" 
+                                        <ComboBox Grid.Row="8" Grid.Column="1"
                                                   ItemsSource="{Binding MapStates}"
                                                   SelectedIndex="{Binding MapUnlockState}"
-                                                  IsVisible="{Binding IsHGSS}" 
+                                                  IsVisible="{Binding IsHGSS}"
                                                   HorizontalAlignment="Stretch" />
+
+                                        <!-- Sinnoh Poke Radar -->
+                                        <CheckBox Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="2"
+                                                  Content="{loc:Loc Misc4PokeRadar}"
+                                                  IsChecked="{Binding PokeRadar, Mode=TwoWay}"
+                                                  IsVisible="{Binding IsPokeRadarVisible}" />
                                     </Grid>
                                 </StackPanel>
                             </Border>

@@ -70,6 +70,25 @@ public partial class PokemonEditorViewModel
     [NotifyPropertyChangedFor(nameof(Stat_HP), nameof(Stat_ATK), nameof(Stat_DEF), nameof(Stat_SPA), nameof(Stat_SPD), nameof(Stat_SPE), nameof(EVTotal))]
     private int _evSPE;
 
+    // Hyper Training
+    [ObservableProperty]
+    private bool _hyperTrainedHP;
+
+    [ObservableProperty]
+    private bool _hyperTrainedATK;
+
+    [ObservableProperty]
+    private bool _hyperTrainedDEF;
+
+    [ObservableProperty]
+    private bool _hyperTrainedSPA;
+
+    [ObservableProperty]
+    private bool _hyperTrainedSPD;
+
+    [ObservableProperty]
+    private bool _hyperTrainedSPE;
+
     // Computed Stats — RecalculateStats() is called in the OnChanged hooks before
     // PropertyChanged fires, so _pk is already up-to-date by the time these are read.
     public int Stat_HP => _pk.Stat_HPMax;
@@ -89,6 +108,16 @@ public partial class PokemonEditorViewModel
 
     public int IVTotal => IvHP + IvATK + IvDEF + IvSPA + IvSPD + IvSPE;
     public int EVTotal => EvHP + EvATK + EvDEF + EvSPA + EvSPD + EvSPE;
+
+    /// <summary>
+    /// Gen7+ formats store Hyper Training flags per stat; <see cref="IHyperTrain"/> gates access.
+    /// </summary>
+    public bool HasHyperTraining => _pk is IHyperTrain;
+
+    /// <summary>
+    /// Hyper Training requires the current level to be at or above the format's minimum.
+    /// </summary>
+    public bool CanHyperTrain => _pk is IHyperTrain t && t.IsHyperTrainingAvailable() && _pk.Context.IsHyperTrainingAvailable(_pk.CurrentLevel);
 
     /// <summary>
     /// Gen8+ formats store the displayed-stat alignment independently of <see cref="PKM.Nature"/>.
@@ -112,6 +141,15 @@ public partial class PokemonEditorViewModel
         _pk.EV_SPA = EvSPA;
         _pk.EV_SPD = EvSPD;
         _pk.EV_SPE = EvSPE;
+        if (_pk is IHyperTrain ht)
+        {
+            ht.HT_HP = HyperTrainedHP;
+            ht.HT_ATK = HyperTrainedATK;
+            ht.HT_DEF = HyperTrainedDEF;
+            ht.HT_SPA = HyperTrainedSPA;
+            ht.HT_SPD = HyperTrainedSPD;
+            ht.HT_SPE = HyperTrainedSPE;
+        }
         _pk.ResetPartyStats();
     }
 
@@ -153,4 +191,10 @@ public partial class PokemonEditorViewModel
     partial void OnEvSPAChanged(int value) { if (!_isLoading) { RecalculateStats(); Validate(); } }
     partial void OnEvSPDChanged(int value) { if (!_isLoading) { RecalculateStats(); Validate(); } }
     partial void OnEvSPEChanged(int value) { if (!_isLoading) { RecalculateStats(); Validate(); } }
+    partial void OnHyperTrainedHPChanged(bool value) { if (!_isLoading) { RecalculateStats(); Validate(); } }
+    partial void OnHyperTrainedATKChanged(bool value) { if (!_isLoading) { RecalculateStats(); Validate(); } }
+    partial void OnHyperTrainedDEFChanged(bool value) { if (!_isLoading) { RecalculateStats(); Validate(); } }
+    partial void OnHyperTrainedSPAChanged(bool value) { if (!_isLoading) { RecalculateStats(); Validate(); } }
+    partial void OnHyperTrainedSPDChanged(bool value) { if (!_isLoading) { RecalculateStats(); Validate(); } }
+    partial void OnHyperTrainedSPEChanged(bool value) { if (!_isLoading) { RecalculateStats(); Validate(); } }
 }

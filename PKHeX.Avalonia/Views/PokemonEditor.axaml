@@ -274,67 +274,74 @@
                         <StackPanel Spacing="12" Margin="6,6,6,64">
                         <Border Classes="section-card"
                                 CornerRadius="4" Padding="8">
-                            <Grid ColumnDefinitions="40,*,*,*,*" RowDefinitions="Auto,4,Auto,Auto,Auto,Auto,Auto,Auto">
+                            <Grid ColumnDefinitions="40,*,*,*,*,*" RowDefinitions="Auto,Auto,4,Auto,Auto,Auto,Auto,Auto,Auto">
                                 <!-- Headers -->
-                                <TextBlock Grid.Row="0" Grid.Column="0" Text="{loc:Loc PokemonEditor_ColStat}" FontWeight="Bold" Opacity="0.6" HorizontalAlignment="Left" />
-                                <TextBlock Grid.Row="0" Grid.Column="1" Text="{loc:Loc PokemonEditor_ColBase}" FontWeight="Bold" Opacity="0.6" HorizontalAlignment="Center" />
-                                <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="4">
+                                <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="6" Text="{loc:Loc StatsHyperTrained}" FontWeight="Bold" Opacity="0.6" HorizontalAlignment="Center" Margin="0,0,0,2" />
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="{loc:Loc PokemonEditor_ColStat}" FontWeight="Bold" Opacity="0.6" HorizontalAlignment="Left" />
+                                <TextBlock Grid.Row="1" Grid.Column="1" Text="{loc:Loc PokemonEditor_ColBase}" FontWeight="Bold" Opacity="0.6" HorizontalAlignment="Center" />
+                                <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="4">
                                     <TextBlock Text="{loc:Loc PokemonEditor_ColIVs}" FontWeight="Bold" Opacity="0.6" VerticalAlignment="Center" />
-                                    <Button Content="{loc:Loc PokemonEditor_ColMax}" Command="{Binding SetMaxIVsCommand}" 
+                                    <Button Content="{loc:Loc PokemonEditor_ColMax}" Command="{Binding SetMaxIVsCommand}"
                                             FontSize="10" Padding="4,1" Height="20" VerticalAlignment="Center"
                                             ToolTip.Tip="{loc:Loc PokemonEditor_MaxIvsTooltip}"
                                             AutomationProperties.Name="Set maximum IVs" />
                                 </StackPanel>
-                                <StackPanel Grid.Row="0" Grid.Column="3" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="4">
+                                <StackPanel Grid.Row="1" Grid.Column="3" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="4">
                                     <TextBlock Text="{loc:Loc PokemonEditor_ColEVs}" FontWeight="Bold" Opacity="0.6" VerticalAlignment="Center" />
-                                    <Button Content="{loc:Loc PokemonEditor_ColClear}" Command="{Binding ClearEVsCommand}" 
+                                    <Button Content="{loc:Loc PokemonEditor_ColClear}" Command="{Binding ClearEVsCommand}"
                                             FontSize="10" Padding="4,1" Height="20" VerticalAlignment="Center"
                                             ToolTip.Tip="{loc:Loc PokemonEditor_ClearEvsTooltip}"
                                             AutomationProperties.Name="Clear all EVs" />
                                 </StackPanel>
-                                <TextBlock Grid.Row="0" Grid.Column="4" Text="{loc:Loc PokemonEditor_ColTotal}" FontWeight="Bold" Opacity="0.6" HorizontalAlignment="Center" />
+                                <TextBlock Grid.Row="1" Grid.Column="4" Text="{loc:Loc PokemonEditor_ColTotal}" FontWeight="Bold" Opacity="0.6" HorizontalAlignment="Center" />
 
                                 <!-- HP -->
-                                <TextBlock Grid.Row="2" Grid.Column="0" Text="{loc:Loc PokemonEditor_StatHp}" FontWeight="SemiBold" VerticalAlignment="Center" />
-                                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Base_HP}" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.7" />
-                                <NumericUpDown Grid.Row="2" Grid.Column="2" Value="{Binding IvHP}" Minimum="0" Maximum="31" FormatString="0" Classes="compact" HorizontalAlignment="Stretch" Margin="2" AutomationProperties.Name="HP IV" />
-                                <NumericUpDown Grid.Row="2" Grid.Column="3" Value="{Binding EvHP}" Minimum="0" Maximum="252" FormatString="0" Classes="compact" HorizontalAlignment="Stretch" Margin="2" AutomationProperties.Name="HP EV" />
-                                <TextBlock Grid.Row="2" Grid.Column="4" Text="{Binding Stat_HP}" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                <TextBlock Grid.Row="3" Grid.Column="0" Text="{loc:Loc PokemonEditor_StatHp}" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Base_HP}" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.7" />
+                                <NumericUpDown Grid.Row="3" Grid.Column="2" Value="{Binding IvHP}" Minimum="0" Maximum="31" FormatString="0" Classes="compact" HorizontalAlignment="Stretch" Margin="2" AutomationProperties.Name="HP IV" />
+                                <NumericUpDown Grid.Row="3" Grid.Column="3" Value="{Binding EvHP}" Minimum="0" Maximum="252" FormatString="0" Classes="compact" HorizontalAlignment="Stretch" Margin="2" AutomationProperties.Name="HP EV" />
+                                <TextBlock Grid.Row="3" Grid.Column="4" Text="{Binding Stat_HP}" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                <CheckBox Grid.Row="3" Grid.Column="5" Content="{loc:Loc StatsHyperTrained}" IsChecked="{Binding HyperTrainedHP, Mode=TwoWay}" IsEnabled="{Binding CanHyperTrain}" IsVisible="{Binding HasHyperTraining}" HorizontalAlignment="Center" VerticalAlignment="Center" />
 
                                 <!-- Atk -->
-                                <TextBlock Grid.Row="3" Grid.Column="0" Text="{loc:Loc PokemonEditor_StatAtk}" FontWeight="SemiBold" VerticalAlignment="Center" />
-                                <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Base_ATK}" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.7" />
-                                <NumericUpDown Grid.Row="3" Grid.Column="2" Value="{Binding IvATK}" Minimum="0" Maximum="31" FormatString="0" Classes="compact" HorizontalAlignment="Stretch" Margin="2" AutomationProperties.Name="Attack IV" />
-                                <NumericUpDown Grid.Row="3" Grid.Column="3" Value="{Binding EvATK}" Minimum="0" Maximum="252" FormatString="0" Classes="compact" HorizontalAlignment="Stretch" Margin="2" AutomationProperties.Name="Attack EV" />
-                                <TextBlock Grid.Row="3" Grid.Column="4" Text="{Binding Stat_ATK}" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                <TextBlock Grid.Row="4" Grid.Column="0" Text="{loc:Loc PokemonEditor_StatAtk}" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding Base_ATK}" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.7" />
+                                <NumericUpDown Grid.Row="4" Grid.Column="2" Value="{Binding IvATK}" Minimum="0" Maximum="31" FormatString="0" Classes="compact" HorizontalAlignment="Stretch" Margin="2" AutomationProperties.Name="Attack IV" />
+                                <NumericUpDown Grid.Row="4" Grid.Column="3" Value="{Binding EvATK}" Minimum="0" Maximum="252" FormatString="0" Classes="compact" HorizontalAlignment="Stretch" Margin="2" AutomationProperties.Name="Attack EV" />
+                                <TextBlock Grid.Row="4" Grid.Column="4" Text="{Binding Stat_ATK}" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                <CheckBox Grid.Row="4" Grid.Column="5" Content="{loc:Loc StatsHyperTrained}" IsChecked="{Binding HyperTrainedATK, Mode=TwoWay}" IsEnabled="{Binding CanHyperTrain}" IsVisible="{Binding HasHyperTraining}" HorizontalAlignment="Center" VerticalAlignment="Center" />
 
                                 <!-- Def -->
-                                <TextBlock Grid.Row="4" Grid.Column="0" Text="{loc:Loc PokemonEditor_StatDef}" FontWeight="SemiBold" VerticalAlignment="Center" />
-                                <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding Base_DEF}" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.7" />
-                                <NumericUpDown Grid.Row="4" Grid.Column="2" Value="{Binding IvDEF}" Minimum="0" Maximum="31" FormatString="0" Classes="compact" HorizontalAlignment="Stretch" Margin="2" AutomationProperties.Name="Defense IV" />
-                                <NumericUpDown Grid.Row="4" Grid.Column="3" Value="{Binding EvDEF}" Minimum="0" Maximum="252" FormatString="0" Classes="compact" HorizontalAlignment="Stretch" Margin="2" AutomationProperties.Name="Defense EV" />
-                                <TextBlock Grid.Row="4" Grid.Column="4" Text="{Binding Stat_DEF}" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                <TextBlock Grid.Row="5" Grid.Column="0" Text="{loc:Loc PokemonEditor_StatDef}" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding Base_DEF}" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.7" />
+                                <NumericUpDown Grid.Row="5" Grid.Column="2" Value="{Binding IvDEF}" Minimum="0" Maximum="31" FormatString="0" Classes="compact" HorizontalAlignment="Stretch" Margin="2" AutomationProperties.Name="Defense IV" />
+                                <NumericUpDown Grid.Row="5" Grid.Column="3" Value="{Binding EvDEF}" Minimum="0" Maximum="252" FormatString="0" Classes="compact" HorizontalAlignment="Stretch" Margin="2" AutomationProperties.Name="Defense EV" />
+                                <TextBlock Grid.Row="5" Grid.Column="4" Text="{Binding Stat_DEF}" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                <CheckBox Grid.Row="5" Grid.Column="5" Content="{loc:Loc StatsHyperTrained}" IsChecked="{Binding HyperTrainedDEF, Mode=TwoWay}" IsEnabled="{Binding CanHyperTrain}" IsVisible="{Binding HasHyperTraining}" HorizontalAlignment="Center" VerticalAlignment="Center" />
 
                                 <!-- SpA -->
-                                <TextBlock Grid.Row="5" Grid.Column="0" Text="{loc:Loc PokemonEditor_StatSpa}" FontWeight="SemiBold" VerticalAlignment="Center" />
-                                <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding Base_SPA}" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.7" />
-                                <NumericUpDown Grid.Row="5" Grid.Column="2" Value="{Binding IvSPA}" Minimum="0" Maximum="31" FormatString="0" Classes="compact" HorizontalAlignment="Stretch" Margin="2" AutomationProperties.Name="Special Attack IV" />
-                                <NumericUpDown Grid.Row="5" Grid.Column="3" Value="{Binding EvSPA}" Minimum="0" Maximum="252" FormatString="0" Classes="compact" HorizontalAlignment="Stretch" Margin="2" AutomationProperties.Name="Special Attack EV" />
-                                <TextBlock Grid.Row="5" Grid.Column="4" Text="{Binding Stat_SPA}" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                <TextBlock Grid.Row="6" Grid.Column="0" Text="{loc:Loc PokemonEditor_StatSpa}" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding Base_SPA}" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.7" />
+                                <NumericUpDown Grid.Row="6" Grid.Column="2" Value="{Binding IvSPA}" Minimum="0" Maximum="31" FormatString="0" Classes="compact" HorizontalAlignment="Stretch" Margin="2" AutomationProperties.Name="Special Attack IV" />
+                                <NumericUpDown Grid.Row="6" Grid.Column="3" Value="{Binding EvSPA}" Minimum="0" Maximum="252" FormatString="0" Classes="compact" HorizontalAlignment="Stretch" Margin="2" AutomationProperties.Name="Special Attack EV" />
+                                <TextBlock Grid.Row="6" Grid.Column="4" Text="{Binding Stat_SPA}" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                <CheckBox Grid.Row="6" Grid.Column="5" Content="{loc:Loc StatsHyperTrained}" IsChecked="{Binding HyperTrainedSPA, Mode=TwoWay}" IsEnabled="{Binding CanHyperTrain}" IsVisible="{Binding HasHyperTraining}" HorizontalAlignment="Center" VerticalAlignment="Center" />
 
                                 <!-- SpD -->
-                                <TextBlock Grid.Row="6" Grid.Column="0" Text="{loc:Loc PokemonEditor_StatSpd}" FontWeight="SemiBold" VerticalAlignment="Center" />
-                                <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding Base_SPD}" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.7" />
-                                <NumericUpDown Grid.Row="6" Grid.Column="2" Value="{Binding IvSPD}" Minimum="0" Maximum="31" FormatString="0" Classes="compact" HorizontalAlignment="Stretch" Margin="2" AutomationProperties.Name="Special Defense IV" />
-                                <NumericUpDown Grid.Row="6" Grid.Column="3" Value="{Binding EvSPD}" Minimum="0" Maximum="252" FormatString="0" Classes="compact" HorizontalAlignment="Stretch" Margin="2" AutomationProperties.Name="Special Defense EV" />
-                                <TextBlock Grid.Row="6" Grid.Column="4" Text="{Binding Stat_SPD}" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                <TextBlock Grid.Row="7" Grid.Column="0" Text="{loc:Loc PokemonEditor_StatSpd}" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding Base_SPD}" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.7" />
+                                <NumericUpDown Grid.Row="7" Grid.Column="2" Value="{Binding IvSPD}" Minimum="0" Maximum="31" FormatString="0" Classes="compact" HorizontalAlignment="Stretch" Margin="2" AutomationProperties.Name="Special Defense IV" />
+                                <NumericUpDown Grid.Row="7" Grid.Column="3" Value="{Binding EvSPD}" Minimum="0" Maximum="252" FormatString="0" Classes="compact" HorizontalAlignment="Stretch" Margin="2" AutomationProperties.Name="Special Defense EV" />
+                                <TextBlock Grid.Row="7" Grid.Column="4" Text="{Binding Stat_SPD}" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                <CheckBox Grid.Row="7" Grid.Column="5" Content="{loc:Loc StatsHyperTrained}" IsChecked="{Binding HyperTrainedSPD, Mode=TwoWay}" IsEnabled="{Binding CanHyperTrain}" IsVisible="{Binding HasHyperTraining}" HorizontalAlignment="Center" VerticalAlignment="Center" />
 
                                 <!-- Spe -->
-                                <TextBlock Grid.Row="7" Grid.Column="0" Text="{loc:Loc PokemonEditor_StatSpe}" FontWeight="SemiBold" VerticalAlignment="Center" />
-                                <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding Base_SPE}" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.7" />
-                                <NumericUpDown Grid.Row="7" Grid.Column="2" Value="{Binding IvSPE}" Minimum="0" Maximum="31" FormatString="0" Classes="compact" HorizontalAlignment="Stretch" Margin="2" AutomationProperties.Name="Speed IV" />
-                                <NumericUpDown Grid.Row="7" Grid.Column="3" Value="{Binding EvSPE}" Minimum="0" Maximum="252" FormatString="0" Classes="compact" HorizontalAlignment="Stretch" Margin="2" AutomationProperties.Name="Speed EV" />
-                                <TextBlock Grid.Row="7" Grid.Column="4" Text="{Binding Stat_SPE}" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                <TextBlock Grid.Row="8" Grid.Column="0" Text="{loc:Loc PokemonEditor_StatSpe}" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                <TextBlock Grid.Row="8" Grid.Column="1" Text="{Binding Base_SPE}" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.7" />
+                                <NumericUpDown Grid.Row="8" Grid.Column="2" Value="{Binding IvSPE}" Minimum="0" Maximum="31" FormatString="0" Classes="compact" HorizontalAlignment="Stretch" Margin="2" AutomationProperties.Name="Speed IV" />
+                                <NumericUpDown Grid.Row="8" Grid.Column="3" Value="{Binding EvSPE}" Minimum="0" Maximum="252" FormatString="0" Classes="compact" HorizontalAlignment="Stretch" Margin="2" AutomationProperties.Name="Speed EV" />
+                                <TextBlock Grid.Row="8" Grid.Column="4" Text="{Binding Stat_SPE}" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                <CheckBox Grid.Row="8" Grid.Column="5" Content="{loc:Loc StatsHyperTrained}" IsChecked="{Binding HyperTrainedSPE, Mode=TwoWay}" IsEnabled="{Binding CanHyperTrain}" IsVisible="{Binding HasHyperTraining}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </Grid>
                         </Border>
                       </StackPanel>
@@ -623,6 +630,8 @@
                                                 <NumericUpDown Grid.Column="2" Value="{Binding PkrsStrain}" Minimum="0" Maximum="15" FormatString="0" ShowButtonSpinner="False"
                                                                AutomationProperties.Name="Pokérus Strain" />
                                             </Grid>
+                                            <CheckBox IsChecked="{Binding IsPokerusInfected, Mode=TwoWay}" Content="{loc:Loc MiscPokerusInfected}" Margin="0,4,0,0" />
+                                            <CheckBox IsChecked="{Binding IsPokerusCured, Mode=TwoWay}" Content="{loc:Loc MiscPokerusCured}" />
                                         </StackPanel>
                                     </Grid>
                                 </StackPanel>
