@@ -84,7 +84,7 @@
                 <Border Classes="section-card" Padding="12">
                     <StackPanel Spacing="8">
                         <TextBlock Text="{loc:Loc JoinAvenueEditor_VisitorShop}" FontWeight="SemiBold" />
-                        <Grid ColumnDefinitions="Auto,160,24,Auto,160" RowDefinitions="Auto,Auto,Auto,Auto,Auto">
+                        <Grid ColumnDefinitions="Auto,160,24,Auto,160" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto">
                             <TextBlock Grid.Row="0" Grid.Column="0" Text="{loc:Loc JoinAvenueEditor_AvenueLevel}" VerticalAlignment="Center" Margin="0,0,8,4" />
                             <NumericUpDown Grid.Row="0" Grid.Column="1" Value="{Binding JoinAvenueLevel}" Minimum="0" Maximum="127" FormatString="0" Classes="compact" Margin="0,0,0,4" />
                             <TextBlock Grid.Row="0" Grid.Column="3" Text="{loc:Loc JoinAvenueEditor_AvenueRank}" VerticalAlignment="Center" Margin="0,0,8,4" />
@@ -93,22 +93,40 @@
                             <TextBlock Grid.Row="1" Grid.Column="0" Text="{loc:Loc JoinAvenueEditor_ShopType}" VerticalAlignment="Center" Margin="0,0,8,4" />
                             <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding ShopTypeList}"
                                       SelectedValue="{Binding ShopTypeIndex}" SelectedValueBinding="{Binding Value}"
-                                      DisplayMemberBinding="{Binding Text}" HorizontalAlignment="Stretch" Margin="0,0,0,4" />
+                                      DisplayMemberBinding="{Binding Text}" HorizontalAlignment="Stretch" Margin="0,0,0,4"
+                                      AutomationProperties.Name="{loc:Loc JoinAvenueEditor_ShopType}" />
                             <TextBlock Grid.Row="1" Grid.Column="3" Text="{loc:Loc JoinAvenueEditor_DesiredShopType}" VerticalAlignment="Center" Margin="0,0,8,4" />
-                            <NumericUpDown Grid.Row="1" Grid.Column="4" Value="{Binding DesiredShopType}" Minimum="0" Maximum="65535" FormatString="0" Classes="compact" Margin="0,0,0,4" />
+                            <ComboBox Grid.Row="1" Grid.Column="4" ItemsSource="{Binding ShopTypeList}"
+                                      SelectedValue="{Binding DesiredShopTypeIndex}" SelectedValueBinding="{Binding Value}"
+                                      DisplayMemberBinding="{Binding Text}" HorizontalAlignment="Stretch" Margin="0,0,0,4"
+                                      AutomationProperties.Name="{loc:Loc JoinAvenueEditor_DesiredShopType}" />
 
-                            <TextBlock Grid.Row="2" Grid.Column="0" Text="{loc:Loc JoinAvenueEditor_ShopLevel}" VerticalAlignment="Center" Margin="0,0,8,4" />
-                            <NumericUpDown Grid.Row="2" Grid.Column="1" Value="{Binding ShopLevel}" Minimum="0" Maximum="{Binding ShopMaxLevel}" FormatString="0" Classes="compact" Margin="0,0,0,4" />
-                            <TextBlock Grid.Row="2" Grid.Column="3" Text="{loc:Loc JoinAvenueEditor_ShopExperience}" VerticalAlignment="Center" Margin="0,0,8,4" />
-                            <NumericUpDown Grid.Row="2" Grid.Column="4" Value="{Binding ShopExperience}" Minimum="0" Maximum="65535" FormatString="0" Classes="compact" Margin="0,0,0,4" />
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="{loc:Loc JoinAvenueEditor_ShopTypeLevel}" VerticalAlignment="Center" Margin="0,0,8,4" />
+                            <NumericUpDown Grid.Row="2" Grid.Column="1" Value="{Binding ShopTypeLevel}" Minimum="0" Maximum="{Binding ShopTypeMaxLevel}" FormatString="0" Classes="compact" Margin="0,0,0,4"
+                                           AutomationProperties.Name="{loc:Loc JoinAvenueEditor_ShopTypeLevel}" />
+                            <TextBlock Grid.Row="2" Grid.Column="3" Text="{loc:Loc JoinAvenueEditor_DesiredShopLevel}" VerticalAlignment="Center" Margin="0,0,8,4" />
+                            <NumericUpDown Grid.Row="2" Grid.Column="4" Value="{Binding DesiredShopLevel}" Minimum="0" Maximum="{Binding ShopTypeMaxLevel}" FormatString="0" Classes="compact" Margin="0,0,0,4"
+                                           AutomationProperties.Name="{loc:Loc JoinAvenueEditor_DesiredShopLevel}" />
 
-                            <TextBlock Grid.Row="3" Grid.Column="0" Text="{loc:Loc JoinAvenueEditor_DexSeen}" VerticalAlignment="Center" Margin="0,0,8,4" />
-                            <NumericUpDown Grid.Row="3" Grid.Column="1" Value="{Binding DexSeen}" Minimum="0" Maximum="1023" FormatString="0" Classes="compact" Margin="0,0,0,4" />
-                            <TextBlock Grid.Row="3" Grid.Column="3" Text="{loc:Loc JoinAvenueEditor_Origin}" VerticalAlignment="Center" Margin="0,0,8,4" />
-                            <NumericUpDown Grid.Row="3" Grid.Column="4" Value="{Binding Origin}" Minimum="0" Maximum="65535" FormatString="0" Classes="compact" Margin="0,0,0,4" />
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="{loc:Loc JoinAvenueEditor_ShopTypeVersion}" VerticalAlignment="Center" Margin="0,0,8,4" />
+                            <NumericUpDown Grid.Row="3" Grid.Column="1" Value="{Binding ShopTypeVersion}" Minimum="0" Maximum="{Binding ShopTypeMaxVersion}" FormatString="0" Classes="compact" Margin="0,0,0,4"
+                                           AutomationProperties.Name="{loc:Loc JoinAvenueEditor_ShopTypeVersion}" />
+                            <TextBlock Grid.Row="3" Grid.Column="3" Text="{loc:Loc JoinAvenueEditor_DesiredShopVersion}" VerticalAlignment="Center" Margin="0,0,8,4" />
+                            <NumericUpDown Grid.Row="3" Grid.Column="4" Value="{Binding DesiredShopTypeVersion}" Minimum="0" Maximum="{Binding ShopTypeMaxVersion}" FormatString="0" Classes="compact" Margin="0,0,0,4"
+                                           AutomationProperties.Name="{loc:Loc JoinAvenueEditor_DesiredShopVersion}" />
 
-                            <TextBlock Grid.Row="4" Grid.Column="0" Text="{loc:Loc JoinAvenueEditor_MedalRankHintCount}" VerticalAlignment="Center" Margin="0,0,8,0" />
-                            <StackPanel Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="4" Orientation="Horizontal" Spacing="6">
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="{loc:Loc JoinAvenueEditor_ShopRank}" VerticalAlignment="Center" Margin="0,0,8,4" />
+                            <NumericUpDown Grid.Row="4" Grid.Column="1" Value="{Binding ShopLevel}" Minimum="0" Maximum="{Binding ShopMaxLevel}" FormatString="0" Classes="compact" Margin="0,0,0,4" />
+                            <TextBlock Grid.Row="4" Grid.Column="3" Text="{loc:Loc JoinAvenueEditor_ShopExperience}" VerticalAlignment="Center" Margin="0,0,8,4" />
+                            <NumericUpDown Grid.Row="4" Grid.Column="4" Value="{Binding ShopExperience}" Minimum="0" Maximum="65535" FormatString="0" Classes="compact" Margin="0,0,0,4" />
+
+                            <TextBlock Grid.Row="5" Grid.Column="0" Text="{loc:Loc JoinAvenueEditor_DexSeen}" VerticalAlignment="Center" Margin="0,0,8,4" />
+                            <NumericUpDown Grid.Row="5" Grid.Column="1" Value="{Binding DexSeen}" Minimum="0" Maximum="1023" FormatString="0" Classes="compact" Margin="0,0,0,4" />
+                            <TextBlock Grid.Row="5" Grid.Column="3" Text="{loc:Loc JoinAvenueEditor_Origin}" VerticalAlignment="Center" Margin="0,0,8,4" />
+                            <NumericUpDown Grid.Row="5" Grid.Column="4" Value="{Binding Origin}" Minimum="0" Maximum="65535" FormatString="0" Classes="compact" Margin="0,0,0,4" />
+
+                            <TextBlock Grid.Row="6" Grid.Column="0" Text="{loc:Loc JoinAvenueEditor_MedalRankHintCount}" VerticalAlignment="Center" Margin="0,0,8,0" />
+                            <StackPanel Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="4" Orientation="Horizontal" Spacing="6">
                                 <NumericUpDown Value="{Binding MedalRank}" Minimum="0" Maximum="255" FormatString="0" Classes="compact" Width="90" AutomationProperties.Name="Medal Rank" />
                                 <NumericUpDown Value="{Binding MedalHint}" Minimum="0" Maximum="255" FormatString="0" Classes="compact" Width="90" AutomationProperties.Name="Medal Hint" />
                                 <NumericUpDown Value="{Binding MedalCount}" Minimum="0" Maximum="255" FormatString="0" Classes="compact" Width="90" AutomationProperties.Name="Medal Count" />
