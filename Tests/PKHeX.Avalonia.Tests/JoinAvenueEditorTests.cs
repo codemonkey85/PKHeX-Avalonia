@@ -132,6 +132,60 @@ public class JoinAvenueEditorTests
     }
 
     [Fact]
+    public void JoinAvenue_Visitor_ShopTuples_RoundTripVersionTypeAndLevel()
+    {
+        var sav = new SAV5B2W2();
+        var live = sav.JoinAvenue.GetVisitor(2);
+        live.ShopType = 208; // ((2 * 8) + 4) * 10 + 7 + 1
+        live.DesiredShopType = 320; // ((3 * 8) + 7) * 10 + 9 + 1
+        live.ShopRank = 10;
+
+        var vm = new JoinAvenueEditorViewModel(sav);
+        var visitor = vm.Visitors[2];
+
+        Assert.Equal((int)JoinAvenueShopType5.Dojo, visitor.ShopTypeIndex);
+        Assert.Equal(2, visitor.ShopTypeVersion);
+        Assert.Equal(7, visitor.ShopTypeLevel);
+        Assert.Equal((int)JoinAvenueShopType5.Cafe, visitor.DesiredShopTypeIndex);
+        Assert.Equal(3, visitor.DesiredShopTypeVersion);
+        Assert.Equal(9, visitor.DesiredShopLevel);
+        Assert.Equal(10, visitor.ShopLevel);
+
+        visitor.ShopTypeIndex = (int)JoinAvenueShopType5.Raffle;
+        visitor.ShopTypeVersion = 1;
+        visitor.ShopTypeLevel = 4;
+        visitor.DesiredShopTypeIndex = (int)JoinAvenueShopType5.Market;
+        visitor.DesiredShopTypeVersion = 0;
+        visitor.DesiredShopLevel = 6;
+
+        Assert.NotNull(live.ShopTypeTuple);
+        Assert.Equal((byte)1, live.ShopTypeTuple!.Value.Version);
+        Assert.Equal(JoinAvenueShopType5.Raffle, live.ShopTypeTuple.Value.Type);
+        Assert.Equal((byte)4, live.ShopTypeTuple.Value.Rank);
+        Assert.NotNull(live.DesiredShopTypeTuple);
+        Assert.Equal((byte)0, live.DesiredShopTypeTuple!.Value.Version);
+        Assert.Equal(JoinAvenueShopType5.Market, live.DesiredShopTypeTuple.Value.Type);
+        Assert.Equal((byte)6, live.DesiredShopTypeTuple.Value.Rank);
+        Assert.Equal((byte)10, live.ShopRank);
+    }
+
+    [Fact]
+    public void JoinAvenue_Visitor_ShopTupleList_IncludesEmptyOption()
+    {
+        var sav = new SAV5B2W2();
+        var visitor = new JoinAvenueEditorViewModel(sav).Visitors[0];
+
+        Assert.Equal(-1, visitor.ShopTypeList[0].Value);
+        Assert.Equal("None", visitor.ShopTypeList[0].Text);
+
+        visitor.ShopTypeIndex = -1;
+        visitor.DesiredShopTypeIndex = -1;
+
+        Assert.Null(sav.JoinAvenue.GetVisitor(0).ShopTypeTuple);
+        Assert.Null(sav.JoinAvenue.GetVisitor(0).DesiredShopTypeTuple);
+    }
+
+    [Fact]
     public void JoinAvenue_Fan_WriteThroughToSave()
     {
         var sav = new SAV5B2W2();

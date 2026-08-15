@@ -488,14 +488,18 @@ public partial class JoinAvenueVisitorEntryViewModel : JoinAvenueEntityViewModel
     public JoinAvenueVisitor5 Visitor => _accessor();
     public override IJoinAvenueEntity5 Entity => _accessor();
 
-    public IReadOnlyList<ComboItem> ShopTypeList { get; } = JoinAvenueEditorViewModel.BuildEnumList<JoinAvenueShopType5>();
+    public IReadOnlyList<ComboItem> ShopTypeList { get; } = BuildShopTypeList();
 
     public JoinAvenueSpeciesViewModel? Favorite { get; private set; }
 
     // ---- Visitor-specific fields ----
     [ObservableProperty] private int _joinAvenueLevel;
     [ObservableProperty] private int _shopTypeIndex;
-    [ObservableProperty] private int _desiredShopType;
+    [ObservableProperty] private int _shopTypeVersion;
+    [ObservableProperty] private int _shopTypeLevel;
+    [ObservableProperty] private int _desiredShopTypeIndex;
+    [ObservableProperty] private int _desiredShopTypeVersion;
+    [ObservableProperty] private int _desiredShopLevel;
     [ObservableProperty] private int _dexSeen;
     [ObservableProperty] private int _medalRank;
     [ObservableProperty] private int _medalHint;
@@ -506,6 +510,8 @@ public partial class JoinAvenueVisitorEntryViewModel : JoinAvenueEntityViewModel
     [ObservableProperty] private int _origin;
 
     public int ShopMaxLevel => JoinAvenueVisitor5.ShopMaxRank;
+    public int ShopTypeMaxLevel => JoinAvenueVisitor5.ShopMaxRank - 1;
+    public int ShopTypeMaxVersion => JoinAvenueVisitor5.ShopVersionCount - 1;
 
     protected override void LoadSpecific()
     {
@@ -516,9 +522,16 @@ public partial class JoinAvenueVisitorEntryViewModel : JoinAvenueEntityViewModel
     private void LoadSpecificFields()
     {
         var v = _accessor();
+        var activeShop = v.ShopTypeTuple;
+        var desiredShop = v.DesiredShopTypeTuple;
+
         JoinAvenueLevel = v.JoinAvenueLevel;
-        ShopTypeIndex = v.ShopTypeTuple is { } shop ? (int)shop.Type : -1;
-        DesiredShopType = v.DesiredShopType;
+        ShopTypeIndex = activeShop is { } shop ? (int)shop.Type : -1;
+        ShopTypeVersion = activeShop?.Version ?? 0;
+        ShopTypeLevel = activeShop?.Rank ?? 0;
+        DesiredShopTypeIndex = desiredShop is { } desired ? (int)desired.Type : -1;
+        DesiredShopTypeVersion = desiredShop?.Version ?? 0;
+        DesiredShopLevel = desiredShop?.Rank ?? 0;
         DexSeen = v.DexSeen;
         MedalRank = v.MedalRank;
         MedalHint = v.MedalHint;
@@ -530,8 +543,12 @@ public partial class JoinAvenueVisitorEntryViewModel : JoinAvenueEntityViewModel
     }
 
     partial void OnJoinAvenueLevelChanged(int value) => WriteVisitor(v => v.JoinAvenueLevel = (byte)value);
-    partial void OnShopTypeIndexChanged(int value) => WriteVisitor(v => SetShopType(v, value));
-    partial void OnDesiredShopTypeChanged(int value) => WriteVisitor(v => v.DesiredShopType = (ushort)value);
+    partial void OnShopTypeIndexChanged(int value) => WriteVisitor(v => SetShopTuple(v, value, ShopTypeVersion, ShopTypeLevel, active: true));
+    partial void OnShopTypeVersionChanged(int value) => WriteVisitor(v => SetShopTuple(v, ShopTypeIndex, value, ShopTypeLevel, active: true));
+    partial void OnShopTypeLevelChanged(int value) => WriteVisitor(v => SetShopTuple(v, ShopTypeIndex, ShopTypeVersion, value, active: true));
+    partial void OnDesiredShopTypeIndexChanged(int value) => WriteVisitor(v => SetShopTuple(v, value, DesiredShopTypeVersion, DesiredShopLevel, active: false));
+    partial void OnDesiredShopTypeVersionChanged(int value) => WriteVisitor(v => SetShopTuple(v, DesiredShopTypeIndex, value, DesiredShopLevel, active: false));
+    partial void OnDesiredShopLevelChanged(int value) => WriteVisitor(v => SetShopTuple(v, DesiredShopTypeIndex, DesiredShopTypeVersion, value, active: false));
     partial void OnDexSeenChanged(int value) => WriteVisitor(v => v.DexSeen = (ushort)value);
     partial void OnMedalRankChanged(int value) => WriteVisitor(v => v.MedalRank = (byte)value);
     partial void OnMedalHintChanged(int value) => WriteVisitor(v => v.MedalHint = (byte)value);
@@ -541,16 +558,34 @@ public partial class JoinAvenueVisitorEntryViewModel : JoinAvenueEntityViewModel
     partial void OnJoinAvenueRankChanged(int value) => WriteVisitor(v => v.JoinAvenueRank = (byte)value);
     partial void OnOriginChanged(int value) => WriteVisitor(v => v.Origin = (ushort)value);
 
-    private static void SetShopType(JoinAvenueVisitor5 visitor, int value)
+    private static IReadOnlyList<ComboItem> BuildShopTypeList()
     {
-        if (value < 0)
+        var list = new List<ComboItem>(JoinAvenueVisitor5.ShopTypeCount + 1)
         {
-            visitor.ShopTypeTuple = null;
-            return;
+            new ComboItem(LocalizedStrings.Instance["JoinAvenueEditor_None"], -1),
+        };
+        list.AddRange(JoinAvenueEditorViewModel.BuildEnumList<JoinAvenueShopType5>());
+        return list;
+    }
+
+    private static void SetShopTuple(JoinAvenueVisitor5 visitor, int typeIndex, int version, int level, bool active)
+    {
+        // Write the inverse of Core's public decoder into the raw field so all three surfaced
+        // tuple components round-trip without modifying the byte-for-byte Core mirror.
+        ushort raw = 0;
+        if (typeIndex >= 0)
+        {
+            var clampedVersion = Math.Clamp(version, 0, JoinAvenueVisitor5.ShopVersionCount - 1);
+            var clampedType = Math.Clamp(typeIndex, 0, JoinAvenueVisitor5.ShopTypeCount - 1);
+            var clampedLevel = Math.Clamp(level, 0, JoinAvenueVisitor5.ShopMaxRank - 1);
+            raw = (ushort)((((clampedVersion * JoinAvenueVisitor5.ShopTypeCount) + clampedType)
+                * JoinAvenueVisitor5.ShopMaxRank) + clampedLevel + 1);
         }
 
-        var current = visitor.ShopTypeTuple;
-        visitor.ShopTypeTuple = ((byte)(current?.Version ?? 0), (JoinAvenueShopType5)value, (byte)(current?.Rank ?? 0));
+        if (active)
+            visitor.ShopType = raw;
+        else
+            visitor.DesiredShopType = raw;
     }
 
     private void WriteVisitor(Action<JoinAvenueVisitor5> apply)
