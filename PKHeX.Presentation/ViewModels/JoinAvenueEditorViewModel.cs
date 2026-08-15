@@ -505,7 +505,7 @@ public partial class JoinAvenueVisitorEntryViewModel : JoinAvenueEntityViewModel
     [ObservableProperty] private int _joinAvenueRank;
     [ObservableProperty] private int _origin;
 
-    public int ShopMaxLevel => JoinAvenueVisitor5.ShopMaxLevel;
+    public int ShopMaxLevel => JoinAvenueVisitor5.ShopMaxRank;
 
     protected override void LoadSpecific()
     {
@@ -517,29 +517,41 @@ public partial class JoinAvenueVisitorEntryViewModel : JoinAvenueEntityViewModel
     {
         var v = _accessor();
         JoinAvenueLevel = v.JoinAvenueLevel;
-        ShopTypeIndex = (ushort)v.ShopType;
+        ShopTypeIndex = v.ShopTypeTuple is { } shop ? (int)shop.Type : -1;
         DesiredShopType = v.DesiredShopType;
         DexSeen = v.DexSeen;
         MedalRank = v.MedalRank;
         MedalHint = v.MedalHint;
         MedalCount = v.MedalCount;
-        ShopLevel = v.ShopLevel;
+        ShopLevel = v.ShopRank;
         ShopExperience = v.ShopExperience;
         JoinAvenueRank = v.JoinAvenueRank;
         Origin = v.Origin;
     }
 
     partial void OnJoinAvenueLevelChanged(int value) => WriteVisitor(v => v.JoinAvenueLevel = (byte)value);
-    partial void OnShopTypeIndexChanged(int value) => WriteVisitor(v => v.ShopType = (JoinAvenueShopType5)(ushort)value);
+    partial void OnShopTypeIndexChanged(int value) => WriteVisitor(v => SetShopType(v, value));
     partial void OnDesiredShopTypeChanged(int value) => WriteVisitor(v => v.DesiredShopType = (ushort)value);
     partial void OnDexSeenChanged(int value) => WriteVisitor(v => v.DexSeen = (ushort)value);
     partial void OnMedalRankChanged(int value) => WriteVisitor(v => v.MedalRank = (byte)value);
     partial void OnMedalHintChanged(int value) => WriteVisitor(v => v.MedalHint = (byte)value);
     partial void OnMedalCountChanged(int value) => WriteVisitor(v => v.MedalCount = (byte)value);
-    partial void OnShopLevelChanged(int value) => WriteVisitor(v => v.ShopLevel = (byte)value);
+    partial void OnShopLevelChanged(int value) => WriteVisitor(v => v.ShopRank = (byte)value);
     partial void OnShopExperienceChanged(int value) => WriteVisitor(v => v.ShopExperience = (ushort)value);
     partial void OnJoinAvenueRankChanged(int value) => WriteVisitor(v => v.JoinAvenueRank = (byte)value);
     partial void OnOriginChanged(int value) => WriteVisitor(v => v.Origin = (ushort)value);
+
+    private static void SetShopType(JoinAvenueVisitor5 visitor, int value)
+    {
+        if (value < 0)
+        {
+            visitor.ShopTypeTuple = null;
+            return;
+        }
+
+        var current = visitor.ShopTypeTuple;
+        visitor.ShopTypeTuple = ((byte)(current?.Version ?? 0), (JoinAvenueShopType5)value, (byte)(current?.Rank ?? 0));
+    }
 
     private void WriteVisitor(Action<JoinAvenueVisitor5> apply)
     {

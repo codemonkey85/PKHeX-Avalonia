@@ -110,6 +110,28 @@ public class JoinAvenueEditorTests
     }
 
     [Fact]
+    public void JoinAvenue_Visitor_ShopTuple_UsesNewCoreProperties()
+    {
+        var sav = new SAV5B2W2();
+        var live = sav.JoinAvenue.GetVisitor(2);
+        live.ShopTypeTuple = (0, JoinAvenueShopType5.Raffle, 8);
+
+        var vm = new JoinAvenueEditorViewModel(sav);
+        var visitor = vm.Visitors[2];
+
+        Assert.Equal((int)JoinAvenueShopType5.Raffle, visitor.ShopTypeIndex);
+
+        visitor.ShopTypeIndex = (int)JoinAvenueShopType5.Raffle;
+        visitor.ShopLevel = 9;
+
+        Assert.NotNull(live.ShopTypeTuple);
+        Assert.Equal((byte)0, live.ShopTypeTuple!.Value.Version);
+        Assert.Equal(JoinAvenueShopType5.Raffle, live.ShopTypeTuple.Value.Type);
+        Assert.Equal((byte)8, live.ShopTypeTuple.Value.Rank);
+        Assert.Equal((byte)9, live.ShopRank);
+    }
+
+    [Fact]
     public void JoinAvenue_Fan_WriteThroughToSave()
     {
         var sav = new SAV5B2W2();
