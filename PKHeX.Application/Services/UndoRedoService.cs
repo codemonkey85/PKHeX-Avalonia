@@ -12,13 +12,10 @@ namespace PKHeX.Application.Services;
 /// into one logical operation, so a single <see cref="Undo"/>/<see cref="Redo"/> call reverts/reapplies the
 /// whole group atomically (e.g. a multi-slot Living Dex fill, issue #123).
 ///
-/// Ungrouped (single) changes still delegate straight to Core's <see cref="SlotChangelog"/>, exactly as
-/// before — zero behavior change there. Grouped changes are tracked entirely on this side instead: Core's
-/// <see cref="SlotChangelog.Redo"/> has a side effect (via its internal <c>AddUndo</c>) of clearing its
-/// *entire* redo stack every time it is called, not just consuming the one entry it redid. That is
-/// harmless for a single change, but calling it N times in a row to redo an N-slot batch would discard
-/// the remaining N-1 entries after the first call. Since <see cref="PKHeX.Core"/> cannot be modified, group
-/// entries capture their own before/after snapshots and are undone/redone by writing them back directly.
+/// Ungrouped (single) changes delegate straight to Core's <see cref="SlotChangelog"/>. Grouped changes are
+/// tracked entirely on this side instead: each group entry captures its own before/after snapshot per slot
+/// and is undone/redone by writing those snapshots back directly, so one <see cref="Undo"/> reverts the whole
+/// group no matter how Core stacks the individual entries.
 /// </remarks>
 public sealed class UndoRedoService
 {
@@ -105,7 +102,14 @@ public sealed class UndoRedoService
             return;
         }
 
-        _changelog?.AddNewChange(info);
+        if (_changelog is not null)
+        {
+            // Core's Begin() snapshots the slot's current (pre-mutation) state; Commit() pushes that snapshot
+            // onto Core's undo stack and clears its redo stack. Same contract as the removed AddNewChange.
+            using var change = _changelog.Begin(info);
+            change.Commit();
+        }
+
         _undoStack.Push(SingleUnit.Instance);
         _redoStack.Clear();
         SetChangeCount(_changeCount + 1);
@@ -119,8 +123,8 @@ public sealed class UndoRedoService
         if (unit is SingleUnit)
         {
             if (_changelog is null || !_changelog.CanUndo) return;
-            var info = _changelog.Undo();
-            UndoPerformed?.Invoke(info);
+            foreach (var info in _changelog.Undo())
+                UndoPerformed?.Invoke(info);
         }
         else if (unit is GroupUnit group)
         {
@@ -143,8 +147,8 @@ public sealed class UndoRedoService
         if (unit is SingleUnit)
         {
             if (_changelog is null || !_changelog.CanRedo) return;
-            var info = _changelog.Redo();
-            RedoPerformed?.Invoke(info);
+            foreach (var info in _changelog.Redo())
+                RedoPerformed?.Invoke(info);
         }
         else if (unit is GroupUnit group)
         {
